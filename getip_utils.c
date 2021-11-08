@@ -3,11 +3,9 @@
 #include <unistd.h>
 #include "getip_utils.h"
 #include "sock_utils.h"
-
-// Args usage storage
+ 
 _Bool only4, bExternalIP;
 
-// Args storage
 char* externalIP = "";
 
 void printHelp (int exitCode) {
@@ -15,7 +13,8 @@ void printHelp (int exitCode) {
           "  -h\t\tPrint this message\n"
           "  -e <str>\tUse another's IP\n"
           "  -4\t\tPrint only IP parameter\n\n"
-          "Version: 1.0\n");
+          "Version: 1.0.1\n"
+          "Author: _Magenta_\n");
     exit (exitCode);
 }
 

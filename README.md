@@ -1,4 +1,4 @@
-# GetIP 1.0
+# GetIP 1.0.1
 
 Simple utility to get information about IP written in C
 
@@ -19,5 +19,6 @@ Usage: getip <args>
   -e <str>      Use another's IP
   -4            Print only IP parameter
 
-Version: 1.0
+Version: 1.0.1
+Author: _Magenta_
 ```
