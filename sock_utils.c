@@ -6,7 +6,7 @@
 #include <json-c/json.h>
 #include "sock_utils.h"
 
-void socketInit () {
+void socket_init () {
     if ((sock = socket (PF_INET, SOCK_STREAM, 0)) == -1) {
         perror ("[\033[1;31m-\033[0m] Socket init error");
         exit (2);
@@ -22,11 +22,11 @@ void socketInit () {
     }
 }
 
-void releaseRequest () {
-    if (!bExternalIP) {
+void release_request () {
+    if (!b_external_ip) {
         strcpy (buf, "GET /json/?fields=22806301 HTTP/1.1\r\nHost: demo.ip-api.com\r\nConnection: close\r\n\r\n");
     } else {
-        sprintf (buf, "GET /json/%s?fields=22806301 HTTP/1.1\r\nHost: demo.ip-api.com\r\nConnection: close\r\n\r\n", externalIP);
+        sprintf (buf, "GET /json/%s?fields=22806301 HTTP/1.1\r\nHost: demo.ip-api.com\r\nConnection: close\r\n\r\n", external_ip);
     }
 
     if (send (sock, buf, strlen (buf), 0) < 0) {
@@ -47,30 +47,25 @@ void releaseRequest () {
         buf [i] = buf [fnd + i];
     }
     
-    parsedJson = json_tokener_parse (buf);
-    json_object_object_get_ex (parsedJson, "status", &certainJsonObj);
-    if (strcmp (json_object_get_string (certainJsonObj), "success")) {
-        printf ("[\033[1;31m-\033[0m] API error: Response status is \"%s\"\n", json_object_get_string (certainJsonObj));
-        json_object_object_get_ex (parsedJson, "message", &certainJsonObj);
-        printf ("[\033[1;31m-\033[0m] API message: %s\n", json_object_get_string (certainJsonObj));
+    parsed_json = json_tokener_parse (buf);
+    json_object_object_get_ex (parsed_json, "status", &certain_json_obj);
+    if (strcmp (json_object_get_string (certain_json_obj), "success")) {
+        printf ("[\033[1;31m-\033[0m] API error: Response status is \"%s\"\n", json_object_get_string (certain_json_obj));
+        json_object_object_get_ex (parsed_json, "message", &certain_json_obj);
+        printf ("[\033[1;31m-\033[0m] API message: %s\n", json_object_get_string (certain_json_obj));
         exit (7);
     }
 
-    // Вывод полученной информации
-    json_object_object_get_ex (parsedJson, paramStrs [0][1], &certainJsonObj);
-    if (!json_object_is_type (certainJsonObj, json_type_null) && json_object_get_string_len (certainJsonObj)) {
-        printf ("[\033[1;32m+\033[0m] %s: %s\n", paramStrs [0][0], json_object_get_string (certainJsonObj));
-    } else {
-        printf ("[\033[1;31m-\033[0m] %s: \033[1;31m%s\033[0m\n", paramStrs [0][0], ERR_GETIP_STR);
-    } if (!only4) {
-        for (int i = 1; paramStrs [i][0]; ++i) {
-            json_object_object_get_ex (parsedJson, paramStrs [i][1], &certainJsonObj);
-            if (!json_object_is_type (certainJsonObj, json_type_null) && (json_object_get_string_len (certainJsonObj) || json_object_is_type (certainJsonObj, json_type_boolean))) {
-                printf ("[\033[1;32m+\033[0m] %s: %s\n", paramStrs [i][0], json_object_get_string (certainJsonObj));
+    // Вывод полученной информации 
+    for (int i = 0; param_objs [i].output_str; ++i) {
+        if (param_objs [i].toggle) {
+            json_object_object_get_ex (parsed_json, param_objs [i].json_obj_n, &certain_json_obj);
+            if (!json_object_is_type (certain_json_obj, json_type_null) && (json_object_get_string_len (certain_json_obj) || json_object_is_type (certain_json_obj, json_type_boolean))) {
+                printf ("[\033[1;32m+\033[0m] %s: %s\n", param_objs [i].output_str, json_object_get_string (certain_json_obj));
             } else {
-                printf ("[\033[1;31m-\033[0m] %s: \033[1;31m%s\033[0m\n", paramStrs [i][0], ERR_GETIP_STR); 
+                printf ("[\033[1;31m-\033[0m] %s: \033[1;31m%s\033[0m\n", param_objs [i].output_str, ERR_GETIP_STR); 
             }
-        }   
+        }
     }
 }
 

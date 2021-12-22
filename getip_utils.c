@@ -4,46 +4,140 @@
 #include "getip_utils.h"
 #include "sock_utils.h"
  
-_Bool only4, bExternalIP;
+_Bool b_external_ip;
+char* external_ip = "";
 
-char* externalIP = "";
+struct param_obj param_objs [14] = { { "IP", "query", 0 },
+                                     { "ORG", "org", 0 },
+                                     { "Hostname", "reverse", 0 },
+                                     { "AS", "as", 0 },
+                                     { "AS Name", "asname", 0 },
+                                     { "ISP", "isp", 0 },
+                                     { "Континент", "continent", 0 },
+                                     { "Страна", "country", 0 },
+                                     { "Регион", "regionName", 0 },
+                                     { "Город", "city", 0 },
+                                     { "Часовой Пояс", "timezone", 0 },
+                                     { "Хостинг", "hosting", 0 },
+                                     { "Прокси", "proxy", 0 },
+                                     { "Мобила", "mobile", 0 } };
 
-void printHelp (int exitCode) {
+
+void print_help (int exitCode) {
     puts ("Usage: getip <args>\n\n"
           "  -h\t\tPrint this message\n"
           "  -e <str>\tUse another's IP\n"
-          "  -4\t\tPrint only IP parameter\n\n"
-          "Version: 1.0.1\n"
+          "  -4\t\tPrint IP parameter\n"
+          "  -o\t\tPrint ORG parameter\n"
+          "  -n\t\tPrint Hostname parameter\n"
+          "  -a\t\tPrint AS parameter\n"
+          "  -A\t\tPrint AS Name parameter\n"
+          "  -i\t\tPrint ISP parameter\n"
+          "  -C\t\tPrint Continent parameter\n"
+          "  -c\t\tPrint Country parameter\n"
+          "  -r\t\tPrint Region parameter\n"
+          "  -t\t\tPrint City parameter\n"
+          "  -z\t\tPrint TimeZone parameter\n"
+          "  -H\t\tPrint Hosting parameter\n"
+          "  -p\t\tPrint Proxy parameter\n"
+          "  -m\t\tPrint Mobile parameter\n\n"
+
+          "Version: 1.1.0\n"
           "Author: _Magenta_\n");
     exit (exitCode);
 }
 
-void parameterHandler (int ac, char** av) {
-    opterr = 1;
-    for (int arg; (arg = getopt (ac, av, "he:4")) != -1;) {
+void parameter_handler (int ac, char** av) {
+    opterr = 0;
+    for (int arg; (arg = getopt (ac, av, "4onaAiCcrtzHpmhe:")) != -1;) {
         switch (arg) {
             case 'h':
-                printHelp (0);
+                print_help (0);
                 break;
 
             case 'e':
-                bExternalIP = 1;
-                externalIP = optarg;
+                b_external_ip = 1;
+                external_ip = optarg;
                 break;
 
             case '4':
-                only4 = 1;
+                param_objs [en_ip].toggle = 1; 
+                break;
+
+            case 'o':
+                param_objs [en_org].toggle = 1; 
+                break;
+
+            case 'n':
+                param_objs [en_hostname].toggle = 1; 
+                break;
+
+            case 'a':
+                param_objs [en_as].toggle = 1; 
+                break;
+
+            case 'A':
+                param_objs [en_asname].toggle = 1; 
+                break;
+
+            case 'i':
+                param_objs [en_isp].toggle = 1; 
+                break;
+
+            case 'C':
+                param_objs [en_continent].toggle = 1; 
+                break;
+
+            case 'c':
+                param_objs [en_country].toggle = 1; 
+                break;
+
+            case 'r':
+                param_objs [en_region].toggle = 1; 
+                break;
+
+            case 't':
+                param_objs [en_city].toggle = 1; 
+                break;
+
+            case 'z':
+                param_objs [en_timezone].toggle = 1; 
+                break;
+
+            case 'H':
+                param_objs [en_hosting].toggle = 1; 
+                break;
+
+            case 'p':
+                param_objs [en_proxy].toggle = 1; 
+                break;
+
+            case 'm':
+                param_objs [en_mobile].toggle = 1; 
                 break;
 
             default:
-                printHelp (1);
+                print_help (1);
                 break;
         }
     }
+
+    if (!check_toggle ())
+        for (int i = 0; param_objs [i].output_str; ++i)
+            param_objs [i].toggle =1;
+    
 }
 
-void execRequests () {
-    socketInit ();
-    releaseRequest ();
+_Bool check_toggle () {
+    for (int i = 0; param_objs [i].output_str; ++i)
+        if (param_objs [i].toggle)
+            return 1;
+
+    return 0;
+}
+
+void exec_requests () {
+    socket_init ();
+    release_request ();
 }
 

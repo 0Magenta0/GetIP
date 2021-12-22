@@ -3,7 +3,7 @@
 #include "getip_utils.h"
 
 int main (int argc, char** argv) {
-    parameterHandler (argc, argv);
-    execRequests ();
+    parameter_handler (argc, argv);
+    exec_requests ();
 }
 
