@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+
 #include "getip_utils.h"
 #include "sock_utils.h"
  
-_Bool b_external_ip;
 char* external_ip = "";
+unsigned int api_bitset_word = 49152 /* 2 битовых флага включены по умолчанию */;
 
 struct param_obj param_objs [14] = { { "IP", "query", 0 },
                                      { "ORG", "org", 0 },
@@ -56,64 +57,77 @@ void parameter_handler (int ac, char** av) {
                 break;
 
             case 'e':
-                b_external_ip = 1;
                 external_ip = optarg;
                 break;
 
             case '4':
-                param_objs [en_ip].toggle = 1; 
+                param_objs [en_ip].toggle = 1;
+                api_bitset_word |= en_ip_bit;
                 break;
 
             case 'o':
                 param_objs [en_org].toggle = 1; 
+                api_bitset_word |= en_org_bit;
                 break;
 
             case 'n':
                 param_objs [en_hostname].toggle = 1; 
+                api_bitset_word |= en_hostname_bit;
                 break;
 
             case 'a':
                 param_objs [en_as].toggle = 1; 
+                api_bitset_word |= en_as_bit;
                 break;
 
             case 'A':
                 param_objs [en_asname].toggle = 1; 
+                api_bitset_word |= en_asname_bit;
                 break;
 
             case 'i':
                 param_objs [en_isp].toggle = 1; 
+                api_bitset_word |= en_isp_bit;
                 break;
 
             case 'C':
                 param_objs [en_continent].toggle = 1; 
+                api_bitset_word |= en_continent_bit;
                 break;
 
             case 'c':
                 param_objs [en_country].toggle = 1; 
+                api_bitset_word |= en_country_bit;
                 break;
 
             case 'r':
                 param_objs [en_region].toggle = 1; 
+                api_bitset_word |= en_region_bit;
                 break;
 
             case 't':
                 param_objs [en_city].toggle = 1; 
+                api_bitset_word |= en_city_bit;
                 break;
 
             case 'z':
                 param_objs [en_timezone].toggle = 1; 
+                api_bitset_word |= en_timezone_bit;
                 break;
 
             case 'H':
                 param_objs [en_hosting].toggle = 1; 
+                api_bitset_word |= en_hosting_bit;
                 break;
 
             case 'p':
                 param_objs [en_proxy].toggle = 1; 
+                api_bitset_word |= en_proxy_bit;
                 break;
 
             case 'm':
                 param_objs [en_mobile].toggle = 1; 
+                api_bitset_word |= en_mobile_bit;
                 break;
 
             default:
@@ -122,9 +136,11 @@ void parameter_handler (int ac, char** av) {
         }
     }
 
-    if (!check_toggle ())
+    if (!check_toggle ()) {
+        api_bitset_word = 22806297 /* Все битовые флаги для API */;
         for (int i = 0; param_objs [i].output_str; ++i)
-            param_objs [i].toggle =1;
+            param_objs [i].toggle = 1;
+    }
     
 }
 

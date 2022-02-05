@@ -4,7 +4,14 @@
 #include <string.h>
 #include <unistd.h>
 #include <json-c/json.h>
+
 #include "sock_utils.h"
+
+static int sock;
+static struct sockaddr_in addr;
+static char buf [BUF_SIZE];
+static struct json_object* parsed_json;
+static struct json_object* certain_json_obj;
 
 void socket_init () {
     if ((sock = socket (PF_INET, SOCK_STREAM, 0)) == -1) {
@@ -23,10 +30,10 @@ void socket_init () {
 }
 
 void release_request () {
-    if (!b_external_ip) {
-        strcpy (buf, "GET /json/?fields=22806301 HTTP/1.1\r\nHost: demo.ip-api.com\r\nConnection: close\r\n\r\n");
+    if (!*external_ip) {
+        sprintf (buf, "GET /json/?fields=%d HTTP/1.1\r\nHost: demo.ip-api.com\r\nConnection: close\r\n\r\n", api_bitset_word);
     } else {
-        sprintf (buf, "GET /json/%s?fields=22806301 HTTP/1.1\r\nHost: demo.ip-api.com\r\nConnection: close\r\n\r\n", external_ip);
+        sprintf (buf, "GET /json/%s?fields=%d HTTP/1.1\r\nHost: demo.ip-api.com\r\nConnection: close\r\n\r\n", external_ip, api_bitset_word);
     }
 
     if (send (sock, buf, strlen (buf), 0) < 0) {

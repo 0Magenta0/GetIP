@@ -1,4 +1,4 @@
-# GetIP 1.1.0
+# GetIP 1.1.1
 
 Simple utility to get information about IP written in C
 
@@ -32,6 +32,6 @@ Usage: getip <args>
   -p            Print Proxy parameter
   -m            Print Mobile parameter
 
-Version: 1.1.0
+Version: 1.1.1
 Author: _Magenta_
 ```
