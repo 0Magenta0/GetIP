@@ -49,11 +49,14 @@ void release_request () {
 
     close (sock);
 
-    // Срезание Header-ов от Json
-    for (int i = 0, fnd = strlen (buf) - strlen (strstr (buf, "\r\n\r\n") + 4); buf [fnd + i]; ++i) {
+    /* Срезание Header-ов от Json */
+    int i, fnd;
+    for (i = 0, fnd = strlen (buf) - strlen (strstr (buf, "\r\n\r\n") + 4); buf [fnd + i]; ++i) {
         buf [i] = buf [fnd + i];
     }
-    
+}
+
+void read_response () {
     parsed_json = json_tokener_parse (buf);
     json_object_object_get_ex (parsed_json, "status", &certain_json_obj);
     if (strcmp (json_object_get_string (certain_json_obj), "success")) {
@@ -63,8 +66,9 @@ void release_request () {
         exit (7);
     }
 
-    // Вывод полученной информации 
-    for (int i = 0; param_objs [i].output_str; ++i) {
+    /* Вывод полученной информации */
+    int i;
+    for (i = 0; param_objs [i].output_str; ++i) {
         if (param_objs [i].toggle) {
             json_object_object_get_ex (parsed_json, param_objs [i].json_obj_n, &certain_json_obj);
             if (!json_object_is_type (certain_json_obj, json_type_null) && (json_object_get_string_len (certain_json_obj) || json_object_is_type (certain_json_obj, json_type_boolean))) {

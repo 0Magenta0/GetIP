@@ -6,6 +6,6 @@ extern unsigned int api_bitset_word;
 
 void print_help (int); /* Вывод Help сообщения */
 void parameter_handler (int, char**); /* Обработчик параметров терминала */
-_Bool check_toggle (); /* Проверка на наличие включенных параметров */
+char check_toggle (); /* Проверка на наличие включенных параметров */
 void exec_requests (); /* Запрос и вывод информации об IP */
 

@@ -32,6 +32,6 @@ Usage: getip <args>
   -p            Print Proxy parameter
   -m            Print Mobile parameter
 
-Version: 1.1.1
+Version: 1.1.1 Gnu89 Support Build
 Author: _Magenta_
 ```

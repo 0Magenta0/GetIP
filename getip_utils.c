@@ -4,6 +4,8 @@
 
 #include "getip_utils.h"
 #include "sock_utils.h"
+
+#define _GNU_SOURCE
  
 char* external_ip = "";
 unsigned int api_bitset_word = 49152 /* 2 битовых флага включены по умолчанию */;
@@ -43,14 +45,15 @@ void print_help (int exitCode) {
           "  -p\t\tPrint Proxy parameter\n"
           "  -m\t\tPrint Mobile parameter\n\n"
 
-          "Version: 1.1.1\n"
+          "Version: 1.1.1 Gnu89 Support Build\n"
           "Author: _Magenta_\n");
     exit (exitCode);
 }
 
 void parameter_handler (int ac, char** av) {
     opterr = 0;
-    for (int arg; (arg = getopt (ac, av, "4onaAiCcrtzHpmhe:")) != -1;) {
+    int arg;
+    for (; (arg = getopt (ac, av, "4onaAiCcrtzHpmhe:")) != -1;) {
         switch (arg) {
             case 'h':
                 print_help (0);
@@ -138,14 +141,16 @@ void parameter_handler (int ac, char** av) {
 
     if (!check_toggle ()) {
         api_bitset_word = 22806297 /* Все битовые флаги для API */;
-        for (int i = 0; param_objs [i].output_str; ++i)
+        int i;
+        for (i = 0; param_objs [i].output_str; ++i)
             param_objs [i].toggle = 1;
     }
     
 }
 
-_Bool check_toggle () {
-    for (int i = 0; param_objs [i].output_str; ++i)
+char check_toggle () {
+    int i;
+    for (i = 0; param_objs [i].output_str; ++i)
         if (param_objs [i].toggle)
             return 1;
 
@@ -155,5 +160,6 @@ _Bool check_toggle () {
 void exec_requests () {
     socket_init ();
     release_request ();
+    read_response ();
 }
 
