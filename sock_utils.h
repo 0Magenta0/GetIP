@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <netinet/in.h>
-
 #include "getip_utils.h"
 
 /* Размер буфера для обмена данными с сервером */
@@ -49,12 +45,13 @@ enum param_enum {
 struct param_obj {
     char* output_str;
     char* json_obj_n;
-    _Bool toggle;
+    char toggle;
 };
 
 /* Заменители PlaceHoder-ов в выоде информации и обращении к Json объектам */
 extern struct param_obj param_objs [14];
 
-void socket_init (); /* Создание сокета и инициализаця адреса */
-void release_request (); /* Запрос на сервер и вывод информации об IP */
+void socket_init (void); /* Создание сокета и инициализаця адреса */
+void release_request (void); /* Запрос на сервер */
+void read_response (void); /* Вывод информации об IP */
 

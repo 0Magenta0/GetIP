@@ -1,6 +1,11 @@
-# GetIP 1.1.1
+# GetIP 1.1.2
 
 Simple utility to get information about IP written in C
+
+![Language](https://img.shields.io/badge/Language-C-blue)
+![Dependency](https://img.shields.io/badge/Dependency-json--c-blue)
+![Release](https://img.shields.io/badge/Latest%20Release%20Version-1.1.2-green)
+![Gnu89Support](https://img.shields.io/badge/Gnu89%20Standart%20Support-Yes-green)
 
 # Manual Compilation
 
@@ -32,6 +37,6 @@ Usage: getip <args>
   -p            Print Proxy parameter
   -m            Print Mobile parameter
 
-Version: 1.1.1 Gnu89 Support Build
+Version: 1.1.2
 Author: _Magenta_
 ```
