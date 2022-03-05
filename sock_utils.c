@@ -21,8 +21,8 @@ void socket_init (void) {
     }
 
     addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = inet_addr ("127.0.0.1");
-    addr.sin_port = htons (3450);
+    addr.sin_addr.s_addr = inet_addr ("208.95.112.1");
+    addr.sin_port = htons (80);
 
     if (connect (sock, (struct sockaddr*) &addr, sizeof (addr)) == -1) {
         perror ("[\033[1;31m-\033[0m] Connection error");
