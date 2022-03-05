@@ -21,8 +21,8 @@ void socket_init (void) {
     }
 
     addr.sin_family = AF_INET;
-    addr.sin_addr.s_addr = inet_addr ("208.95.112.1");
-    addr.sin_port = htons (80);
+    addr.sin_addr.s_addr = inet_addr ("127.0.0.1");
+    addr.sin_port = htons (3450);
 
     if (connect (sock, (struct sockaddr*) &addr, sizeof (addr)) == -1) {
         perror ("[\033[1;31m-\033[0m] Connection error");
@@ -37,14 +37,14 @@ void release_request (void) {
         sprintf (buf, "GET /json/%.255s?fields=%d HTTP/1.1\r\nHost: ip-api.com\r\nConnection: close\r\n\r\n", external_ip, api_bitset_word);
     }
 
-    if (send (sock, buf, strlen (buf), 0) < 0) {
+    if (send (sock, buf, strlen (buf), 0) <= 0) {
         perror ("[\033[1;31m-\033[0m] Request error");
         exit (4);
-    } if (recv (sock, buf, BUF_SIZE, 0) < 0) {
+    } if (recv (sock, buf, BUF_SIZE, 0) <= 0) {
         perror ("[\033[1;31m-\033[0m] Response error");
         exit (5);
     } if (!strstr (buf, "HTTP/1.1 200 OK")) {
-        puts ("[\033[1;31m-\033[0m] HTTP error: Response code is not \"200 OK\"");
+        fputs ("[\033[1;31m-\033[0m] HTTP error: Response code is not \"200 OK\"\n", stderr);
         exit (6);
     }
 
@@ -57,7 +57,12 @@ void release_request (void) {
     }
 
     /* Парсинг JSON */
-    parsed_json = json_tokener_parse (buf);
+    struct json_tokener* tokener_ex = json_tokener_new ();
+    if (!(parsed_json = json_tokener_parse_ex (tokener_ex, buf, i))) {
+        fprintf (stderr, "[\033[1;31m-\033[0m] JSON error: %d\n[\033[1;33m*\033[0m] JSON buffer:\n%s\n", json_tokener_get_error (tokener_ex), buf);
+        exit (8);
+    } json_tokener_free (tokener_ex);
+
     json_object_object_get_ex (parsed_json, "status", &certain_json_obj);
     if (strcmp (json_object_get_string (certain_json_obj), "success")) {
         printf ("[\033[1;31m-\033[0m] API error: Response status is \"%s\"\n", json_object_get_string (certain_json_obj));

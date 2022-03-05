@@ -10,7 +10,7 @@
 char* external_ip;
 unsigned int api_bitset_word = 49152 /* 2 битовых флага включены по умолчанию */;
 
-struct param_obj param_objs [14] = { { "IP", "query", 0 },
+struct param_obj param_objs [15] = { { "IP", "query", 0 },
                                      { "ORG", "org", 0 },
                                      { "Hostname", "reverse", 0 },
                                      { "AS", "as", 0 },
@@ -20,6 +20,7 @@ struct param_obj param_objs [14] = { { "IP", "query", 0 },
                                      { "Страна", "country", 0 },
                                      { "Регион", "regionName", 0 },
                                      { "Город", "city", 0 },
+                                     { "Район", "district", 0 },
                                      { "Часовой Пояс", "timezone", 0 },
                                      { "Хостинг", "hosting", 0 },
                                      { "Прокси", "proxy", 0 },
@@ -39,12 +40,13 @@ void print_help (int exit_code) {
           "  -c\t\tPrint Country parameter\n"
           "  -r\t\tPrint Region parameter\n"
           "  -t\t\tPrint City parameter\n"
+          "  -d\t\tPrint District parameter\n"
           "  -z\t\tPrint TimeZone parameter\n"
           "  -H\t\tPrint Hosting parameter\n"
           "  -p\t\tPrint Proxy parameter\n"
           "  -m\t\tPrint Mobile parameter\n\n"
 
-          "Version: 1.1.2\n"
+          "Version: 1.1.3\n"
           "Author: _Magenta_\n");
     exit (exit_code);
 }
@@ -52,7 +54,7 @@ void print_help (int exit_code) {
 void parameter_handler (int ac, char** av) {
     opterr = 0;
     int arg;
-    for (; (arg = getopt (ac, av, "4onaAiCcrtzHpmhe:")) != -1;) {
+    for (; (arg = getopt (ac, av, "4onaAiCcrtdzHpmhe:")) != -1;) {
         switch (arg) {
             case 'h':
                 print_help (0);
@@ -110,6 +112,11 @@ void parameter_handler (int ac, char** av) {
             case 't':
                 param_objs [en_city].toggle = 1;
                 api_bitset_word |= en_city_bit;
+                break;
+
+            case 'd':
+                param_objs [en_district].toggle = 1;
+                api_bitset_word |= en_district_bit;
                 break;
 
             case 'z':
