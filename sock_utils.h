@@ -3,7 +3,7 @@
 /* Размер буфера для обмена данными с сервером */
 #define BUF_SIZE BUFSIZ /* BUFSIZ определён в stdio.h */
 
-#define ERR_GETIP_STR "Ошибка" /* Строка-заменитель для невалидного ответа API */
+#define ERR_GETIP_STR "Error" /* Строка-заменитель для невалидного ответа API */
 
 /* Битовые флаги для API -=- Docs: https://ip-api.com/docs/api:json */
 enum api_bitset {
@@ -17,7 +17,6 @@ enum api_bitset {
     en_country_bit = 1,
     en_region_bit = 8,
     en_city_bit = 16,
-    en_district_bit = 524288,
     en_timezone_bit = 256,
     en_hosting_bit = 16777216,
     en_proxy_bit = 131072,
@@ -36,7 +35,6 @@ enum param_enum {
     en_country,
     en_region,
     en_city,
-    en_district,
     en_timezone,
     en_hosting,
     en_proxy,
@@ -51,7 +49,7 @@ struct param_obj {
 };
 
 /* Заменители PlaceHoder-ов в выоде информации и обращении к Json объектам */
-extern struct param_obj param_objs [15];
+extern struct param_obj param_objs [14];
 
 void socket_init (void); /* Создание сокета и инициализаця адреса */
 void release_request (void); /* Запрос на сервер */
