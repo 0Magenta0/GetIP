@@ -7,11 +7,28 @@ Simple utility to get information about IP written in C
 ![Release](https://img.shields.io/badge/Latest%20Release%20Version-1.1.4-green)
 ![Gnu89Support](https://img.shields.io/badge/Gnu89%20Standart%20Support-Yes-green)
 
+# Automatic Installation
+
+**Before you can use script, you need to make it executable!**
+```
+chmod +x ./install.sh
+```
+
+- To install GetIP just execute it!
+```
+# ./install.sh install
+```
+
+- If you want to remove GetIP you can use this command!
+```
+# ./install.sh uninstall
+```
+
 # Manual Compilation
 
 - For compilation you need [json-c](https://github.com/json-c/json-c) library
 ```
-gcc *.c -ljson-c -o getip
+$ gcc *.c -ljson-c -o getip
 ```
 
 # Usage
