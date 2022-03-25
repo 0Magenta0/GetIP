@@ -44,7 +44,7 @@ void print_help (int exit_code) {
           "  -p\t\tPrint Proxy parameter\n"
           "  -m\t\tPrint Mobile parameter\n\n"
 
-          "Version: 1.1.4\n"
+          "Version: 1.1.5\n"
           "Author: _Magenta_\n");
     exit (exit_code);
 }

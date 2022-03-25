@@ -50,16 +50,13 @@ void release_request (void) {
 
     close (sock);
 
-    /* Срезание Header-ов от Json */
-    int i, fnd;
-    for (i = 0, fnd = strlen (buf) - strlen (strstr (buf, "\r\n\r\n") + 4); buf [fnd + i]; ++i) {
-        buf [i] = buf [fnd + i];
-    }
+    /* Отбрасывание HTTP Header-ов от Json */
+    char* content = strstr (buf, "\r\n\r\n") + 4;
 
     /* Парсинг JSON */
     struct json_tokener* tokener_ex = json_tokener_new ();
-    if (!(parsed_json = json_tokener_parse_ex (tokener_ex, buf, i))) {
-        fprintf (stderr, "[\033[1;31m-\033[0m] JSON error: %d\n[\033[1;33m*\033[0m] JSON buffer:\n%s\n", json_tokener_get_error (tokener_ex), buf);
+    if (!(parsed_json = json_tokener_parse_ex (tokener_ex, content, strlen (content)))) {
+        fprintf (stderr, "[\033[1;31m-\033[0m] JSON error: %d\n[\033[1;33m*\033[0m] JSON buffer:\n%s\n", json_tokener_get_error (tokener_ex), content);
         exit (8);
     } json_tokener_free (tokener_ex);
 
