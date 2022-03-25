@@ -23,7 +23,7 @@ if [ "$1" = "install" ]; then
     echo -e "[\033[36m*\033[0m] Changing of owner..."
     chown root:root getip
     echo -e "[\033[36m*\033[0m] Changing of permissions..."
-    chmod 655 getip
+    chmod 755 getip
     echo -e "[\033[36m*\033[0m] Moving GetIP to /usr/local/bin/..."
     mv getip "/usr/local/bin"
     echo -e "[\033[32m+\033[0m] Successfuly installed!"
