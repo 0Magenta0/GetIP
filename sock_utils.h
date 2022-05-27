@@ -43,12 +43,12 @@ enum param_enum {
 
 /* Объект параметра API */
 struct param_obj {
-    char* output_str;
-    char* json_obj_n;
+    char *output_str;
+    char *json_obj_n;
     char toggle;
 };
 
-/* Заменители PlaceHoder-ов в выоде информации и обращении к Json объектам */
+/* Заменители PlaceHoder-ов в выводе информации и обращении к Json объектам */
 extern struct param_obj param_objs [14];
 
 void socket_init (void); /* Создание сокета и инициализаця адреса */

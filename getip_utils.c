@@ -7,7 +7,7 @@
 
 #define _GNU_SOURCE
 
-char* external_ip;
+char *external_ip;
 unsigned int api_bitset_word = 49152 /* 2 битовых флага включены по умолчанию */;
 
 struct param_obj param_objs [14] = { { "IP", "query", 0 },
@@ -49,10 +49,10 @@ void print_help (int exit_code) {
     exit (exit_code);
 }
 
-void parameter_handler (int ac, char** av) {
+void parameter_handler (int ac, char **av) {
     opterr = 0;
     int arg;
-    for (; (arg = getopt (ac, av, "4onaAiCcrtzHpmhe:")) != -1;) {
+    while ((arg = getopt (ac, av, "4onaAiCcrtzHpmhe:")) != -1) {
         switch (arg) {
             case 'h':
                 print_help (0);

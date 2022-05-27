@@ -11,8 +11,8 @@
 static int sock;
 static struct sockaddr_in addr;
 static char buf [BUF_SIZE];
-static struct json_object* parsed_json;
-static struct json_object* certain_json_obj;
+static struct json_object *parsed_json;
+static struct json_object *certain_json_obj;
 
 void socket_init (void) {
     if ((sock = socket (PF_INET, SOCK_STREAM, 0)) == -1) {
@@ -24,7 +24,7 @@ void socket_init (void) {
     addr.sin_addr.s_addr = inet_addr ("208.95.112.1");
     addr.sin_port = htons (80);
 
-    if (connect (sock, (struct sockaddr*) &addr, sizeof (addr)) == -1) {
+    if (connect (sock, (struct sockaddr *) &addr, sizeof (addr)) == -1) {
         perror ("[\033[1;31m-\033[0m] Connection error");
         exit (3);
     }
@@ -51,10 +51,14 @@ void release_request (void) {
     close (sock);
 
     /* Отбрасывание HTTP Header-ов от Json */
-    char* content = strstr (buf, "\r\n\r\n") + 4;
+    char *content;
+    if (!(content = strstr (buf, "\r\n\r\n")))  {
+        fputs ("[\033[1;31m-\033[0m] HTTP error: Cannot find start JSON position\n", stderr);
+        exit (9);
+    } content += 4; /* Перемещение указателя за \r\n\r\n */
 
     /* Парсинг JSON */
-    struct json_tokener* tokener_ex = json_tokener_new ();
+    struct json_tokener *tokener_ex = json_tokener_new ();
     if (!(parsed_json = json_tokener_parse_ex (tokener_ex, content, strlen (content)))) {
         fprintf (stderr, "[\033[1;31m-\033[0m] JSON error: %d\n[\033[1;33m*\033[0m] JSON buffer:\n%s\n", json_tokener_get_error (tokener_ex), content);
         exit (8);
