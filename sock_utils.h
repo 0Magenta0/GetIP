@@ -51,7 +51,7 @@ struct param_obj {
 /* Заменители PlaceHoder-ов в выводе информации и обращении к Json объектам */
 extern struct param_obj param_objs [14];
 
-void socket_init (void); /* Создание сокета и инициализаця адреса */
+void socket_init (void); /* Создание сокета и инициализация адреса */
 void release_request (void); /* Запрос на сервер */
 void read_response (void); /* Вывод информации об IP */
 
