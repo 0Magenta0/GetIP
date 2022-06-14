@@ -7,7 +7,7 @@ Simple utility to get information about IP written in C
 [![Release](https://img.shields.io/badge/Latest%20Release%20Version-1.1.5-green)](https://github.com/0Magenta0/GetIP/releases/tag/1.2.0)
 [![Gnu89Support](https://img.shields.io/badge/Gnu89%20Standart%20Support-Yes-green)](https://gcc.gnu.org/onlinedocs/gcc-3.3.6/gcc/Standards.html)
 
-GetIP uses this API: [ip-api](https://ip-api.com)
+GetIP uses this [API](https://ip-api.com)
 
 # Automatic Installation
 
