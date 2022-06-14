@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <getopt.h>
 
 #include "getip_utils.h"
 #include "sock_utils.h"
@@ -25,34 +26,52 @@ struct param_obj param_objs [14] = { { "IP", "query", 0 },
                                      { "isProxy", "proxy", 0 },
                                      { "isMobile", "mobile", 0 } };
 
+struct option long_options [] = { { "help", no_argument, 0, 'h' },
+                                  { "addr", required_argument, 0, 'e' },
+                                  { "print-ip", no_argument, 0, 'i' },
+                                  { "print-org", no_argument, 0, 'o' },
+                                  { "print-hostname", no_argument, 0, 'n' },
+                                  { "print-as", no_argument, 0, 'a' },
+                                  { "print-asname", no_argument, 0, 'A' },
+                                  { "print-isp", no_argument, 0, 'I' },
+                                  { "print-continent", no_argument, 0, 'C' },
+                                  { "print-country", no_argument, 0, 'c' },
+                                  { "print-region", no_argument, 0, 'r' },
+                                  { "print-city", no_argument, 0, 't' },
+                                  { "print-timezone", no_argument, 0, 'z' },
+                                  { "print-hosting", no_argument, 0, 'H' },
+                                  { "print-proxy", no_argument, 0, 'p' },
+                                  { "print-mobile", no_argument, 0, 'm' } };
+
 void print_help (int exit_code) {
     puts ("Usage: getip <args>\n\n"
-          "  -h\t\tPrint this message\n"
-          "  -e <str>\tUse another's IP\n"
-          "  -I\t\tPrint IP parameter\n"
-          "  -o\t\tPrint ORG parameter\n"
-          "  -n\t\tPrint Hostname parameter\n"
-          "  -a\t\tPrint AS parameter\n"
-          "  -A\t\tPrint AS Name parameter\n"
-          "  -i\t\tPrint ISP parameter\n"
-          "  -C\t\tPrint Continent parameter\n"
-          "  -c\t\tPrint Country parameter\n"
-          "  -r\t\tPrint Region parameter\n"
-          "  -t\t\tPrint City parameter\n"
-          "  -z\t\tPrint TimeZone parameter\n"
-          "  -H\t\tPrint Hosting parameter\n"
-          "  -p\t\tPrint Proxy parameter\n"
-          "  -m\t\tPrint Mobile parameter\n\n"
+          "  -h --help\t\t\tPrint this message\n"
+          "  -e <str> --addr=<str>\t\tUse another's IP\n"
+          "  -i --print-ip\t\t\tPrint IP parameter\n"
+          "  -o --print-org\t\tPrint ORG parameter\n"
+          "  -n --print-hostname\t\tPrint Hostname parameter\n"
+          "  -a --print-as\t\t\tPrint AS parameter\n"
+          "  -A --print-asname\t\tPrint AS Name parameter\n"
+          "  -I --print-isp\t\tPrint ISP parameter\n"
+          "  -C --print-continent\t\tPrint Continent parameter\n"
+          "  -c --print-country\t\tPrint Country parameter\n"
+          "  -r --print-region\t\tPrint Region parameter\n"
+          "  -t --print-city\t\tPrint City parameter\n"
+          "  -z --print-timezone\t\tPrint TimeZone parameter\n"
+          "  -H --print-hosting\t\tPrint Hosting parameter\n"
+          "  -p --print-proxy\t\tPrint Proxy parameter\n"
+          "  -m --print-mobile\t\tPrint Mobile parameter\n\n"
 
-          "Version: 1.1.5\n"
+          "Version: 1.2.0\n"
           "Author: _Magenta_\n");
     exit (exit_code);
 }
 
 void parameter_handler (int ac, char **av) {
+    int arg, index = 0;
+
     opterr = 0;
-    int arg;
-    while ((arg = getopt (ac, av, "IonaAiCcrtzHpmhe:")) != -1) {
+    while ((arg = getopt_long (ac, av, "ionaAICcrtzHpmhe:", long_options, &index)) != -1) {
         switch (arg) {
             case 'h':
                 print_help (0);
@@ -62,7 +81,7 @@ void parameter_handler (int ac, char **av) {
                 external_ip = optarg;
                 break;
 
-            case '4':
+            case 'i':
                 param_objs [en_ip].toggle = 1;
                 api_bitset_word |= en_ip_bit;
                 break;
@@ -87,7 +106,7 @@ void parameter_handler (int ac, char **av) {
                 api_bitset_word |= en_asname_bit;
                 break;
 
-            case 'i':
+            case 'I':
                 param_objs [en_isp].toggle = 1;
                 api_bitset_word |= en_isp_bit;
                 break;
@@ -141,6 +160,7 @@ void parameter_handler (int ac, char **av) {
     if (!check_toggle ()) {
         api_bitset_word = 22282009 /* Все битовые флаги для API */;
         int i;
+
         for (i = 0; param_objs [i].output_str; ++i)
             param_objs [i].toggle = 1;
     }
@@ -148,6 +168,7 @@ void parameter_handler (int ac, char **av) {
 
 char check_toggle (void) {
     int i;
+
     for (i = 0; param_objs [i].output_str; ++i)
         if (param_objs [i].toggle)
             return 1;

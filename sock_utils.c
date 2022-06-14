@@ -31,6 +31,9 @@ void socket_init (void) {
 }
 
 void release_request (void) {
+    struct json_tokener *tokener_ex;
+    char *content;
+
     if (!external_ip) {
         sprintf (buf, "GET /json/?fields=%d HTTP/1.1\r\nHost: ip-api.com\r\nConnection: close\r\n\r\n", api_bitset_word);
     } else {
@@ -51,14 +54,13 @@ void release_request (void) {
     close (sock);
 
     /* Отбрасывание HTTP Header-ов от Json */
-    char *content;
     if (!(content = strstr (buf, "\r\n\r\n")))  {
         fputs ("[\033[1;31m-\033[0m] HTTP error: Cannot find start JSON position\n", stderr);
         exit (9);
     } content += 4; /* Перемещение указателя за \r\n\r\n */
 
     /* Парсинг JSON */
-    struct json_tokener *tokener_ex = json_tokener_new ();
+    tokener_ex = json_tokener_new ();
     if (!(parsed_json = json_tokener_parse_ex (tokener_ex, content, strlen (content)))) {
         fprintf (stderr, "[\033[1;31m-\033[0m] JSON error: %d\n[\033[1;33m*\033[0m] JSON buffer:\n%s\n", json_tokener_get_error (tokener_ex), content);
         exit (8);
@@ -75,6 +77,7 @@ void release_request (void) {
 
 void read_response (void) {
     int i;
+
     for (i = 0; param_objs [i].output_str; ++i) {
         if (param_objs [i].toggle) {
             json_object_object_get_ex (parsed_json, param_objs [i].json_obj_n, &certain_json_obj);

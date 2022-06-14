@@ -1,11 +1,13 @@
-# GetIP 1.1.5
+# GetIP 1.2.0
 
 Simple utility to get information about IP written in C
 
-![Language](https://img.shields.io/badge/Language-C-blue)
-![Dependency](https://img.shields.io/badge/Dependency-json--c-blue)
-![Release](https://img.shields.io/badge/Latest%20Release%20Version-1.1.5-green)
-![Gnu89Support](https://img.shields.io/badge/Gnu89%20Standart%20Support-Yes-green)
+[![Language](https://img.shields.io/badge/Language-C-blue)](https://en.wikipedia.org/wiki/C%20%28programming%20language%29)
+[![Dependency](https://img.shields.io/badge/Dependency-json--c-blue)](https://github.com/json-c/json-c)
+[![Release](https://img.shields.io/badge/Latest%20Release%20Version-1.1.5-green)](https://github.com/0Magenta0/GetIP/releases/tag/1.2.0)
+[![Gnu89Support](https://img.shields.io/badge/Gnu89%20Standart%20Support-Yes-green)](https://gcc.gnu.org/onlinedocs/gcc-3.3.6/gcc/Standards.html)
+
+GetIP uses this API: [ip-api](https://ip-api.com)
 
 # Automatic Installation
 
@@ -32,23 +34,23 @@ GetIP help message
 ```
 Usage: getip <args>
 
-  -h            Print this message
-  -e <str>      Use another's IP
-  -4            Print IP parameter
-  -o            Print ORG parameter
-  -n            Print Hostname parameter
-  -a            Print AS parameter
-  -A            Print AS Name parameter
-  -i            Print ISP parameter
-  -C            Print Continent parameter
-  -c            Print Country parameter
-  -r            Print Region parameter
-  -t            Print City parameter
-  -z            Print TimeZone parameter
-  -H            Print Hosting parameter
-  -p            Print Proxy parameter
-  -m            Print Mobile parameter
+  -h --help                     Print this message
+  -e <str> --addr=<str>         Use another's IP
+  -i --print-ip                 Print IP parameter
+  -o --print-org                Print ORG parameter
+  -n --print-hostname           Print Hostname parameter
+  -a --print-as                 Print AS parameter
+  -A --print-asname             Print AS Name parameter
+  -I --print-isp                Print ISP parameter
+  -C --print-continent          Print Continent parameter
+  -c --print-country            Print Country parameter
+  -r --print-region             Print Region parameter
+  -t --print-city               Print City parameter
+  -z --print-timezone           Print TimeZone parameter
+  -H --print-hosting            Print Hosting parameter
+  -p --print-proxy              Print Proxy parameter
+  -m --print-mobile             Print Mobile parameter
 
-Version: 1.1.5
+Version: 1.2.0
 Author: _Magenta_
 ```

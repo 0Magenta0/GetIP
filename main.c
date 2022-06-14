@@ -3,5 +3,7 @@
 int main (int argc, char **argv) {
     parameter_handler (argc, argv);
     exec_requests ();
+
+    return 0;
 }
 
