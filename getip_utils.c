@@ -29,7 +29,7 @@ void print_help (int exit_code) {
     puts ("Usage: getip <args>\n\n"
           "  -h\t\tPrint this message\n"
           "  -e <str>\tUse another's IP\n"
-          "  -4\t\tPrint IP parameter\n"
+          "  -I\t\tPrint IP parameter\n"
           "  -o\t\tPrint ORG parameter\n"
           "  -n\t\tPrint Hostname parameter\n"
           "  -a\t\tPrint AS parameter\n"
@@ -52,7 +52,7 @@ void print_help (int exit_code) {
 void parameter_handler (int ac, char **av) {
     opterr = 0;
     int arg;
-    while ((arg = getopt (ac, av, "4onaAiCcrtzHpmhe:")) != -1) {
+    while ((arg = getopt (ac, av, "IonaAiCcrtzHpmhe:")) != -1) {
         switch (arg) {
             case 'h':
                 print_help (0);
