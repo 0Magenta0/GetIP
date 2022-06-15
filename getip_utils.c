@@ -68,7 +68,7 @@ void print_help (int exit_code) {
 }
 
 void parameter_handler (int ac, char **av) {
-    int arg, index = 0;
+    int i, arg, index = 0;
 
     opterr = 0;
     while ((arg = getopt_long (ac, av, "ionaAICcrtzHpmhe:", long_options, &index)) != -1) {
@@ -159,7 +159,6 @@ void parameter_handler (int ac, char **av) {
 
     if (!check_toggle ()) {
         api_bitset_word = 22282009 /* Все битовые флаги для API */;
-        int i;
 
         for (i = 0; param_objs [i].output_str; ++i)
             param_objs [i].toggle = 1;
