@@ -1,10 +1,10 @@
-# GetIP 1.2.0
+# GetIP 1.2.1
 
 Simple utility to get information about IP written in C
 
 [![Language](https://img.shields.io/badge/Language-C-blue)](https://en.wikipedia.org/wiki/C%20%28programming%20language%29)
 [![Dependency](https://img.shields.io/badge/Dependency-json--c-blue)](https://github.com/json-c/json-c)
-[![Release](https://img.shields.io/badge/Latest%20Release%20Version-1.2.0-green)](https://github.com/0Magenta0/GetIP/releases/tag/1.2.0)
+[![Release](https://img.shields.io/badge/Latest%20Release%20Version-1.2.1-green)](https://github.com/0Magenta0/GetIP/releases/tag/1.2.1)
 [![Gnu89Support](https://img.shields.io/badge/Gnu89%20Standart%20Support-Yes-green)](https://gcc.gnu.org/onlinedocs/gcc-3.3.6/gcc/Standards.html)
 
 GetIP uses this [API](https://ip-api.com)
@@ -32,7 +32,7 @@ $ gcc *.c -ljson-c -o getip
 
 GetIP help message
 ```
-Usage: getip <args>
+Usage: getip [args]
 
   -h --help                     Print this message
   -e <str> --addr=<str>         Use another's IP
@@ -51,6 +51,6 @@ Usage: getip <args>
   -p --print-proxy              Print Proxy parameter
   -m --print-mobile             Print Mobile parameter
 
-Version: 1.2.0
+Version: 1.2.1
 Author: _Magenta_
 ```

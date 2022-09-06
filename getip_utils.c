@@ -44,7 +44,7 @@ struct option long_options [] = { { "help", no_argument, 0, 'h' },
                                   { "print-mobile", no_argument, 0, 'm' } };
 
 void print_help (int exit_code) {
-    puts ("Usage: getip <args>\n\n"
+    puts ("Usage: getip [args]\n\n"
           "  -h --help\t\t\tPrint this message\n"
           "  -e <str> --addr=<str>\t\tUse another's IP\n"
           "  -i --print-ip\t\t\tPrint IP parameter\n"
@@ -62,7 +62,7 @@ void print_help (int exit_code) {
           "  -p --print-proxy\t\tPrint Proxy parameter\n"
           "  -m --print-mobile\t\tPrint Mobile parameter\n\n"
 
-          "Version: 1.2.0\n"
+          "Version: 1.2.1\n"
           "Author: _Magenta_\n");
     exit (exit_code);
 }
