@@ -25,7 +25,7 @@ GetIP uses this [API](https://ip-api.com)
 
 - For compilation you need [json-c](https://github.com/json-c/json-c) library
 ```
-$ gcc *.c -ljson-c -o getip
+$ gcc *.c -ljson-c -std=gnu89 -o getip
 ```
 
 # Usage

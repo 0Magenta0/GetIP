@@ -14,7 +14,7 @@ if [ "$1" = "install" ]; then
     fi
 
     echo -e "[\033[36m*\033[0m] Trying to compile GetIP..."
-    gcc *.c -ljson-c -o getip
+    gcc *.c -ljson-c -std=gnu89 -o getip
     if [ $? -ne 0 ]; then
         echo -e "[\033[31m-\033[0m] Compilation is not successful!"
         exit
