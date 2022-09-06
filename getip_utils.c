@@ -9,7 +9,7 @@
 #define _GNU_SOURCE
 
 char *external_ip;
-unsigned int api_bitset_word = 49152 /* 2 битовых флага включены по умолчанию */;
+unsigned int api_bitset_word = 49152 /* 2 Bit Flags That Is Enabled By Default */;
 
 struct param_obj param_objs [14] = { { "IP", "query", 0 },
                                      { "ORG", "org", 0 },
@@ -158,7 +158,7 @@ void parameter_handler (int ac, char **av) {
     }
 
     if (!check_toggle ()) {
-        api_bitset_word = 22282009 /* Все битовые флаги для API */;
+        api_bitset_word = 22282009 /* Enable All API Bit Flags */;
 
         for (i = 0; param_objs [i].output_str; ++i)
             param_objs [i].toggle = 1;

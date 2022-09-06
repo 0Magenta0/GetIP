@@ -53,13 +53,13 @@ void release_request (void) {
 
     close (sock);
 
-    /* Отбрасывание HTTP Header-ов от Json */
+    /* Cut The HTTP Headers From Json */
     if (!(content = strstr (buf, "\r\n\r\n")))  {
         fputs ("[\033[1;31m-\033[0m] HTTP error: Cannot find start JSON position\n", stderr);
         exit (9);
-    } content += 4; /* Перемещение указателя за \r\n\r\n */
+    } content += 4; /* Set Buffer String Pointer After \r\n\r\n */
 
-    /* Парсинг JSON */
+    /* JSON Parsing */
     tokener_ex = json_tokener_new ();
     if (!(parsed_json = json_tokener_parse_ex (tokener_ex, content, strlen (content)))) {
         fprintf (stderr, "[\033[1;31m-\033[0m] JSON error: %d\n[\033[1;33m*\033[0m] JSON buffer:\n%s\n", json_tokener_get_error (tokener_ex), content);

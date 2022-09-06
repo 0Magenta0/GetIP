@@ -1,11 +1,11 @@
-/* Переменная для хранения данных из аргументов терминала */
+/* Contains Target IP/Domain */
 extern char *external_ip;
 
-/* Переменная для хранения битовых флагов для API */
+/* Contains API Bit Flags */
 extern unsigned int api_bitset_word;
 
-void print_help (int); /* Вывод Help сообщения */
-void parameter_handler (int, char **); /* Обработчик параметров терминала */
-char check_toggle (void); /* Проверка на наличие включенных параметров */
-void exec_requests (void); /* Запрос и вывод информации об IP */
+void print_help (int); /* Print Help Message */
+void parameter_handler (int, char **); /* Terminal Parameters Handler */
+char check_toggle (void); /* Check If Any API Terminal Parameter Is Enabled */
+void exec_requests (void); /* HTTP Request To API And Print The Result */
 

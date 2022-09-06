@@ -1,11 +1,11 @@
 #include "getip_utils.h"
 
-/* Размер буфера для обмена данными с сервером */
-#define BUF_SIZE BUFSIZ /* BUFSIZ определён в stdio.h */
+/* Inet Buffer Size */
+#define BUF_SIZE BUFSIZ /* BUFSIZ Macro Is Defined In stdio.h */
 
-#define ERR_GETIP_STR "Error" /* Строка-заменитель для невалидного ответа API */
+#define ERR_GETIP_STR "Error" /* String-Placeholder For Invalid API Response */
 
-/* Битовые флаги для API -=- Docs: https://ip-api.com/docs/api:json */
+/* API Bit Flags -=- API Documentation: https://ip-api.com/docs/api:json */
 enum api_bitset {
     en_ip_bit = 8192,
     en_org_bit = 1024,
@@ -23,7 +23,7 @@ enum api_bitset {
     en_mobile_bit = 65536
 };
 
-/* Enumerator параметров API */
+/* API Fields Enumerator */
 enum param_enum {
     en_ip,
     en_org,
@@ -41,17 +41,17 @@ enum param_enum {
     en_mobile
 };
 
-/* Объект параметра API */
+/* Object Of The API Field */
 struct param_obj {
     char *output_str;
     char *json_obj_n;
     char toggle;
 };
 
-/* Заменители PlaceHoder-ов в выводе информации и обращении к Json объектам */
+/* API Fields Array */
 extern struct param_obj param_objs [14];
 
-void socket_init (void); /* Создание сокета и инициализация адреса */
-void release_request (void); /* Запрос на сервер */
-void read_response (void); /* Вывод информации об IP */
+void socket_init (void); /* socket & sockaddr_in Initialization */
+void release_request (void); /* Make A Request To API */
+void read_response (void); /* Print API Response */
 
