@@ -1,2 +1,5 @@
 /.git/
-/getip
+/.gitignore
+/build/**
+!/build/builder.sh
+/.cache/
