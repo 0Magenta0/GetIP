@@ -7,23 +7,12 @@ Simple utility to get information about IP written in C
 
 GetIP uses this [API](https://ip-api.com)
 
-# Automatic Installation
+# Project build
 
-- To install GetIP just execute it!
 ```
-# ./install.sh install
-```
-
-- If you want to remove GetIP you can use this command!
-```
-# ./install.sh uninstall
-```
-
-# Manual Compilation
-
-- For compilation you need [json-c](https://github.com/json-c/json-c) library
-```
-$ gcc *.c -ljson-c -std=gnu89 -o getip
+$ git clone https://github.com/0Magenta0/GetIP
+$ cd GetIP/build
+$ ./builder.sh R
 ```
 
 # Usage
