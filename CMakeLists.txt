@@ -16,7 +16,7 @@ ENDIF ()
 #              General Project Configuration              #
 #--------=========================================--------#
 PROJECT (
-  geitp
+  getip
     VERSION 2.0
     DESCRIPTION "Utility to get info about IP"
     LANGUAGES C
@@ -30,6 +30,15 @@ IF (NOT CMAKE_BUILD_TYPE)
   MESSAGE (STATUS "Build type is not specified! Setting up to Release.")
   SET (CMAKE_BUILD_TYPE Release)
 ENDIF (NOT CMAKE_BUILD_TYPE)
+
+SET (
+  CMAKE_C_FLAGS
+    "${CMAKE_C_FLAGS} \
+     -Wall -Wextra -Werror -Wpedantic \
+     -Wcast-qual -Wconversion -Wcast-align \
+     -Wredundant-decls -Wsign-conversion \
+     -Waggregate-return -Wswitch-enum"
+)
 
 ADD_EXECUTABLE (${CMAKE_PROJECT_NAME} src/main.c)
 
