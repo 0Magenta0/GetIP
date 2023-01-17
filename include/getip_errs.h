@@ -13,5 +13,6 @@ enum errs_status {
 
 extern int errs_status;
 
-void errs_handler(void);
+void
+errs_handler(void);
 

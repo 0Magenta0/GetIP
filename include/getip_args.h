@@ -9,5 +9,6 @@
 
 #include <stdbool.h>
 
-bool args_handler(int argc, char *argv[]);
+bool
+args_handler(int argc, char *argv[]);
 
