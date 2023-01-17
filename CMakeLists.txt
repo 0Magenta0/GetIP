@@ -40,5 +40,21 @@ SET (
      -Waggregate-return -Wswitch-enum"
 )
 
-ADD_EXECUTABLE (${CMAKE_PROJECT_NAME} src/main.c)
+
+
+#--------=========================================--------#
+#                  Setup Project Sources                  #
+#--------=========================================--------#
+ADD_EXECUTABLE (${CMAKE_PROJECT_NAME})
+
+TARGET_SOURCES (
+  ${CMAKE_PROJECT_NAME} PRIVATE
+    src/main.c
+    src/getip_errs.c
+)
+
+TARGET_INCLUDE_DIRECTORIES (
+  ${CMAKE_PROJECT_NAME}
+    PRIVATE ${CMAKE_SOURCE_DIR}/include
+)
 
