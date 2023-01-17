@@ -3,3 +3,4 @@
 /build/**
 !/build/builder.sh
 /.cache/
+/include/getip_usage.h

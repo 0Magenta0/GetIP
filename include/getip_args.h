@@ -10,5 +10,5 @@
 #include <stdbool.h>
 
 bool
-args_handler(int argc, char *argv[]);
+args_handler(const int argc, char * const argv[]);
 

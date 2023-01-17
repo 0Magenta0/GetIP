@@ -14,10 +14,10 @@
 int
 main(int argc, char *argv[]) {
     if (args_handler(argc, argv)) {
+        exit(EXIT_SUCCESS);
+    } else {
         errs_handler();
         exit(EXIT_FAILURE);
-    } else {
-        exit(EXIT_SUCCESS);
     }
 }
 

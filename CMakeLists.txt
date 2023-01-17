@@ -50,6 +50,14 @@ TARGET_SOURCES (
   ${CMAKE_PROJECT_NAME} PRIVATE
     src/main.c
     src/getip_errs.c
+    src/getip_args.c
+    src/getip_usage.c
+)
+
+CONFIGURE_FILE (
+  ${CMAKE_SOURCE_DIR}/include/getip_usage.h.in
+  ${CMAKE_SOURCE_DIR}/include/getip_usage.h
+  NEWLINE_STYLE UNIX
 )
 
 TARGET_INCLUDE_DIRECTORIES (
