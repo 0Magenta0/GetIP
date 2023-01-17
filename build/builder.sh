@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #---------------==================================================---------------#
 #  build/builder.sh                                                              #
 #  This file is a part of the GetIP distribution released under GNU GPLv3        #
