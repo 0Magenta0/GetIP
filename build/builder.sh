@@ -13,7 +13,7 @@ fi
 
 # Build Debug
 if [[ $(echo "$1" | grep -Eq "^.*D.*$"; echo $?) -eq 0 ]]; then
-    cmake .. -DCMAKE_BULD_TYPE=Debug && make
+    cmake .. -DCMAKE_BUILD_TYPE=Debug && make
 fi
 
 # Build Release
