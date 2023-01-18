@@ -9,6 +9,9 @@
 
 #include <stdbool.h>
 
+extern bool is_verbose;
+extern bool is_force;
+
 bool
 args_handler(const int argc, char * const argv[]);
 

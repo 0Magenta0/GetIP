@@ -18,7 +18,8 @@ ENDIF ()
 PROJECT (
   getip
     VERSION 2.0
-    DESCRIPTION "Utility to get info about IP"
+    DESCRIPTION "Utility to request info about IP from APIs"
+    HOMEPAGE_URL "https://github.com/0Magenta0/GetIP"
     LANGUAGES C
 )
 
@@ -28,8 +29,8 @@ SET (CMAKE_C_STANDARD_REQUIRED ON)
 SET (CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 IF (NOT CMAKE_BUILD_TYPE)
-  MESSAGE (STATUS "Build type is not specified! Setting up to Release.")
-  SET (CMAKE_BUILD_TYPE Release)
+  MESSAGE (STATUS "Build type is not specified! Setting up to RelWithDebInfo.")
+  SET (CMAKE_BUILD_TYPE RelWithDebInfo)
 ENDIF (NOT CMAKE_BUILD_TYPE)
 
 SET (
@@ -46,6 +47,7 @@ SET (
 #         Setup Project Sources And Dependencies          #
 #--------=========================================--------#
 FIND_PACKAGE (CURL REQUIRED)
+FIND_PACKAGE (json-c CONFIG)
 
 ADD_EXECUTABLE (${CMAKE_PROJECT_NAME})
 
@@ -54,6 +56,7 @@ TARGET_SOURCES (
     src/main.c
     src/getip_errs.c
     src/getip_args.c
+    src/getip_apis.c
     src/getip_usage.c
     src/getip_request.c
 )
@@ -73,5 +76,6 @@ TARGET_INCLUDE_DIRECTORIES (
 TARGET_LINK_LIBRARIES (
   ${CMAKE_PROJECT_NAME} PRIVATE
     CURL::libcurl
+    json-c::json-c
 )
 

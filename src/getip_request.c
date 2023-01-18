@@ -32,7 +32,7 @@ bool
 send_request(void) {
     CURL *curl;
     CURLcode curl_status;
-    struct response response = { .response = NULL };
+    struct response response = {0};
 
     if (curl_global_init(CURL_GLOBAL_NOTHING)) {
         errs_status = ERRS_CURL_GLOB_INIT;
@@ -84,7 +84,6 @@ write_response(void   *npart,
         str_responsep = realloc(tmp_responsep->response,
                 tmp_responsep->len + full_size + 1);
     } else {
-        tmp_responsep->len = 0;
         str_responsep = malloc(full_size + 1);
     }
 
