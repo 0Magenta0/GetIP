@@ -7,6 +7,7 @@
 
 #include "getip_args.h"
 #include "getip_errs.h"
+#include "getip_request.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -30,7 +31,7 @@ args_handler(const int argc, char * const argv[]) {
             errs_status = ERRS_ARGS_IP_STR_LEN;
             return false;
         } if (argv[1][0] != '-') {
-            /* external_ip = true */
+            is_external_ip = true;
             ++counter;
         }
 

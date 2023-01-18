@@ -5,6 +5,8 @@
  *  https://github.com/0Magenta0/GetIP
  */
 
+#pragma once
+
 #define GETIP_VERSION "@CMAKE_PROJECT_VERSION@"
 #define GETIP_DESCRIPTION "@CMAKE_PROJECT_DESCRIPTION@"
 

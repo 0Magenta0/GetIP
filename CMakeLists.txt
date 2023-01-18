@@ -43,8 +43,10 @@ SET (
 
 
 #--------=========================================--------#
-#                  Setup Project Sources                  #
+#         Setup Project Sources And Dependencies          #
 #--------=========================================--------#
+FIND_PACKAGE (CURL REQUIRED)
+
 ADD_EXECUTABLE (${CMAKE_PROJECT_NAME})
 
 TARGET_SOURCES (
@@ -53,6 +55,7 @@ TARGET_SOURCES (
     src/getip_errs.c
     src/getip_args.c
     src/getip_usage.c
+    src/getip_request.c
 )
 
 CONFIGURE_FILE (
@@ -62,7 +65,13 @@ CONFIGURE_FILE (
 )
 
 TARGET_INCLUDE_DIRECTORIES (
-  ${CMAKE_PROJECT_NAME}
-    PRIVATE ${CMAKE_SOURCE_DIR}/include
+  ${CMAKE_PROJECT_NAME} PRIVATE
+    ${CMAKE_SOURCE_DIR}/include
+    ${CURL_INCLUDE_DIRS}
+)
+
+TARGET_LINK_LIBRARIES (
+  ${CMAKE_PROJECT_NAME} PRIVATE
+    CURL::libcurl
 )
 

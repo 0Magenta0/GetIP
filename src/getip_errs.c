@@ -13,6 +13,9 @@
 #define ERRS_ESTR_UNK             "Unknown error"
 #define ERRS_ESTR_ARGS_COUNT      "Have no arguments passed"
 #define ERRS_ESTR_ARGS_IP_STR_LEN "IP paramenter cannot be NULL-lenght or too long"
+#define ERRS_ESTR_CURL_GLOB_INIT  "Cannot initialize a curl library"
+#define ERRS_ESTR_CURL_EASY_INIT  "Cannot initialize a curl request"
+#define ERRS_ESTR_CURL_EASY_PERF  "Cannot realize a curl request"
 
 enum errs_status errs_status;
 
@@ -25,6 +28,18 @@ errs_handler(void) {
 
         case ERRS_ARGS_IP_STR_LEN:
             fputs("getip: " ERRS_ESTR_ARGS_IP_STR_LEN "\n", stderr);
+            break;
+
+        case ERRS_CURL_GLOB_INIT:
+            fputs("getip: " ERRS_ESTR_CURL_GLOB_INIT "\n", stderr);
+            break;
+
+        case ERRS_CURL_EASY_INIT:
+            fputs("getip: " ERRS_ESTR_CURL_EASY_INIT "\n", stderr);
+            break;
+
+        case ERRS_CURL_EASY_PERF:
+            fputs("getip: " ERRS_ESTR_CURL_EASY_PERF "\n", stderr);
             break;
 
         default:

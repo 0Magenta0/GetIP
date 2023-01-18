@@ -10,6 +10,9 @@
 enum errs_status {
     ERRS_ARGS_COUNT,
     ERRS_ARGS_IP_STR_LEN,
+    ERRS_CURL_GLOB_INIT,
+    ERRS_CURL_EASY_INIT,
+    ERRS_CURL_EASY_PERF
 };
 
 extern enum errs_status errs_status;
