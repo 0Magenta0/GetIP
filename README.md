@@ -8,8 +8,8 @@ Simple utility to get information about IP written in C
 GetIP uses this [API](https://ip-api.com)
 
 # Dependencies
- - [Curl](https://curl.se/libcurl)
- - [Json-c](https://github.com/json-c/json-c)
+ - [libcurl](https://curl.se/libcurl)
+ - [json-c](https://github.com/json-c/json-c)
 
 # Project build
 
