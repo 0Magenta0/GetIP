@@ -1,4 +1,4 @@
-# GetIP 1.2.1
+# GetIP 2.0.0
 
 Simple utility to get information about IP written in C
 
@@ -6,6 +6,10 @@ Simple utility to get information about IP written in C
 [![Release](https://img.shields.io/badge/Latest%20Release%20Version-1.2.1-green)](https://github.com/0Magenta0/GetIP/releases/tag/1.2.1)
 
 GetIP uses this [API](https://ip-api.com)
+
+# Dependencies
+ - [Curl](https://curl.se/libcurl)
+ - [Json-c](https://github.com/json-c/json-c)
 
 # Project build
 
