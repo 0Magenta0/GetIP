@@ -15,11 +15,15 @@
 
 enum apis_ids selected_id = IP_API_COM;
 
+void
+ip_api_com_build_request(CURL *curl);
+
 struct ip_api supported_apis[APIS_COUNT] = {
     { true,
       { IP_API_COM,
         "IP_API_COM"
       },
+      ip_api_com_build_request,
       API_IP | API_COUNTRY | API_HOSTNAME,
       { { API_IP,       "query",    "IP"       },
         { API_COUNTRY,  "country",  "COUNTRY"  },
@@ -61,9 +65,8 @@ select_api_by_str_id(char *str_id) {
     return false;
 }
 
-bool
-ip_api_com_build_request(void) {
-
-    return true;
+void
+ip_api_com_build_request(CURL *curl) {
+    curl_easy_setopt(curl, CURLOPT_URL, "http://ip-api.com/json");
 }
 

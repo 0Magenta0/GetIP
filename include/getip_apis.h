@@ -9,6 +9,8 @@
 
 #include <stdbool.h>
 
+#include <curl/curl.h>
+
 #define APIS_COUNT 1
 #define FIELDS_COUNT 4
 
@@ -37,6 +39,7 @@ struct fields_keys {
 struct ip_api {
     bool is_default;
     struct api_id_name id_name;
+    void (* const build_request)(CURL *);
     enum ip_api_fields bitmap_supported_fields;
     struct fields_keys supported_fields_keys[FIELDS_COUNT];
 };
@@ -52,7 +55,4 @@ check_field_support(enum ip_api_fields field);
 
 bool
 select_api_by_str_id(char *str_id);
-
-bool
-ip_api_com_build_request(void);
 

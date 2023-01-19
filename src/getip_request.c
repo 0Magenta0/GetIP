@@ -6,6 +6,8 @@
  */
 
 #include "getip_errs.h"
+#include "getip_args.h"
+#include "getip_apis.h"
 #include "getip_request.h"
 
 #include <stdlib.h>
@@ -29,9 +31,11 @@ write_response(void   *contents,
                void   *response);
 
 bool
+curl_perform(CURL *curl);
+
+bool
 send_request(void) {
     CURL *curl;
-    CURLcode curl_status;
     struct response response = {0};
 
     if (curl_global_init(CURL_GLOBAL_NOTHING)) {
@@ -46,16 +50,12 @@ send_request(void) {
         goto _end_fail;
     }
 
-    /* TODO: xxx_api_build_request() */
-    curl_easy_setopt(curl, CURLOPT_URL, "http://ip-api.com/json");
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_response);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
 
-    if ((curl_status = curl_easy_perform(curl)) != CURLE_OK) {
-        errs_status = ERRS_CURL_EASY_PERF;
-        fprintf (stderr, "libcurl: %s\n", curl_easy_strerror(curl_status));
-        curl_easy_cleanup(curl);
+    get_api_by_id(selected_id)->build_request(curl);
 
+    if (!curl_perform(curl)) {
         goto _end_fail;
     }
 
@@ -94,5 +94,23 @@ write_response(void   *npart,
     tmp_responsep->response[tmp_responsep->len] = '\0';
 
     return full_size;
+}
+
+bool
+curl_perform(CURL *curl) {
+    CURLcode curl_status;
+
+    if ((curl_status = curl_easy_perform(curl)) != CURLE_OK) {
+        errs_status = ERRS_CURL_EASY_PERF;
+        if (is_verbose) {
+            fprintf (stderr, "libcurl: %s\n", curl_easy_strerror(curl_status));
+        }
+
+        curl_easy_cleanup(curl);
+
+        return false;
+    }
+
+    return true;
 }
 
