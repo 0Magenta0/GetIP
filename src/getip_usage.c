@@ -32,15 +32,18 @@ print_usage(enum usage_variants variant) {
              "  -fields-list     List of supported fields by selected API\n"
         );
     } else if (variant == USAGE_FIELDS) {
+        puts("List of supported field by current API:");
         if (check_field_support(API_IP)) {
-
+            puts("  -ip              Print IP field");
+        } if (check_field_support(API_HOSTNAME)) {
+            puts("  -domain          Print HOSTNAME field");
+        } if (check_field_support(API_COUNTRY)) {
+            puts("  -country         Print COUNTRY field");
+        } if (check_field_support(API_REGION)) {
+            puts("  -region          Print REGION field");
         }
 
-        puts("  -ip              Print IP field\n"
-             "  -domain          Print HOSTNAME field\n"
-             "  -country         Print COUNTRY field\n"
-             "  -region          Print REGION field\n"
-        );
+        putchar('\n');
     } else if (variant == USAGE_APIS) {
         puts("List of supported apis:");
         for (int counter = 0; counter < APIS_COUNT; ++counter) {
@@ -52,6 +55,8 @@ print_usage(enum usage_variants variant) {
                 puts(supported_apis[counter].id_name.api_name);
             }
         }
+
+        putchar('\n');
     }
 }
 

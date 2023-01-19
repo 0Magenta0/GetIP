@@ -10,6 +10,7 @@
 #include <string.h>
 #include <stdbool.h>
 
+#include<curl/curl.h>
 #include <json-c/json.h>
 
 enum apis_ids selected_id = IP_API_COM;
@@ -19,7 +20,6 @@ struct ip_api supported_apis[APIS_COUNT] = {
       { IP_API_COM,
         "IP_API_COM"
       },
-      "http://ip-api.com/json/{IP}",
       API_IP | API_COUNTRY | API_HOSTNAME,
       { { API_IP,       "query",    "IP"       },
         { API_COUNTRY,  "country",  "COUNTRY"  },
@@ -59,5 +59,11 @@ select_api_by_str_id(char *str_id) {
     }
 
     return false;
+}
+
+bool
+ip_api_com_build_request(void) {
+
+    return true;
 }
 

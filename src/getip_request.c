@@ -46,6 +46,7 @@ send_request(void) {
         goto _end_fail;
     }
 
+    /* TODO: xxx_api_build_request() */
     curl_easy_setopt(curl, CURLOPT_URL, "http://ip-api.com/json");
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_response);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
