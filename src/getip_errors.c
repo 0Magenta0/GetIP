@@ -11,9 +11,13 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#define ERR_STR_IP_STR   "invalid target paramenter"
-#define ERR_STR_ARG_UNK  "unknown paramenter"
-#define ERR_STR_ARG_MISS "parameter should have argument"
+#define ERR_STR_IP_STR         "invalid target paramenter"
+#define ERR_STR_ARG_UNK        "unknown paramenter"
+#define ERR_STR_ARG_MISS       "parameter should have argument"
+#define ERR_STR_ARG_API_UNK    "you're select invalid API"
+#define ERR_STR_CURL_GLOB_INIT "curl_global_init() failed"
+#define ERR_STR_CURL_EASY_INIT "curl_easy_init() failed"
+#define ERR_STR_CURL_EASY_PERF "curl_easy_perform() failed"
 
 enum error_id error_id;
 
@@ -39,6 +43,27 @@ error_handler(void)
             fputs(ERR_STR_ARG_MISS, stderr);
             putchar('\n');
             print_usage(USAGE_GENERAL);
+            break;
+
+        case ERR_CURL_GLOB_INIT:
+            fputs(ERR_STR_CURL_GLOB_INIT, stderr);
+            putchar('\n');
+            break;
+
+        case ERR_CURL_EASY_INIT:
+            fputs(ERR_STR_CURL_EASY_INIT, stderr);
+            putchar('\n');
+            break;
+
+        case ERR_CURL_EASY_PERF:
+            fputs(ERR_STR_CURL_EASY_PERF, stderr);
+            putchar('\n');
+            break;
+
+        case ERR_ARG_API_UNK:
+            fputs(ERR_STR_ARG_API_UNK, stderr);
+            putchar('\n');
+            print_usage(USAGE_APIS);
             break;
     }
 }

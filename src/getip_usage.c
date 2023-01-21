@@ -5,9 +5,12 @@
  *  https://github.com/0Magenta0/GetIP
  */
 
+#include "getip_apis.h"
 #include "getip_usage.h"
+#include "getip_request.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 
 void
 print_usage(enum usage_variants variant) {
@@ -28,31 +31,30 @@ print_usage(enum usage_variants variant) {
              "  -api <api-id>    Select API\n"
              "  -api-list        List of supported apis\n"
              "  -fields-list     List of supported fields by selected API\n"
+             "  -agent <ua>      Custom User-Agent header\n"
         );
     } else if (variant == USAGE_FIELDS) {
-        puts("List of supported field by current API:"); /*
-        if (check_field_support(API_IP)) {
+        puts("List of supported field by current API:");
+        if (check_field_support(API_CAP_IP)) {
             puts("  -ip              Print IP field");
-        } if (check_field_support(API_HOSTNAME)) {
+        } if (check_field_support(API_CAP_HOST)) {
             puts("  -domain          Print HOSTNAME field");
-        } if (check_field_support(API_COUNTRY)) {
+        } if (check_field_support(API_CAP_COUNTRY)) {
             puts("  -country         Print COUNTRY field");
-        } if (check_field_support(API_REGION)) {
-            puts("  -region          Print REGION field");
-        } */
+        }
 
         putchar('\n');
     } else if (variant == USAGE_APIS) {
-        puts("List of supported apis:"); /*
+        puts("List of supported apis:");
         for (int counter = 0; counter < APIS_COUNT; ++counter) {
             putchar(' '), putchar(' ');
 
-            if (supported_apis[counter].is_default) {
-                printf("%s (Default)\n", supported_apis[counter].id_name.api_name);
+            if (!counter) {
+                printf("%s (Default)\n", apis_list[counter].str_id);
             } else {
-                puts(supported_apis[counter].id_name.api_name);
+                puts(apis_list[counter].str_id);
             }
-        } */
+        }
 
         putchar('\n');
     }

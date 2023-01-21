@@ -6,8 +6,10 @@
  */
 
 #include "getip_args.h"
+#include "getip_apis.h"
 #include "getip_usage.h"
 #include "getip_errors.h"
+#include "getip_request.h"
 
 #include <ctype.h>
 #include <stdio.h>
@@ -19,12 +21,13 @@
 #define MIN_IP_STR_LEN   3
 #define MAX_IP_STR_LEN 254
 
-#define MAX_OPT_PRIORITY 1
+#define MAX_OPT_PRIORITY 2
 #define OPTIONS_COUNT (sizeof (options_list) / sizeof (struct getip_option))
 
 enum getip_option_type {
     GETIP_OPTION_ARG,
-    GETIP_OPTION_NO_ARG
+    GETIP_OPTION_NO_ARG,
+    GETIP_OPTION_ARG_HAVE_EMP
 };
 
 struct getip_option {
@@ -35,21 +38,32 @@ struct getip_option {
 };
 
 bool
-ip_string_validate(const char * ip_str);
+ip_string_validate(const char *ip_str);
 
 bool
-string_have_no_empty(const char * str);
+string_have_no_empty(const char *str);
 
-_Noreturn bool
+bool
+string_have_no_full_empty(const char * str);
+
+noreturn bool
 help_opt(char *);
 
 bool
 verbose_opt(char *);
 
-bool is_verbose;
-bool is_external_ip;
+noreturn bool
+api_list_opt(char *);
 
-struct getip_option options_list[] = {
+bool
+api_opt(char *api_str_id);
+
+noreturn bool
+fileds_list_opt(char *);
+
+bool is_verbose;
+
+const struct getip_option options_list[] = {
     { "help",
       GETIP_OPTION_NO_ARG,
       help_opt,
@@ -61,6 +75,30 @@ struct getip_option options_list[] = {
       verbose_opt,
       0
     },
+
+    { "api-list",
+      GETIP_OPTION_NO_ARG,
+      api_list_opt,
+      0
+    },
+
+    { "api",
+      GETIP_OPTION_ARG,
+      api_opt,
+      1
+    },
+
+    { "fields-list",
+      GETIP_OPTION_NO_ARG,
+      fileds_list_opt,
+      2
+    },
+
+    { "agent",
+      GETIP_OPTION_ARG_HAVE_EMP,
+      NULL,
+      2
+    }
 };
 
 bool
@@ -94,6 +132,13 @@ args_handler(const int    argc,
                         }
                     }
 
+                    if (options_list[opt_counter].option_type == GETIP_OPTION_ARG_HAVE_EMP) {
+                        if (!string_have_no_full_empty(argv[arg_counter])) {
+                            error_id = ERR_ARG_MISS;
+                            return false;
+                        }
+                    }
+
                     goto _valid_arg;
                 }
             }
@@ -114,9 +159,13 @@ _valid_arg:
 
                     if (!strcmp(options_list[opt_counter].option_name, argv[arg_counter] + 1)) {
                         if (options_list[opt_counter].option_type == GETIP_OPTION_ARG) {
-                            options_list[opt_counter].func(argv[++arg_counter]);
+                            if (!options_list[opt_counter].func(argv[++arg_counter])) {
+                                return false;
+                            }
                         } else {
-                            options_list[opt_counter].func(NULL);
+                            if (!options_list[opt_counter].func(NULL)) {
+                                return false;
+                            }
                         }
 
                         goto _opt_found;
@@ -166,6 +215,22 @@ string_have_no_empty(const char * str)
     return true;
 }
 
+bool
+string_have_no_full_empty(const char * str)
+{
+    if (!str[0]) {
+        return false;
+    }
+
+    for (; *str; ++str) {
+        if (!isblank(*str)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 noreturn bool
 help_opt(char *n)
 {
@@ -181,5 +246,33 @@ verbose_opt(char *n)
     (void) n;
 
     return (is_verbose = true);
+}
+
+noreturn bool
+api_list_opt(char *n) {
+    (void) n;
+
+    print_usage(USAGE_APIS);
+    exit(EXIT_SUCCESS);
+}
+
+bool
+api_opt(char *api_str_id)
+{
+    if (!select_api_by_str_id(api_str_id)) {
+        error_id = ERR_ARG_API_UNK;
+        return false;
+    }
+
+    return true;
+}
+
+noreturn bool
+fileds_list_opt(char *n)
+{
+    (void) n;
+
+    print_usage(USAGE_FIELDS);
+    exit(EXIT_SUCCESS);
 }
 

@@ -55,8 +55,10 @@ TARGET_SOURCES (
   ${CMAKE_PROJECT_NAME} PRIVATE
   src/getip_main.c
   src/getip_args.c
+  src/getip_apis.c
   src/getip_usage.c
   src/getip_errors.c
+  src/getip_request.c
 )
 
 CONFIGURE_FILE (

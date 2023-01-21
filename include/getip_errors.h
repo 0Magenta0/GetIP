@@ -12,7 +12,11 @@
 enum error_id {
     ERR_IP_STR,
     ERR_ARG_UNK,
-    ERR_ARG_MISS
+    ERR_ARG_MISS,
+    ERR_ARG_API_UNK,
+    ERR_CURL_GLOB_INIT,
+    ERR_CURL_EASY_INIT,
+    ERR_CURL_EASY_PERF,
 };
 
 extern enum error_id error_id;
