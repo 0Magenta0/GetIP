@@ -7,10 +7,15 @@
 
 #pragma once
 
+#include <stdlib.h>
 #include <stdbool.h>
 
+struct external_ip {
+    char *ip_str;
+    size_t str_len;
+} extern external_ip;
+
 extern bool is_external_ip;
-extern char *external_ip_str;
 
 bool
 send_api_request(void);

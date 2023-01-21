@@ -105,6 +105,8 @@ bool
 args_handler(const int    argc,
              char * const argv[])
 {
+    size_t ip_str_len;
+
     if (argc == 1 || !argc) {
         return true;
     } else {
@@ -114,6 +116,11 @@ args_handler(const int    argc,
                 return false;
             }
 
+            ip_str_len = strlen(argv[1]);
+            external_ip.ip_str = malloc(ip_str_len + 1);
+            strncpy(external_ip.ip_str, argv[1], ip_str_len);
+            external_ip.ip_str[ip_str_len] = '\0';
+            external_ip.str_len = ip_str_len;
             is_external_ip = true;
         }
 

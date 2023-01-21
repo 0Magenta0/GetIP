@@ -5,6 +5,7 @@
  *  https://github.com/0Magenta0/GetIP
  */
 
+#include "getip_apis.h"
 #include "getip_args.h"
 #include "getip_errors.h"
 #include "getip_request.h"
@@ -21,7 +22,7 @@ struct response {
 };
 
 bool is_external_ip;
-char *external_ip_str;
+struct external_ip external_ip;
 
 size_t
 write_response(void   *npart,
@@ -53,7 +54,7 @@ send_api_request(void)
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_response);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
 
-    /* get_api_by_id(selected_id)->build_request(curl); */
+    get_api_by_id(selected_api)->build_request(curl);
 
     if (!curl_perform(curl)) {
         goto _end_fail;

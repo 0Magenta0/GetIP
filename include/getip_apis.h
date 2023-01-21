@@ -9,6 +9,8 @@
 
 #include <stdbool.h>
 
+#include <curl/curl.h>
+
 #define API_CAP_COUNT 2
 #define APIS_COUNT 1
 
@@ -30,6 +32,7 @@ struct api_cap_id {
 struct api_node {
     const enum api_ids id;
     const char *str_id;
+    void (* const build_request)(CURL *curl);
     const enum api_cap capabilities;
     const struct api_cap_id api_cap_id[API_CAP_COUNT];
 };
@@ -42,5 +45,8 @@ bool
 select_api_by_str_id(const char * const str_id);
 
 bool
-check_field_support(enum api_cap);
+check_field_support(enum api_cap api_cap);
+
+const struct api_node *
+get_api_by_id(enum api_ids id);
 

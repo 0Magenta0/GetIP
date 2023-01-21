@@ -11,11 +11,17 @@
 #include <string.h>
 #include <stdbool.h>
 
+#include <curl/curl.h>
+
+void
+ip_api_com_builder(CURL *curl);
+
 enum api_ids selected_api;
 
 const struct api_node apis_list[] = {
     { IP_API_COM,
       "IP_API_COM",
+      ip_api_com_builder,
       API_CAP_IP | API_CAP_HOST,
       { { API_CAP_IP,
           "IP"
@@ -45,5 +51,23 @@ bool
 check_field_support(const enum api_cap api_cap)
 {
     return apis_list[selected_api].capabilities & api_cap;
+}
+
+const struct api_node *
+get_api_by_id(enum api_ids id)
+{
+    for (size_t counter = 0; counter < APIS_COUNT; ++counter) {
+        if (apis_list[counter].id == id) {
+            return &apis_list[counter];
+        }
+    }
+
+    return NULL;
+}
+
+void
+ip_api_com_builder(CURL *curl)
+{
+    
 }
 
