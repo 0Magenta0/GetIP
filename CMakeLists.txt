@@ -53,12 +53,10 @@ ADD_EXECUTABLE (${CMAKE_PROJECT_NAME})
 
 TARGET_SOURCES (
   ${CMAKE_PROJECT_NAME} PRIVATE
-    src/getip.c
-    src/getip_errs.c
-    src/getip_args.c
-    src/getip_apis.c
-    src/getip_usage.c
-    src/getip_request.c
+  src/getip_main.c
+  src/getip_args.c
+  src/getip_usage.c
+  src/getip_errors.c
 )
 
 CONFIGURE_FILE (

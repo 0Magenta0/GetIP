@@ -5,7 +5,6 @@
  *  https://github.com/0Magenta0/GetIP
  */
 
-#include "getip_apis.h"
 #include "getip_usage.h"
 
 #include <stdio.h>
@@ -25,14 +24,13 @@ print_usage(enum usage_variants variant) {
 
     if (variant == USAGE_GENERAL) {
         puts("  -help            Print this message and exit\n"
-             "  -force           Ignore warnings\n"
              "  -verbose         Debug output to stderr\n"
              "  -api <str>       Select API\n"
              "  -api-list        List of supported apis\n"
              "  -fields-list     List of supported fields by selected API\n"
         );
     } else if (variant == USAGE_FIELDS) {
-        puts("List of supported field by current API:");
+        puts("List of supported field by current API:"); /*
         if (check_field_support(API_IP)) {
             puts("  -ip              Print IP field");
         } if (check_field_support(API_HOSTNAME)) {
@@ -41,11 +39,11 @@ print_usage(enum usage_variants variant) {
             puts("  -country         Print COUNTRY field");
         } if (check_field_support(API_REGION)) {
             puts("  -region          Print REGION field");
-        }
+        } */
 
         putchar('\n');
     } else if (variant == USAGE_APIS) {
-        puts("List of supported apis:");
+        puts("List of supported apis:"); /*
         for (int counter = 0; counter < APIS_COUNT; ++counter) {
             putchar(' '), putchar(' ');
 
@@ -54,7 +52,7 @@ print_usage(enum usage_variants variant) {
             } else {
                 puts(supported_apis[counter].id_name.api_name);
             }
-        }
+        } */
 
         putchar('\n');
     }

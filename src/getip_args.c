@@ -6,116 +6,133 @@
  */
 
 #include "getip_args.h"
-#include "getip_errs.h"
-#include "getip_apis.h"
 #include "getip_usage.h"
-#include "getip_request.h"
+#include "getip_errors.h"
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <stdnoreturn.h>
 
+#define MIN_IP_STR_LEN   3
 #define MAX_IP_STR_LEN 254
 
-bool is_verbose;
-bool is_force;
+#define MAX_OPT_PRIORITY 1
+#define OPTIONS_COUNT (sizeof (options_list) / sizeof (struct getip_option))
+
+enum getip_option_type {
+    GETIP_OPTION_ARG,
+    GETIP_OPTION_NO_ARG
+};
+
+struct getip_option {
+    const char * const option_name;
+    const enum getip_option_type option_type;
+    bool (* const func)(char *);
+    const int option_priority;
+};
 
 bool
-args_handler(const int argc, char * const argv[]) {
-    size_t ip_str_len;
+ip_string_validate(const char * const ip_str);
 
-    if (argc == 0) {
-        return false;
-    } else if (argc == 1) {
+_Noreturn bool
+help_opt(char *);
+
+bool
+verbose_opt(char *);
+
+bool is_verbose;
+
+struct getip_option options_list[] = {
+    { "help",
+      GETIP_OPTION_NO_ARG,
+      help_opt,
+      0
+    },
+
+    { "verbose",
+      GETIP_OPTION_NO_ARG,
+      verbose_opt,
+      0
+    },
+};
+
+bool
+args_handler(const int    argc,
+             char * const argv[])
+{
+    if (argc == 1 || !argc) {
+        /* is_external_ip = false */
         return true;
     } else {
-        ip_str_len = strlen(argv[1]);
-        if (!ip_str_len || ip_str_len > MAX_IP_STR_LEN) {
-            errs_status = ERRS_ARGS_IP_STR_LEN;
+        if (argv[1][0] != '-' && !ip_string_validate(argv[1])) {
+            error_id = ERR_IP_STR;
             return false;
-        } if (argv[1][0] != '-') {
-            is_external_ip = true;
         }
 
-        for (int counter = (is_external_ip) ? 2 : 1; counter < argc; ++counter) {
-            if (!strcmp(argv[counter], "-verbose")) {
-                is_verbose = true;
-                continue;
-            } if (!strcmp(argv[counter], "-force")) {
-                is_force = true;
-                continue;
-            }
-        }
+        /* TODO: Validate args */
 
-        for (int counter = (is_external_ip) ? 2 : 1; counter < argc; ++counter) {
-            if (!strcmp(argv[counter], "-help")) {
-                print_usage(USAGE_GENERAL);
-                exit(EXIT_SUCCESS);
-            } if (!strcmp(argv[counter], "-api-list")) {
-                print_usage(USAGE_APIS);
-                exit(EXIT_SUCCESS);
-            }
-        }
+        for (int priority = 0; priority <= MAX_OPT_PRIORITY; ++priority) {
+            for (int arg_counter = 1; arg_counter < argc; ++arg_counter) {
+                for (int opt_counter = 0; opt_counter < (int) OPTIONS_COUNT; ++opt_counter) {
+                    if (options_list[opt_counter].option_priority != priority) {
+                        continue;
+                    }
 
-        for (int counter = (is_external_ip) ? 2 : 1; counter < argc; ++counter) {
-            if (!strcmp(argv[counter], "-api")) {
-                if (argv[++counter] == NULL) {
-                    errs_status = ERRS_ARGS_API_NULL;
-                    return false;
-                }
+                    if (!strcmp(options_list[opt_counter].option_name, argv[arg_counter] + 1)) {
+                        if (options_list[opt_counter].option_type == GETIP_OPTION_ARG) {
+                            options_list[opt_counter].func(argv[++arg_counter]);
+                        } else {
+                            options_list[opt_counter].func(NULL);
+                        }
 
-                if (is_verbose) {
-                    fprintf(stderr, "Trying to select API: %s\n", argv[counter]);
-                }
-
-                if (!select_api_by_str_id(argv[counter])) {
-                    if (is_force) {
-                        puts("getip: Cannot select API, selecting default...");
-                    } else {
-                        errs_status = ERRS_ARGS_API_UNK;
-                        return false;
+                        goto _opt_found;
                     }
                 }
-            }
-        }
 
-        for (int counter = (is_external_ip) ? 2 : 1; counter < argc; ++counter) {
-            if (!strcmp(argv[counter], "-fields-list")) {
-                print_usage(USAGE_FIELDS);
-                exit(EXIT_SUCCESS);
-            }
-        }
-
-        for (int counter = (is_external_ip) ? 2 : 1; counter < argc; ++counter) {
-            if (!strcmp(argv[counter], "-i")) {
-                if (check_field_support(API_IP)) {
-
-                } else {
-                    errs_status = ERRS_ARGS_FIELD_SUPPORT;
-                    return false;
-                }
-
-                continue;
-            } if (!strcmp(argv[counter], "-H")) {
-
-                continue;
-            } if (!strcmp(argv[counter], "-c")) {
-
-                continue;
-            } if (!strcmp(argv[counter], "-r")) {
-                if (check_field_support(API_REGION)) {
-
-                } else {
-                    errs_status = ERRS_ARGS_FIELD_SUPPORT;
-                    return false;
-                }
-
+_opt_found:
                 continue;
             }
         }
 
         return true;
     }
+}
+
+bool
+ip_string_validate(const char * const ip_str)
+{
+    register size_t len;
+
+    if ((len = strlen(ip_str)) < MIN_IP_STR_LEN || len > MAX_IP_STR_LEN) {
+        return false;
+    }
+
+    for (size_t counter = 0; ip_str[counter]; ++counter) {
+        if (isblank(ip_str[counter])) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+noreturn bool
+help_opt(char *n)
+{
+    (void) n;
+
+    print_usage(USAGE_GENERAL);
+    exit(EXIT_SUCCESS);
+}
+
+bool
+verbose_opt(char *n)
+{
+    (void) n;
+
+    return (is_verbose = true);
 }
 

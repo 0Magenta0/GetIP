@@ -1,14 +1,18 @@
 /*
- *  include/getip_request.h
+ *  include/getip_errors.h
  *  This file is a part of the GetIP distribution released under GNU GPLv3
  *  Copyright (C) 2021-2023  0Magenta0
  *  https://github.com/0Magenta0/GetIP
  */
 
-#include <stdbool.h>
+#pragma once
 
-extern bool is_external_ip;
+enum error_id {
+    ERR_IP_STR
+};
 
-bool
-send_request(void);
+extern enum error_id error_id;
+
+void
+error_handler(void);
 
