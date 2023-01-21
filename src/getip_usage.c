@@ -25,7 +25,7 @@ print_usage(enum usage_variants variant) {
     if (variant == USAGE_GENERAL) {
         puts("  -help            Print this message and exit\n"
              "  -verbose         Debug output to stderr\n"
-             "  -api <str>       Select API\n"
+             "  -api <api-id>    Select API\n"
              "  -api-list        List of supported apis\n"
              "  -fields-list     List of supported fields by selected API\n"
         );

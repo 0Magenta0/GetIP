@@ -10,6 +10,7 @@
 #include <stdbool.h>
 
 extern bool is_verbose;
+extern bool is_external_ip;
 
 bool
 args_handler(int argc,

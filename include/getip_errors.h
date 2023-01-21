@@ -7,8 +7,12 @@
 
 #pragma once
 
+#include <stdbool.h>
+
 enum error_id {
-    ERR_IP_STR
+    ERR_IP_STR,
+    ERR_ARG_UNK,
+    ERR_ARG_MISS
 };
 
 extern enum error_id error_id;

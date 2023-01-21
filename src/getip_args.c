@@ -35,7 +35,10 @@ struct getip_option {
 };
 
 bool
-ip_string_validate(const char * const ip_str);
+ip_string_validate(const char * ip_str);
+
+bool
+string_have_no_empty(const char * str);
 
 _Noreturn bool
 help_opt(char *);
@@ -44,6 +47,7 @@ bool
 verbose_opt(char *);
 
 bool is_verbose;
+bool is_external_ip;
 
 struct getip_option options_list[] = {
     { "help",
@@ -64,18 +68,45 @@ args_handler(const int    argc,
              char * const argv[])
 {
     if (argc == 1 || !argc) {
-        /* is_external_ip = false */
         return true;
     } else {
-        if (argv[1][0] != '-' && !ip_string_validate(argv[1])) {
-            error_id = ERR_IP_STR;
-            return false;
+        if (argv[1][0] != '-') {
+            if (!ip_string_validate(argv[1])) {
+                error_id = ERR_IP_STR;
+                return false;
+            }
+
+            is_external_ip = true;
         }
 
-        /* TODO: Validate args */
+        for (int arg_counter = is_external_ip ? 2 : 1; arg_counter < argc; ++arg_counter) {
+            for (int opt_counter = 0; opt_counter < (int) OPTIONS_COUNT; ++opt_counter) {
+                if (!strcmp(options_list[opt_counter].option_name, argv[arg_counter] + 1)) {
+                    if (options_list[opt_counter].option_type == GETIP_OPTION_ARG) {
+                        if (++arg_counter >= argc) {
+                            error_id = ERR_ARG_MISS;
+                            return false;
+                        }
+
+                        if (!string_have_no_empty(argv[arg_counter])) {
+                            error_id = ERR_ARG_MISS;
+                            return false;
+                        }
+                    }
+
+                    goto _valid_arg;
+                }
+            }
+
+            error_id = ERR_ARG_UNK;
+            return false;
+
+_valid_arg:
+            continue;
+        }
 
         for (int priority = 0; priority <= MAX_OPT_PRIORITY; ++priority) {
-            for (int arg_counter = 1; arg_counter < argc; ++arg_counter) {
+            for (int arg_counter = is_external_ip ? 2 : 1; arg_counter < argc; ++arg_counter) {
                 for (int opt_counter = 0; opt_counter < (int) OPTIONS_COUNT; ++opt_counter) {
                     if (options_list[opt_counter].option_priority != priority) {
                         continue;
@@ -102,16 +133,32 @@ _opt_found:
 }
 
 bool
-ip_string_validate(const char * const ip_str)
+ip_string_validate(const char * ip_str)
 {
-    register size_t len;
+    size_t len;
 
     if ((len = strlen(ip_str)) < MIN_IP_STR_LEN || len > MAX_IP_STR_LEN) {
         return false;
     }
 
-    for (size_t counter = 0; ip_str[counter]; ++counter) {
-        if (isblank(ip_str[counter])) {
+    for (; *ip_str; ++ip_str) {
+        if (isblank(*ip_str)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+bool
+string_have_no_empty(const char * str)
+{
+    if (!str[0]) {
+        return false;
+    }
+
+    for (; *str; ++str) {
+        if (isblank(*str)) {
             return false;
         }
     }
