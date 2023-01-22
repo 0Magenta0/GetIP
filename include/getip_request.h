@@ -10,10 +10,10 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-struct external_ip {
+extern struct external_ip {
     char *ip_str;
     size_t str_len;
-} extern external_ip;
+} external_ip;
 
 extern bool is_external_ip;
 

@@ -7,6 +7,7 @@
 
 #include "getip_args.h"
 #include "getip_errors.h"
+#include "getip_request.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,7 +17,12 @@ main(int  argc,
      char *argv[])
 {
     if (args_handler(argc, argv)) {
-        exit(EXIT_SUCCESS);
+        if (send_api_request()) {
+            exit(EXIT_SUCCESS);
+        } else {
+            error_handler();
+            exit(EXIT_FAILURE);
+        }
     } else {
         error_handler();
         exit(EXIT_FAILURE);

@@ -6,12 +6,16 @@
  */
 
 #include "getip_apis.h"
+#include "getip_request.h"
 
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
 
 #include <curl/curl.h>
+
+#define IP_API_COM_URL     "http://ip-api.com/json/"
+#define IP_API_COM_URL_LEN (sizeof (IP_API_COM_URL) / sizeof (char))
 
 void
 ip_api_com_builder(CURL *curl);
@@ -68,6 +72,15 @@ get_api_by_id(enum api_ids id)
 void
 ip_api_com_builder(CURL *curl)
 {
-    
+    char *tmp_url;
+
+    if (is_external_ip) {
+        tmp_url = malloc(external_ip.str_len + IP_API_COM_URL_LEN);
+        sprintf(tmp_url, IP_API_COM_URL "%s", external_ip.ip_str);
+        curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
+        free(tmp_url);
+    } else {
+        curl_easy_setopt(curl, CURLOPT_URL, "http://ip-api.com/json");
+    }
 }
 
