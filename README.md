@@ -5,7 +5,8 @@ Simple utility to get information about IP written in C
 [![Language](https://img.shields.io/badge/Language-C-blue)](https://en.wikipedia.org/wiki/C%20%28programming%20language%29)
 [![Release](https://img.shields.io/badge/Latest%20Release%20Version-1.2.1-green)](https://github.com/0Magenta0/GetIP/releases/tag/1.2.1)
 
-GetIP uses this [API](https://ip-api.com)
+# GetIP supports this APIs
+ - [ip-api.com](https://ip-api.com)
 
 # Dependencies
  - [libcurl](https://curl.se/libcurl)
@@ -23,25 +24,17 @@ $ ./builder.sh R
 
 GetIP help message
 ```
-Usage: getip [args]
+GetIP (version 2.0)
+Utility to request info about IP from APIs
+https://github.com/0Magenta0/GetIP
 
-  -h --help                     Print this message
-  -e <str> --addr=<str>         Use another's IP
-  -i --print-ip                 Print IP parameter
-  -o --print-org                Print ORG parameter
-  -n --print-hostname           Print Hostname parameter
-  -a --print-as                 Print AS parameter
-  -A --print-asname             Print AS Name parameter
-  -I --print-isp                Print ISP parameter
-  -C --print-continent          Print Continent parameter
-  -c --print-country            Print Country parameter
-  -r --print-region             Print Region parameter
-  -t --print-city               Print City parameter
-  -z --print-timezone           Print TimeZone parameter
-  -H --print-hosting            Print Hosting parameter
-  -p --print-proxy              Print Proxy parameter
-  -m --print-mobile             Print Mobile parameter
+Usage: getip [target] [options]
+ or:   getip [options]
 
-Version: 1.2.1
-Author: _Magenta_
+  -help            Print this message and exit
+  -verbose         Debug output to stderr
+  -api <api-id>    Select API
+  -api-list        List of supported apis
+  -fields-list     List of supported fields by selected API
+  -agent <ua>      Custom User-Agent header
 ```
