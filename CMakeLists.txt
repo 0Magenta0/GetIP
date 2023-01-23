@@ -17,7 +17,7 @@ ENDIF ()
 #--------=========================================--------#
 PROJECT (
   getip
-    VERSION 2.0
+    VERSION 2.1.0
     DESCRIPTION "Utility to request info about IP from APIs"
     HOMEPAGE_URL "https://github.com/0Magenta0/GetIP"
     LANGUAGES C
