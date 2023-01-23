@@ -5,14 +5,14 @@ Simple utility to get information about IP written in C
 [![Language](https://img.shields.io/badge/Language-C-blue)](https://en.wikipedia.org/wiki/C%20%28programming%20language%29)
 [![Release](https://img.shields.io/badge/Latest%20Release%20Version-1.2.1-green)](https://github.com/0Magenta0/GetIP/releases/tag/1.2.1)
 
-# GetIP supports this APIs
+### GetIP supports this APIs
  - [ip-api.com](https://ip-api.com)
 
-# Dependencies
+### Dependencies
  - [libcurl](https://curl.se/libcurl)
  - [json-c](https://github.com/json-c/json-c)
 
-# Project build
+### Project build
 
 ```
 $ git clone https://github.com/0Magenta0/GetIP
@@ -20,7 +20,7 @@ $ cd GetIP/build
 $ ./builder.sh R
 ```
 
-# Usage
+### Usage
 
 GetIP help message
 ```
