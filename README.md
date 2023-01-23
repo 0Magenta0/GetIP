@@ -38,3 +38,39 @@ Usage: getip [target] [options]
   -fields-list     List of supported fields by selected API
   -agent <ua>      Custom User-Agent header
 ```
+
+GetIP api-list message
+```
+GetIP (version 2.0)
+Utility to request info about IP from APIs
+https://github.com/0Magenta0/GetIP
+
+List of supported apis:
+  IP_API_COM (Default)
+```
+
+GetIP fields-list message
+```
+GetIP (version 2.0)
+Utility to request info about IP from APIs
+https://github.com/0Magenta0/GetIP
+
+Usage: getip [target] [options]
+ or:   getip [options]
+
+List of supported field by current API:
+  -ip                 Print IP field
+  -org                Print ORG field
+  -host               Print Hostname field
+  -as                 Print AS field
+  -asname             Print AS Name field
+  -isp                Print ISP field
+  -continent          Print Continent field
+  -country            Print Country field
+  -region             Print Region field
+  -city               Print City field
+  -zone               Print Time Zone field
+  -is-host            Print Hosting field
+  -is-proxy           Print Time Proxy field
+  -is-mobile          Print Time Mobile field
+```
