@@ -17,7 +17,7 @@ ENDIF (CMAKE_BINARY_DIR STREQUAL CMAKE_SOURCE_DIR)
 #--------=========================================--------#
 PROJECT (
   getip
-    VERSION 2.1.0
+    VERSION 2.1.1
     DESCRIPTION "Utility to request info about IP from APIs"
     HOMEPAGE_URL "https://github.com/0Magenta0/GetIP"
     LANGUAGES C
