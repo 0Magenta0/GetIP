@@ -282,7 +282,7 @@ ip_api_com_handler(CURL   *curl,
                 } else {
                     cap_res_len = (size_t) json_object_get_string_len(certain_json_obj);
                     current_api->api_cap_id[counter].result = malloc(cap_res_len + 1);
-                    strncpy(current_api->api_cap_id[counter].result, json_object_get_string(certain_json_obj), cap_res_len);
+                    strcpy(current_api->api_cap_id[counter].result, json_object_get_string(certain_json_obj));
                 }
             }
         }
