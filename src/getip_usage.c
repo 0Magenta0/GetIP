@@ -36,31 +36,31 @@ print_usage(enum usage_variants variant) {
     } else if (variant == USAGE_FIELDS) {
         puts("List of supported field by current API:");
         if (check_field_support(API_CAP_IP)) {
-            puts("  -ip              Print IP field");
+            puts("  -ip                 Print IP field");
         } if (check_field_support(API_CAP_ORG)) {
-            puts("  -org          Print ORG field");
+            puts("  -org                Print ORG field");
         } if (check_field_support(API_CAP_HOST)) {
-            puts("  -host          Print Hostname field");
+            puts("  -host               Print Hostname field");
         } if (check_field_support(API_CAP_AS)) {
-            puts("  -as          Print AS field");
+            puts("  -as                 Print AS field");
         } if (check_field_support(API_CAP_AS_NAME)) {
-            puts("  -asname          Print AS Name field");
+            puts("  -asname             Print AS Name field");
         } if (check_field_support(API_CAP_ISP)) {
-            puts("  -isp          Print ISP field");
+            puts("  -isp                Print ISP field");
         } if (check_field_support(API_CAP_CONTINENT)) {
             puts("  -continent          Print Continent field");
         } if (check_field_support(API_CAP_COUNTRY)) {
-            puts("  -country          Print Country field");
+            puts("  -country            Print Country field");
         } if (check_field_support(API_CAP_REGION)) {
-            puts("  -region          Print Region field");
+            puts("  -region             Print Region field");
         } if (check_field_support(API_CAP_CITY)) {
-            puts("  -city          Print City field");
+            puts("  -city               Print City field");
         } if (check_field_support(API_CAP_CITY)) {
-            puts("  -zone          Print Time Zone field");
+            puts("  -zone               Print Time Zone field");
         } if (check_field_support(API_CAP_CITY)) {
-            puts("  -is-host          Print Hosting field");
+            puts("  -is-host            Print Hosting field");
         } if (check_field_support(API_CAP_CITY)) {
-            puts("  -is-proxy          Print Time Proxy field");
+            puts("  -is-proxy           Print Time Proxy field");
         } if (check_field_support(API_CAP_CITY)) {
             puts("  -is-mobile          Print Time Mobile field");
         }
