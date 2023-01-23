@@ -21,7 +21,7 @@
 #define MIN_IP_STR_LEN   3
 #define MAX_IP_STR_LEN 254
 
-#define MAX_OPT_PRIORITY 2
+#define MAX_OPT_PRIORITY 3
 #define OPTIONS_COUNT (sizeof (options_list) / sizeof (struct getip_option))
 
 enum getip_option_type {
@@ -61,6 +61,48 @@ api_opt(char *api_str_id);
 noreturn bool
 fileds_list_opt(char *);
 
+bool
+ip_opt(char *);
+
+bool
+org_opt(char *);
+
+bool
+host_opt(char *);
+
+bool
+as_opt(char *);
+
+bool
+asname_opt(char *);
+
+bool
+isp_opt(char *);
+
+bool
+continent_opt(char *);
+
+bool
+country_opt(char *);
+
+bool
+region_opt(char *);
+
+bool
+city_opt(char *);
+
+bool
+zone_opt(char *);
+
+bool
+is_host_opt(char *);
+
+bool
+is_proxy_opt(char *);
+
+bool
+is_mobile_opt(char *);
+
 bool is_verbose;
 
 const struct getip_option options_list[] = {
@@ -98,7 +140,91 @@ const struct getip_option options_list[] = {
       GETIP_OPTION_ARG_HAVE_EMP,
       NULL,
       2
-    }
+    },
+
+    { "ip",
+      GETIP_OPTION_NO_ARG,
+      ip_opt,
+      3
+    },
+
+    { "org",
+      GETIP_OPTION_NO_ARG,
+      org_opt,
+      3
+    },
+
+    { "host",
+      GETIP_OPTION_NO_ARG,
+      host_opt,
+      3
+    },
+
+    { "as",
+      GETIP_OPTION_NO_ARG,
+      as_opt,
+      3
+    },
+
+    { "asname",
+      GETIP_OPTION_NO_ARG,
+      asname_opt,
+      3
+    },
+
+    { "isp",
+      GETIP_OPTION_NO_ARG,
+      isp_opt,
+      3
+    },
+
+    { "continent",
+      GETIP_OPTION_NO_ARG,
+      continent_opt,
+      3
+    },
+
+    { "country",
+      GETIP_OPTION_NO_ARG,
+      country_opt,
+      3
+    },
+
+    { "region",
+      GETIP_OPTION_NO_ARG,
+      region_opt,
+      3
+    },
+
+    { "city",
+      GETIP_OPTION_NO_ARG,
+      city_opt,
+      3
+    },
+
+    { "zone",
+      GETIP_OPTION_NO_ARG,
+      zone_opt,
+      3
+    },
+
+    { "is-host",
+      GETIP_OPTION_NO_ARG,
+      is_host_opt,
+      3
+    },
+
+    { "is-proxy",
+      GETIP_OPTION_NO_ARG,
+      is_proxy_opt,
+      3
+    },
+
+    { "is-mobile",
+      GETIP_OPTION_NO_ARG,
+      is_mobile_opt,
+      3
+    },
 };
 
 bool
@@ -281,5 +407,185 @@ fileds_list_opt(char *n)
 
     print_usage(USAGE_FIELDS);
     exit(EXIT_SUCCESS);
+}
+
+bool
+ip_opt(char *n)
+{
+    (void) n;
+
+    if (check_field_support(API_CAP_IP)) {
+        selected_capabilites |= API_CAP_IP;
+        return true;
+    }
+
+    return false;
+}
+
+bool
+org_opt(char *n)
+{
+    (void) n;
+
+    if (check_field_support(API_CAP_ORG)) {
+        selected_capabilites |= API_CAP_ORG;
+        return true;
+    }
+
+    return false;
+}
+
+bool
+host_opt(char *n)
+{
+    (void) n;
+
+    if (check_field_support(API_CAP_HOST)) {
+        selected_capabilites |= API_CAP_HOST;
+        return true;
+    }
+
+    return false;
+}
+
+bool
+as_opt(char *n)
+{
+    (void) n;
+
+    if (check_field_support(API_CAP_AS)) {
+        selected_capabilites |= API_CAP_AS;
+        return true;
+    }
+
+    return false;
+}
+
+bool
+asname_opt(char *n)
+{
+    (void) n;
+
+    if (check_field_support(API_CAP_AS_NAME)) {
+        selected_capabilites |= API_CAP_AS_NAME;
+        return true;
+    }
+
+    return false;
+}
+
+bool
+isp_opt(char *n) {
+    (void) n;
+
+    if (check_field_support(API_CAP_ISP)) {
+        selected_capabilites |= API_CAP_ISP;
+        return true;
+    }
+
+    return false;
+}
+
+bool
+continent_opt(char *n)
+{
+    (void) n;
+
+    if (check_field_support(API_CAP_CONTINENT)) {
+        selected_capabilites |= API_CAP_CONTINENT;
+        return true;
+    }
+
+    return false;
+}
+
+bool
+country_opt(char *n)
+{
+    (void) n;
+
+    if (check_field_support(API_CAP_COUNTRY)) {
+        selected_capabilites |= API_CAP_COUNTRY;
+        return true;
+    }
+
+    return false;
+}
+
+bool
+region_opt(char *n) {
+    (void) n;
+
+    if (check_field_support(API_CAP_REGION)) {
+        selected_capabilites |= API_CAP_REGION;
+        return true;
+    }
+
+    return false;
+}
+
+bool
+city_opt(char *n)
+{
+    (void) n;
+
+    if (check_field_support(API_CAP_CITY)) {
+        selected_capabilites |= API_CAP_CITY;
+        return true;
+    }
+
+    return false;
+}
+
+bool
+zone_opt(char *n)
+{
+    (void) n;
+
+    if (check_field_support(API_CAP_TIMEZONE)) {
+        selected_capabilites |= API_CAP_TIMEZONE;
+        return true;
+    }
+
+    return false;
+}
+
+bool
+is_host_opt(char *n)
+{
+    (void) n;
+
+    if (check_field_support(API_CAP_ISHOST)) {
+        selected_capabilites |= API_CAP_ISHOST;
+        return true;
+    }
+
+    return false;
+}
+
+bool
+is_proxy_opt(char *n)
+{
+    (void) n;
+
+    if (check_field_support(API_CAP_ISPROXY)) {
+        selected_capabilites |= API_CAP_ISPROXY;
+        return true;
+    }
+
+    return false;
+}
+
+bool
+is_mobile_opt(char *n)
+{
+    (void) n;
+
+    if (check_field_support(API_CAP_ISMOBILE)) {
+        selected_capabilites |= API_CAP_ISMOBILE;
+        return true;
+    }
+
+    return false;
 }
 

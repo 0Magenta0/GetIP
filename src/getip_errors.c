@@ -18,6 +18,9 @@
 #define ERR_STR_CURL_GLOB_INIT "curl_global_init() failed"
 #define ERR_STR_CURL_EASY_INIT "curl_easy_init() failed"
 #define ERR_STR_CURL_EASY_PERF "curl_easy_perform() failed"
+#define ERR_STR_API_RET_CODE   "API's response status code is not 200"
+#define ERR_STR_API_JSON_PARSE "Cannot parse JSON API response"
+#define ERR_STR_API_STATUS     "API response is not successful"
 
 enum error_id error_id;
 
@@ -64,6 +67,21 @@ error_handler(void)
             fputs(ERR_STR_ARG_API_UNK, stderr);
             putchar('\n');
             print_usage(USAGE_APIS);
+            break;
+
+        case ERR_API_RET_CODE:
+            fputs(ERR_STR_API_RET_CODE, stderr);
+            putchar('\n');
+            break;
+
+        case ERR_API_JSON_PARSE:
+            fputs(ERR_STR_API_JSON_PARSE, stderr);
+            putchar('\n');
+            break;
+
+        case ERR_API_STATUS:
+            fputs(ERR_STR_API_STATUS, stderr);
+            putchar('\n');
             break;
     }
 }

@@ -23,6 +23,7 @@ struct response {
 
 bool is_external_ip;
 struct external_ip external_ip;
+enum api_cap selected_capabilites;
 
 size_t
 write_response(void   *npart,
@@ -32,6 +33,9 @@ write_response(void   *npart,
 
 bool
 curl_perform(CURL *curl);
+
+void
+print_response(void);
 
 bool
 send_api_request(void)
@@ -63,7 +67,12 @@ send_api_request(void)
     curl_easy_cleanup(curl);
     curl_global_cleanup();
 
-    printf("%s\n", response.response);
+    if (!get_api_by_id(selected_api)->
+            handle_response(curl, response.response, response.len)) {
+        return false;
+    }
+
+    print_response();
 
     return true;
 
@@ -99,7 +108,8 @@ write_response(void   *npart,
 }
 
 bool
-curl_perform(CURL *curl) {
+curl_perform(CURL *curl)
+{
     CURLcode curl_status;
 
     if ((curl_status = curl_easy_perform(curl)) != CURLE_OK) {
@@ -114,5 +124,29 @@ curl_perform(CURL *curl) {
     }
 
     return true;
+}
+
+void
+print_response(void)
+{
+    struct api_node *current_api;
+    size_t caps_count;
+    size_t counter;
+
+    current_api = get_api_by_id(IP_API_COM);
+    caps_count = API_CAPS_COUNT(current_api->api_cap_id);
+    for (counter = 0; counter < caps_count; ++counter) {
+        if (current_api->api_cap_id[counter].capablitiy & selected_capabilites) {
+            if (current_api->api_cap_id[counter].result) {
+                printf("[\x1B[0;32m+\x1B[0m] %s: %s\n",
+                        current_api->api_cap_id[counter].str_value_name,
+                        current_api->api_cap_id[counter].result);
+            } else {
+                printf("[\x1B[0;31m-\x1B[0m] %s: %s\n",
+                        current_api->api_cap_id[counter].str_value_name,
+                        "\x1B[0;31mFAIL\x1B[0m");
+            }
+        }
+    }
 }
 

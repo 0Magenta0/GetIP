@@ -7,6 +7,9 @@
 
 #pragma once
 
+#include "getip_apis.h"
+#include "getip_request.h"
+
 #include <stdlib.h>
 #include <stdbool.h>
 
@@ -15,7 +18,13 @@ extern struct external_ip {
     size_t str_len;
 } external_ip;
 
+struct api_cap_response {
+    enum api_cap key;
+    char *str_res;
+};
+
 extern bool is_external_ip;
+extern enum api_cap selected_capabilites;
 
 bool
 send_api_request(void);

@@ -17,6 +17,9 @@ enum error_id {
     ERR_CURL_GLOB_INIT,
     ERR_CURL_EASY_INIT,
     ERR_CURL_EASY_PERF,
+    ERR_API_RET_CODE,
+    ERR_API_JSON_PARSE,
+    ERR_API_STATUS
 };
 
 extern enum error_id error_id;
