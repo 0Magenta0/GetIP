@@ -9,6 +9,9 @@
 
 #include <stdbool.h>
 
+#define MIN_IP_STR_LEN   3
+#define MAX_IP_STR_LEN 254
+
 extern bool is_verbose;
 
 bool

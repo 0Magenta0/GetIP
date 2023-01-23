@@ -18,9 +18,6 @@
 #include <stdbool.h>
 #include <stdnoreturn.h>
 
-#define MIN_IP_STR_LEN   3
-#define MAX_IP_STR_LEN 254
-
 #define MAX_OPT_PRIORITY 3
 #define OPTIONS_COUNT (sizeof (options_list) / sizeof (struct getip_option))
 
@@ -234,6 +231,8 @@ args_handler(const int    argc,
     size_t ip_str_len;
 
     if (argc == 1 || !argc) {
+        selected_capabilites =
+            get_api_by_id(selected_api)->capabilities;
         return true;
     } else {
         if (argv[1][0] != '-') {
@@ -308,6 +307,11 @@ _valid_arg:
 _opt_found:
                 continue;
             }
+        }
+
+        if (!selected_capabilites) {
+            selected_capabilites =
+                get_api_by_id(selected_api)->capabilities;
         }
 
         return true;

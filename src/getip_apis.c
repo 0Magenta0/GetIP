@@ -20,6 +20,23 @@
 #define IP_API_COM_URL     "http://ip-api.com/json/"
 #define IP_API_COM_URL_LEN (sizeof (IP_API_COM_URL) / sizeof (char))
 
+enum ip_api_com_bitset {
+    BS_IP_API_COM_IP        =    0x2000,
+    BS_IP_API_COM_ORG       =    0x0400,
+    BS_IP_API_COM_HOST      =    0x1000,
+    BS_IP_API_COM_AS        =    0x0800,
+    BS_IP_API_COM_AS_NAME   =  0x400000,
+    BS_IP_API_COM_ISP       =    0x0200,
+    BS_IP_API_COM_CONTINENT =  0x100000,
+    BS_IP_API_COM_COUNTRY   =      0x01,
+    BS_IP_API_COM_REGION    =      0x08,
+    BS_IP_API_COM_CITY      =      0x10,
+    BS_IP_API_COM_TIMEZONE  =     0x100,
+    BS_IP_API_COM_ISHOST    = 0x1000000,
+    BS_IP_API_COM_ISPROXY   =   0x20000,
+    BS_IP_API_COM_ISMOBILE  =   0x10000
+};
+
 void
 ip_api_com_builder(CURL *curl);
 
@@ -158,16 +175,52 @@ void
 ip_api_com_builder(CURL *curl)
 {
     char *tmp_url;
+    int tmp_bitset = 0;
 
-    /* TODO: Optimize request */
-    if (is_external_ip) {
-        tmp_url = malloc(external_ip.str_len + IP_API_COM_URL_LEN);
-        sprintf(tmp_url, IP_API_COM_URL "%s", external_ip.ip_str);
-        curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
-        free(tmp_url);
-    } else {
-        curl_easy_setopt(curl, CURLOPT_URL, "http://ip-api.com/json");
+    if (selected_capabilites & API_CAP_IP) {
+        tmp_bitset |= BS_IP_API_COM_IP;
+    } if (selected_capabilites & API_CAP_ORG) {
+        tmp_bitset |= BS_IP_API_COM_ORG;
+    } if (selected_capabilites & API_CAP_HOST) {
+        tmp_bitset |= BS_IP_API_COM_HOST;
+    } if (selected_capabilites & API_CAP_AS) {
+        tmp_bitset |= BS_IP_API_COM_AS;
+    } if (selected_capabilites & API_CAP_AS_NAME) {
+        tmp_bitset |= BS_IP_API_COM_AS_NAME;
+    } if (selected_capabilites & API_CAP_ISP) {
+        tmp_bitset |= BS_IP_API_COM_ISP;
+    } if (selected_capabilites & API_CAP_CONTINENT) {
+        tmp_bitset |= BS_IP_API_COM_CONTINENT;
+    } if (selected_capabilites & API_CAP_COUNTRY) {
+        tmp_bitset |= BS_IP_API_COM_COUNTRY;
+    } if (selected_capabilites & API_CAP_REGION) {
+        tmp_bitset |= BS_IP_API_COM_REGION;
+    } if (selected_capabilites & API_CAP_CITY) {
+        tmp_bitset |= BS_IP_API_COM_CITY;
+    } if (selected_capabilites & API_CAP_TIMEZONE) {
+        tmp_bitset |= BS_IP_API_COM_TIMEZONE;
+    } if (selected_capabilites & API_CAP_ISHOST) {
+        tmp_bitset |= BS_IP_API_COM_ISHOST;
+    } if (selected_capabilites & API_CAP_ISPROXY) {
+        tmp_bitset |= BS_IP_API_COM_ISPROXY;
+    } if (selected_capabilites & API_CAP_ISMOBILE) {
+        tmp_bitset |= BS_IP_API_COM_ISMOBILE;
     }
+
+    tmp_bitset |= 0xC000 /* Two flag enabled by default */;
+
+    tmp_url = malloc(external_ip.str_len + /* By default is 0 */
+                     IP_API_COM_URL_LEN + /* Includes Null-terminator */
+                     16 /* API bitset */);
+    if (is_external_ip) {
+        sprintf(tmp_url, IP_API_COM_URL "%.*s?fields=%d", MAX_IP_STR_LEN, external_ip.ip_str, tmp_bitset);
+        curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
+    } else {
+        sprintf(tmp_url, IP_API_COM_URL "?fields=%d", tmp_bitset);
+        curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
+    }
+
+    free(tmp_url);
 }
 
 bool
@@ -223,10 +276,14 @@ ip_api_com_handler(CURL   *curl,
             if (!json_object_is_type(certain_json_obj, json_type_null)
                 && (json_object_get_string_len(certain_json_obj)
                    || json_object_is_type(certain_json_obj, json_type_boolean))) {
-                cap_res_len = (size_t) json_object_get_string_len(certain_json_obj);
-                current_api->api_cap_id[counter].result = malloc(cap_res_len + 1);
-                strncpy(current_api->api_cap_id[counter].result, json_object_get_string(certain_json_obj), cap_res_len);
-                current_api->api_cap_id[counter].result[cap_res_len] = '\0';
+                if (json_object_is_type(certain_json_obj, json_type_boolean)) {
+                    current_api->api_cap_id[counter].result = malloc(6);
+                    strncpy(current_api->api_cap_id[counter].result, json_object_get_string(certain_json_obj), 6);
+                } else {
+                    cap_res_len = (size_t) json_object_get_string_len(certain_json_obj);
+                    current_api->api_cap_id[counter].result = malloc(cap_res_len + 1);
+                    strncpy(current_api->api_cap_id[counter].result, json_object_get_string(certain_json_obj), cap_res_len);
+                }
             }
         }
     }

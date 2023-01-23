@@ -30,10 +30,10 @@ enum api_cap {
     API_CAP_ISP       =   0x20,
     API_CAP_CONTINENT =   0x40,
     API_CAP_COUNTRY   =   0x80,
-    API_CAP_REGION    =  0x100,
-    API_CAP_CITY      =  0x200,
-    API_CAP_TIMEZONE  =  0x400,
-    API_CAP_ISHOST    =  0x800,
+    API_CAP_REGION    = 0x0100,
+    API_CAP_CITY      = 0x0200,
+    API_CAP_TIMEZONE  = 0x0400,
+    API_CAP_ISHOST    = 0x0800,
     API_CAP_ISPROXY   = 0x1000,
     API_CAP_ISMOBILE  = 0x2000
 };
