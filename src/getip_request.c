@@ -22,7 +22,9 @@ struct response {
 };
 
 bool is_external_ip;
+bool is_custom_agent;
 struct external_ip external_ip;
+char *custom_agent;
 enum api_cap selected_capabilites;
 
 size_t
@@ -53,6 +55,10 @@ send_api_request(void)
         error_id = ERR_CURL_EASY_INIT;
 
         goto _end_fail;
+    }
+
+    if (is_custom_agent) {
+        curl_easy_setopt(curl, CURLOPT_USERAGENT, custom_agent);
     }
 
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_response);

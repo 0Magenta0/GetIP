@@ -59,6 +59,9 @@ noreturn bool
 fileds_list_opt(char *);
 
 bool
+agent_opt(char *agent);
+
+bool
 ip_opt(char *);
 
 bool
@@ -135,7 +138,7 @@ const struct getip_option options_list[] = {
 
     { "agent",
       GETIP_OPTION_ARG_HAVE_EMP,
-      NULL,
+      agent_opt,
       2
     },
 
@@ -293,7 +296,8 @@ _valid_arg:
                     }
 
                     if (!strcmp(options_list[opt_counter].option_name, argv[arg_counter] + 1)) {
-                        if (options_list[opt_counter].option_type == GETIP_OPTION_ARG) {
+                        if (options_list[opt_counter].option_type == GETIP_OPTION_ARG ||
+                            options_list[opt_counter].option_type == GETIP_OPTION_ARG_HAVE_EMP) {
                             if (!options_list[opt_counter].func(argv[++arg_counter])) {
                                 return false;
                             }
@@ -414,6 +418,15 @@ fileds_list_opt(char *n)
 
     print_usage(USAGE_FIELDS);
     exit(EXIT_SUCCESS);
+}
+
+bool
+agent_opt(char *agent)
+{
+    is_custom_agent = true;
+    custom_agent = agent;
+
+    return true;
 }
 
 bool

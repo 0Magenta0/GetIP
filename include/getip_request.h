@@ -24,7 +24,9 @@ struct api_cap_response {
 };
 
 extern bool is_external_ip;
+extern bool is_custom_agent;
 extern enum api_cap selected_capabilites;
+extern char *custom_agent;
 
 bool
 send_api_request(void);
