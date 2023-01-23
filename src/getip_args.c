@@ -252,12 +252,15 @@ args_handler(const int    argc,
         for (int arg_counter = is_external_ip ? 2 : 1; arg_counter < argc; ++arg_counter) {
             for (int opt_counter = 0; opt_counter < (int) OPTIONS_COUNT; ++opt_counter) {
                 if (!strcmp(options_list[opt_counter].option_name, argv[arg_counter] + 1)) {
-                    if (options_list[opt_counter].option_type == GETIP_OPTION_ARG) {
+                    if (options_list[opt_counter].option_type == GETIP_OPTION_ARG ||
+                        options_list[opt_counter].option_type == GETIP_OPTION_ARG_HAVE_EMP) {
                         if (++arg_counter >= argc) {
                             error_id = ERR_ARG_MISS;
                             return false;
                         }
+                    }
 
+                    if (options_list[opt_counter].option_type == GETIP_OPTION_ARG) {
                         if (!string_have_no_empty(argv[arg_counter])) {
                             error_id = ERR_ARG_MISS;
                             return false;

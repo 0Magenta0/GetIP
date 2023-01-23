@@ -12,7 +12,7 @@ Simple utility to get information about IP written in C
  - [libcurl](https://curl.se/libcurl)
  - [json-c](https://github.com/json-c/json-c)
 
-### Project build
+### Manual build
 
 ```
 $ git clone https://github.com/0Magenta0/GetIP
