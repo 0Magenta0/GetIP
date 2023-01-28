@@ -43,6 +43,14 @@ enum ip_api_com_bitset {
 bool
 curl_check_code(CURL *curl);
 
+bool
+json_parse(struct json_object **parsed_json,
+           char   *json_response,
+           size_t json_res_len);
+
+void
+json_copy_caps_values(struct json_object **parsed_json);
+
 void
 ip_api_com_builder(CURL *curl);
 
@@ -260,6 +268,61 @@ curl_check_code(CURL *curl)
     return true;
 }
 
+bool
+json_parse(struct json_object **parsed_json,
+           char   *json_response,
+           size_t json_res_len)
+{
+    struct json_tokener *json_tokener;
+
+    json_tokener = json_tokener_new();
+
+    if (!(*parsed_json = json_tokener_parse_ex(json_tokener, json_response, (int) json_res_len))) {
+        if (is_verbose) {
+            fprintf(stderr, "JSON error: %d\n JSON buffer:\n%s\n", json_tokener_get_error(json_tokener), json_response);
+        }
+
+        error_id = ERR_API_JSON_PARSE;
+        json_tokener_free(json_tokener);
+
+        return false;
+    }
+
+    json_tokener_free(json_tokener);
+
+    return true;
+}
+
+void
+json_copy_caps_values(struct json_object **parsed_json)
+{
+    struct json_object *certain_json_obj;
+    struct api_node *current_api;
+    size_t caps_count;
+    size_t cap_res_len;
+    size_t counter;
+
+    current_api = get_api_by_id(IP_API_COM);
+    caps_count = API_CAPS_COUNT(current_api->api_cap_id);
+    for (counter = 0; counter < caps_count; ++counter) {
+        if (current_api->api_cap_id[counter].capablitiy & selected_capabilites) {
+            json_object_object_get_ex(*parsed_json, current_api->api_cap_id[counter].str_json_key, &certain_json_obj);
+            if (!json_object_is_type(certain_json_obj, json_type_null)
+                && (json_object_get_string_len(certain_json_obj)
+                   || json_object_is_type(certain_json_obj, json_type_boolean))) {
+                if (json_object_is_type(certain_json_obj, json_type_boolean)) {
+                    current_api->api_cap_id[counter].result = malloc(6);
+                    strncpy(current_api->api_cap_id[counter].result, json_object_get_string(certain_json_obj), 6);
+                } else {
+                    cap_res_len = (size_t) json_object_get_string_len(certain_json_obj);
+                    current_api->api_cap_id[counter].result = malloc(cap_res_len + 1);
+                    strcpy(current_api->api_cap_id[counter].result, json_object_get_string(certain_json_obj));
+                }
+            }
+        }
+    }
+}
+
 void
 ip_api_com_builder(CURL *curl)
 {
@@ -317,30 +380,16 @@ ip_api_com_handler(CURL   *curl,
                    char   *json_response,
                    size_t json_res_len)
 {
-    struct api_node *current_api;
-    size_t caps_count;
-    size_t cap_res_len;
-
-    struct json_object  *parsed_json;
-    struct json_object  *certain_json_obj;
-    struct json_tokener *tokener_ex;
-
-    size_t counter;
+    struct json_object  *parsed_json      = NULL;
+    struct json_object  *certain_json_obj = NULL;
 
     if (!curl_check_code(curl)) {
         return false;
     }
 
-    tokener_ex = json_tokener_new();
-    if (!(parsed_json = json_tokener_parse_ex(tokener_ex, json_response, (int) json_res_len))) {
-        if (is_verbose) {
-            fprintf(stderr, "JSON error: %d\n JSON buffer:\n%s\n", json_tokener_get_error(tokener_ex), json_response);
-        }
-
-        error_id = ERR_API_JSON_PARSE;
-        json_tokener_free(tokener_ex);
+    if (!json_parse(&parsed_json, json_response, json_res_len)) {
         return false;
-    } json_tokener_free(tokener_ex);
+    }
 
     json_object_object_get_ex(parsed_json, "status", &certain_json_obj);
     if (strcmp(json_object_get_string (certain_json_obj), "success")) {
@@ -354,25 +403,7 @@ ip_api_com_handler(CURL   *curl,
         return false;
     }
 
-    current_api = get_api_by_id(IP_API_COM);
-    caps_count = API_CAPS_COUNT(current_api->api_cap_id);
-    for (counter = 0; counter < caps_count; ++counter) {
-        if (current_api->api_cap_id[counter].capablitiy & selected_capabilites) {
-            json_object_object_get_ex(parsed_json, current_api->api_cap_id[counter].str_json_key, &certain_json_obj);
-            if (!json_object_is_type(certain_json_obj, json_type_null)
-                && (json_object_get_string_len(certain_json_obj)
-                   || json_object_is_type(certain_json_obj, json_type_boolean))) {
-                if (json_object_is_type(certain_json_obj, json_type_boolean)) {
-                    current_api->api_cap_id[counter].result = malloc(6);
-                    strncpy(current_api->api_cap_id[counter].result, json_object_get_string(certain_json_obj), 6);
-                } else {
-                    cap_res_len = (size_t) json_object_get_string_len(certain_json_obj);
-                    current_api->api_cap_id[counter].result = malloc(cap_res_len + 1);
-                    strcpy(current_api->api_cap_id[counter].result, json_object_get_string(certain_json_obj));
-                }
-            }
-        }
-    }
+    json_copy_caps_values(&parsed_json);
 
     return true;
 }
@@ -403,51 +434,17 @@ ipapi_co_handler(CURL   *curl,
                  char   *json_response,
                  size_t json_res_len)
 {
-    struct api_node *current_api;
-    size_t caps_count;
-    size_t cap_res_len;
-
-    struct json_object  *parsed_json;
-    struct json_object  *certain_json_obj;
-    struct json_tokener *tokener_ex;
-
-    size_t counter;
-
+    struct json_object  *parsed_json = NULL;
 
     if (!curl_check_code(curl)) {
         return false;
     }
 
-    tokener_ex = json_tokener_new();
-    if (!(parsed_json = json_tokener_parse_ex(tokener_ex, json_response, (int) json_res_len))) {
-        if (is_verbose) {
-            fprintf(stderr, "JSON error: %d\n JSON buffer:\n%s\n", json_tokener_get_error(tokener_ex), json_response);
-        }
-
-        error_id = ERR_API_JSON_PARSE;
-        json_tokener_free(tokener_ex);
+    if (!json_parse(&parsed_json, json_response, json_res_len)) {
         return false;
-    } json_tokener_free(tokener_ex);
-
-    current_api = get_api_by_id(selected_api);
-    caps_count = API_CAPS_COUNT(current_api->api_cap_id);
-    for (counter = 0; counter < caps_count; ++counter) {
-        if (current_api->api_cap_id[counter].capablitiy & selected_capabilites) {
-            json_object_object_get_ex(parsed_json, current_api->api_cap_id[counter].str_json_key, &certain_json_obj);
-            if (!json_object_is_type(certain_json_obj, json_type_null)
-                && (json_object_get_string_len(certain_json_obj)
-                   || json_object_is_type(certain_json_obj, json_type_boolean))) {
-                if (json_object_is_type(certain_json_obj, json_type_boolean)) {
-                    current_api->api_cap_id[counter].result = malloc(6);
-                    strncpy(current_api->api_cap_id[counter].result, json_object_get_string(certain_json_obj), 6);
-                } else {
-                    cap_res_len = (size_t) json_object_get_string_len(certain_json_obj);
-                    current_api->api_cap_id[counter].result = malloc(cap_res_len + 1);
-                    strcpy(current_api->api_cap_id[counter].result, json_object_get_string(certain_json_obj));
-                }
-            }
-        }
     }
+
+    json_copy_caps_values(&parsed_json);
 
     return true;
 }
