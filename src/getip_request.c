@@ -44,6 +44,7 @@ send_api_request(void)
 {
     CURL *curl;
     struct response response = {0};
+    char *default_agent;
 
     if (curl_global_init(CURL_GLOBAL_SSL)) {
         error_id = ERR_CURL_GLOB_INIT;
@@ -60,7 +61,8 @@ send_api_request(void)
     if (is_custom_agent) {
         curl_easy_setopt(curl, CURLOPT_USERAGENT, custom_agent);
     } else {
-        curl_easy_setopt(curl, CURLOPT_USERAGENT, "curl/7.87.1");
+        default_agent = strtok(curl_version() + 3, " ");
+        curl_easy_setopt(curl, CURLOPT_USERAGENT, default_agent);
     }
 
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_response);

@@ -363,9 +363,9 @@ ip_api_com_builder(CURL *curl)
 
     tmp_bitset |= 0xC000 /* Two flag enabled by default */;
 
-    tmp_url = malloc(external_ip.str_len + /* By default is 0 */
-                     IP_API_COM_URL_LEN + /* Includes Null-terminator */
-                     16 /* API bitset */);
+    tmp_url = malloc(external_ip.str_len /* By default is 0 */
+                     + IP_API_COM_URL_LEN /* Includes Null-terminator */
+                     + 16 /* API bitset */);
     if (is_external_ip) {
         sprintf(tmp_url, IP_API_COM_URL "%.*s?fields=%d", MAX_IP_STR_LEN, external_ip.ip_str, tmp_bitset);
         curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
