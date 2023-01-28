@@ -17,11 +17,13 @@
 #include <curl/curl.h>
 #include <json-c/json.h>
 
-#define IP_API_COM_URL     "http://ip-api.com/json/"
-#define IP_API_COM_URL_LEN (sizeof (IP_API_COM_URL) / sizeof (char))
+#define IP_API_COM_URL      "http://ip-api.com/json/"
+#define IP_API_COM_URL_LEN  (sizeof (IP_API_COM_URL) / sizeof (char))
+#define IP_API_COM_ALL_CAPS 0x3FFF
 
-#define IPAPI_CO_URL     "http://ipapi.co/"
-#define IPAPI_CO_URL_LEN (sizeof (IPAPI_CO_URL) / sizeof (char))
+#define IPAPI_CO_URL      "http://ipapi.co/"
+#define IPAPI_CO_URL_LEN  (sizeof (IPAPI_CO_URL) / sizeof (char))
+#define IPAPI_CO_ALL_CAPS 0x07CF
 
 enum ip_api_com_bitset {
     BS_IP_API_COM_IP        =    0x2000,
@@ -74,7 +76,7 @@ struct api_node apis_list[] = {
       "IP_API_COM",
       ip_api_com_builder,
       ip_api_com_handler,
-      0x3FFF,
+      IP_API_COM_ALL_CAPS,
       { { API_CAP_IP,
           "query",
           "IP",
@@ -165,7 +167,7 @@ struct api_node apis_list[] = {
       "IPAPI_CO",
       ipapi_co_builder,
       ipapi_co_handler,
-      0x3FFF,
+      IPAPI_CO_ALL_CAPS,
       { { API_CAP_IP,
           "ip",
           "IP",
