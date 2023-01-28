@@ -82,6 +82,7 @@ send_api_request(void)
         return false;
     }
 
+    free(response.response);
     print_response();
 
     return true;
@@ -151,6 +152,7 @@ print_response(void)
                 printf("[\x1B[0;32m+\x1B[0m] %s: %s\n",
                         current_api->api_cap_id[counter].str_value_name,
                         current_api->api_cap_id[counter].result);
+                free(current_api->api_cap_id[counter].result);
             } else {
                 printf("[\x1B[0;31m-\x1B[0m] %s: %s\n",
                         current_api->api_cap_id[counter].str_value_name,
