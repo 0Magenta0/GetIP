@@ -312,7 +312,7 @@ json_copy_caps_values(struct json_object **parsed_json)
                    || json_object_is_type(certain_json_obj, json_type_boolean))) {
                 if (json_object_is_type(certain_json_obj, json_type_boolean)) {
                     current_api->api_cap_id[counter].result = malloc(6);
-                    strncpy(current_api->api_cap_id[counter].result, json_object_get_string(certain_json_obj), 6);
+                    strncpy(current_api->api_cap_id[counter].result, json_object_get_string(certain_json_obj), 5);
                 } else {
                     cap_res_len = (size_t) json_object_get_string_len(certain_json_obj);
                     current_api->api_cap_id[counter].result = malloc(cap_res_len + 1);
