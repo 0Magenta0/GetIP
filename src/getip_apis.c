@@ -21,7 +21,7 @@
 #define IP_API_COM_URL_LEN  (sizeof (IP_API_COM_URL) / sizeof (char))
 #define IP_API_COM_ALL_CAPS 0x3FFF
 
-#define IPAPI_CO_URL      "http://ipapi.co/"
+#define IPAPI_CO_URL      "https://ipapi.co/"
 #define IPAPI_CO_URL_LEN  (sizeof (IPAPI_CO_URL) / sizeof (char))
 #define IPAPI_CO_ALL_CAPS 0x07CF
 
@@ -304,7 +304,7 @@ json_copy_caps_values(struct json_object **parsed_json)
     size_t cap_res_len;
     size_t counter;
 
-    current_api = get_api_by_id(IP_API_COM);
+    current_api = get_api_by_id(selected_api);
     caps_count = API_CAPS_COUNT(current_api->api_cap_id);
     for (counter = 0; counter < caps_count; ++counter) {
         if (current_api->api_cap_id[counter].capablitiy & selected_capabilites) {
@@ -382,8 +382,8 @@ ip_api_com_handler(CURL   *curl,
                    char   *json_response,
                    size_t json_res_len)
 {
-    struct json_object  *parsed_json      = NULL;
-    struct json_object  *certain_json_obj = NULL;
+    struct json_object *parsed_json      = NULL;
+    struct json_object *certain_json_obj = NULL;
 
     if (!curl_check_code(curl)) {
         return false;
@@ -436,7 +436,7 @@ ipapi_co_handler(CURL   *curl,
                  char   *json_response,
                  size_t json_res_len)
 {
-    struct json_object  *parsed_json = NULL;
+    struct json_object *parsed_json = NULL;
 
     if (!curl_check_code(curl)) {
         return false;

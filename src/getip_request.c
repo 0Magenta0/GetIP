@@ -45,7 +45,7 @@ send_api_request(void)
     CURL *curl;
     struct response response = {0};
 
-    if (curl_global_init(CURL_GLOBAL_NOTHING)) {
+    if (curl_global_init(CURL_GLOBAL_SSL)) {
         error_id = ERR_CURL_GLOB_INIT;
 
         return false;
