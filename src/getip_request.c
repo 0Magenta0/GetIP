@@ -59,6 +59,8 @@ send_api_request(void)
 
     if (is_custom_agent) {
         curl_easy_setopt(curl, CURLOPT_USERAGENT, custom_agent);
+    } else {
+        curl_easy_setopt(curl, CURLOPT_USERAGENT, "curl/7.87.1");
     }
 
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_response);
@@ -139,7 +141,7 @@ print_response(void)
     size_t caps_count;
     size_t counter;
 
-    current_api = get_api_by_id(IP_API_COM);
+    current_api = get_api_by_id(selected_api);
     caps_count = API_CAPS_COUNT(current_api->api_cap_id);
     for (counter = 0; counter < caps_count; ++counter) {
         if (current_api->api_cap_id[counter].capablitiy & selected_capabilites) {

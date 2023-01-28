@@ -13,12 +13,13 @@
 #include <curl/curl.h>
 
 #define API_CAP_COUNT 14
-#define APIS_COUNT 1
+#define APIS_COUNT 2
 
 #define API_CAPS_COUNT(api_caps) (sizeof (api_caps) / sizeof (struct api_cap_id))
 
 enum api_ids {
-    IP_API_COM
+    IP_API_COM,
+    IPAPI_CO
 };
 
 enum api_cap {

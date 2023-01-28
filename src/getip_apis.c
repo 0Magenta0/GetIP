@@ -20,6 +20,9 @@
 #define IP_API_COM_URL     "http://ip-api.com/json/"
 #define IP_API_COM_URL_LEN (sizeof (IP_API_COM_URL) / sizeof (char))
 
+#define IPAPI_CO_URL     "http://ipapi.co/"
+#define IPAPI_CO_URL_LEN (sizeof (IPAPI_CO_URL) / sizeof (char))
+
 enum ip_api_com_bitset {
     BS_IP_API_COM_IP        =    0x2000,
     BS_IP_API_COM_ORG       =    0x0400,
@@ -37,6 +40,9 @@ enum ip_api_com_bitset {
     BS_IP_API_COM_ISMOBILE  =   0x10000
 };
 
+bool
+curl_check_code(CURL *curl);
+
 void
 ip_api_com_builder(CURL *curl);
 
@@ -44,6 +50,14 @@ bool
 ip_api_com_handler(CURL *curl,
                    char *json_response,
                    size_t json_res_len);
+
+void
+ipapi_co_builder(CURL *curl);
+
+bool
+ipapi_co_handler(CURL   *curl,
+                 char   *json_response,
+                 size_t json_res_len);
 
 enum api_ids selected_api;
 
@@ -137,6 +151,67 @@ struct api_node apis_list[] = {
           NULL
         }
       }
+    },
+
+    { IPAPI_CO,
+      "IPAPI_CO",
+      ipapi_co_builder,
+      ipapi_co_handler,
+      0x3FFF,
+      { { API_CAP_IP,
+          "ip",
+          "IP",
+          NULL
+        },
+
+        { API_CAP_ORG,
+          "org",
+          "ORG",
+          NULL
+        },
+
+        { API_CAP_HOST,
+          "hostname",
+          "Hostname",
+          NULL
+        },
+
+        { API_CAP_AS,
+          "asn",
+          "ASN",
+          NULL
+        },
+
+        { API_CAP_CONTINENT,
+          "continent_code",
+          "Continent",
+          NULL
+        },
+
+        { API_CAP_COUNTRY,
+          "country_name",
+          "Country",
+          NULL
+        },
+
+        { API_CAP_REGION,
+          "region",
+          "Region",
+          NULL
+        },
+
+        { API_CAP_CITY,
+          "city",
+          "City",
+          NULL
+        },
+
+        { API_CAP_TIMEZONE,
+          "timezone",
+          "Time Zone",
+          NULL
+        },
+      }
     }
 };
 
@@ -169,6 +244,20 @@ get_api_by_id(enum api_ids id)
     }
 
     return NULL;
+}
+
+bool
+curl_check_code(CURL *curl)
+{
+    long status_code;
+
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status_code);
+    if (status_code != 200) {
+        error_id = ERR_API_RET_CODE;
+        return false;
+    }
+
+    return true;
 }
 
 void
@@ -236,12 +325,9 @@ ip_api_com_handler(CURL   *curl,
     struct json_object  *certain_json_obj;
     struct json_tokener *tokener_ex;
 
-    long status_code;
     size_t counter;
 
-    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status_code);
-    if (status_code != 200) {
-        error_id = ERR_API_RET_CODE;
+    if (!curl_check_code(curl)) {
         return false;
     }
 
@@ -269,6 +355,81 @@ ip_api_com_handler(CURL   *curl,
     }
 
     current_api = get_api_by_id(IP_API_COM);
+    caps_count = API_CAPS_COUNT(current_api->api_cap_id);
+    for (counter = 0; counter < caps_count; ++counter) {
+        if (current_api->api_cap_id[counter].capablitiy & selected_capabilites) {
+            json_object_object_get_ex(parsed_json, current_api->api_cap_id[counter].str_json_key, &certain_json_obj);
+            if (!json_object_is_type(certain_json_obj, json_type_null)
+                && (json_object_get_string_len(certain_json_obj)
+                   || json_object_is_type(certain_json_obj, json_type_boolean))) {
+                if (json_object_is_type(certain_json_obj, json_type_boolean)) {
+                    current_api->api_cap_id[counter].result = malloc(6);
+                    strncpy(current_api->api_cap_id[counter].result, json_object_get_string(certain_json_obj), 6);
+                } else {
+                    cap_res_len = (size_t) json_object_get_string_len(certain_json_obj);
+                    current_api->api_cap_id[counter].result = malloc(cap_res_len + 1);
+                    strcpy(current_api->api_cap_id[counter].result, json_object_get_string(certain_json_obj));
+                }
+            }
+        }
+    }
+
+    return true;
+}
+
+void
+ipapi_co_builder(CURL *curl)
+{
+    char *tmp_url;
+
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, true);
+
+    tmp_url = malloc(external_ip.str_len + /* By default is 0 */
+                     IPAPI_CO_URL_LEN + /* Includes Null-terminator */
+                     5 /* /json */);
+    if (is_external_ip) {
+        sprintf(tmp_url, IPAPI_CO_URL "%.*s/json", MAX_IP_STR_LEN, external_ip.ip_str);
+        curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
+    } else {
+        sprintf(tmp_url, IPAPI_CO_URL "json");
+        curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
+    }
+
+    free(tmp_url);
+}
+
+bool
+ipapi_co_handler(CURL   *curl,
+                 char   *json_response,
+                 size_t json_res_len)
+{
+    struct api_node *current_api;
+    size_t caps_count;
+    size_t cap_res_len;
+
+    struct json_object  *parsed_json;
+    struct json_object  *certain_json_obj;
+    struct json_tokener *tokener_ex;
+
+    size_t counter;
+
+
+    if (!curl_check_code(curl)) {
+        return false;
+    }
+
+    tokener_ex = json_tokener_new();
+    if (!(parsed_json = json_tokener_parse_ex(tokener_ex, json_response, (int) json_res_len))) {
+        if (is_verbose) {
+            fprintf(stderr, "JSON error: %d\n JSON buffer:\n%s\n", json_tokener_get_error(tokener_ex), json_response);
+        }
+
+        error_id = ERR_API_JSON_PARSE;
+        json_tokener_free(tokener_ex);
+        return false;
+    } json_tokener_free(tokener_ex);
+
+    current_api = get_api_by_id(selected_api);
     caps_count = API_CAPS_COUNT(current_api->api_cap_id);
     for (counter = 0; counter < caps_count; ++counter) {
         if (current_api->api_cap_id[counter].capablitiy & selected_capabilites) {
