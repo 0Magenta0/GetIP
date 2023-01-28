@@ -439,6 +439,7 @@ ip_opt(char *n)
         return true;
     }
 
+    error_id = ERR_ARG_API_FIELD;
     return false;
 }
 
@@ -452,6 +453,7 @@ org_opt(char *n)
         return true;
     }
 
+    error_id = ERR_ARG_API_FIELD;
     return false;
 }
 
@@ -465,6 +467,7 @@ host_opt(char *n)
         return true;
     }
 
+    error_id = ERR_ARG_API_FIELD;
     return false;
 }
 
@@ -478,6 +481,7 @@ as_opt(char *n)
         return true;
     }
 
+    error_id = ERR_ARG_API_FIELD;
     return false;
 }
 
@@ -491,6 +495,7 @@ asname_opt(char *n)
         return true;
     }
 
+    error_id = ERR_ARG_API_FIELD;
     return false;
 }
 
@@ -503,6 +508,7 @@ isp_opt(char *n) {
         return true;
     }
 
+    error_id = ERR_ARG_API_FIELD;
     return false;
 }
 
@@ -516,6 +522,7 @@ continent_opt(char *n)
         return true;
     }
 
+    error_id = ERR_ARG_API_FIELD;
     return false;
 }
 
@@ -529,6 +536,7 @@ country_opt(char *n)
         return true;
     }
 
+    error_id = ERR_ARG_API_FIELD;
     return false;
 }
 
@@ -541,6 +549,7 @@ region_opt(char *n) {
         return true;
     }
 
+    error_id = ERR_ARG_API_FIELD;
     return false;
 }
 
@@ -554,6 +563,7 @@ city_opt(char *n)
         return true;
     }
 
+    error_id = ERR_ARG_API_FIELD;
     return false;
 }
 
@@ -567,6 +577,7 @@ zone_opt(char *n)
         return true;
     }
 
+    error_id = ERR_ARG_API_FIELD;
     return false;
 }
 
@@ -580,6 +591,7 @@ is_host_opt(char *n)
         return true;
     }
 
+    error_id = ERR_ARG_API_FIELD;
     return false;
 }
 
@@ -593,6 +605,7 @@ is_proxy_opt(char *n)
         return true;
     }
 
+    error_id = ERR_ARG_API_FIELD;
     return false;
 }
 
@@ -606,6 +619,7 @@ is_mobile_opt(char *n)
         return true;
     }
 
+    error_id = ERR_ARG_API_FIELD;
     return false;
 }
 
