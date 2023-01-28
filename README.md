@@ -1,9 +1,10 @@
-# GetIP 2.1.1
+# GetIP 2.2.1
 
 Simple utility to get information about IP written in C
 
 ### GetIP supports this APIs
  - [ip-api.com](https://ip-api.com) (Default)
+ - [ipapi.co](https://ipapi.co)
 
 ### Dependencies
  - [libcurl](https://curl.se/libcurl)
@@ -21,7 +22,7 @@ $ ./builder.sh R
 
 GetIP help message
 ```
-GetIP (version 2.1.1)
+GetIP (version 2.2.1)
 Utility to request info about IP from APIs
 https://github.com/0Magenta0/GetIP
 
@@ -38,17 +39,18 @@ Usage: getip [target] [options]
 
 GetIP api-list message
 ```
-GetIP (version 2.1.1)
+GetIP (version 2.2.1)
 Utility to request info about IP from APIs
 https://github.com/0Magenta0/GetIP
 
 List of supported apis:
   IP_API_COM (Default)
+  IPAPI_CO
 ```
 
 GetIP fields-list message (IP\_API\_COM)
 ```
-GetIP (version 2.1.1)
+GetIP (version 2.2.1)
 Utility to request info about IP from APIs
 https://github.com/0Magenta0/GetIP
 
