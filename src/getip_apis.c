@@ -90,7 +90,7 @@ struct api_node apis_list[] = {
         },
 
         { API_CAP_HOST,
-          "hostname",
+          "reverse",
           "Hostname",
           NULL
         },
