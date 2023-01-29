@@ -1,6 +1,6 @@
 # GetIP 2.2.3
 
-Simple utility to get information about IP written in C
+Simple utility to request information about IP written in C
 
 ### GetIP supports this APIs
  - [ip-api.com](https://ip-api.com) (Default)
