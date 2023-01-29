@@ -25,6 +25,10 @@
 #define IPAPI_CO_URL_LEN  (sizeof (IPAPI_CO_URL) / sizeof (char))
 #define IPAPI_CO_ALL_CAPS 0x07CF
 
+#define EXTREME_IP_URL      "https://extreme-ip-lookup.com/json/"
+#define EXTREME_IP_URL_LEN  (sizeof (EXTREME_IP_URL) / sizeof (char))
+#define EXTREME_IP_ALL_CAPS 0x07FB
+
 enum ip_api_com_bitset {
     BS_IP_API_COM_IP        =    0x2000,
     BS_IP_API_COM_ORG       =    0x0400,
@@ -53,6 +57,9 @@ json_parse(struct json_object **parsed_json,
 void
 json_copy_caps_values(struct json_object **parsed_json);
 
+bool
+check_api_success(struct json_object **parsed_json);
+
 void
 ip_api_com_builder(CURL *curl);
 
@@ -69,9 +76,17 @@ ipapi_co_handler(CURL   *curl,
                  char   *json_response,
                  size_t json_res_len);
 
+void
+extreme_ip_builder(CURL *curl);
+
+bool
+extreme_ip_handler(CURL   *curl,
+                   char   *json_response,
+                   size_t json_res_len);
+
 enum api_ids selected_api;
 
-struct api_node apis_list[] = {
+struct api_node apis_list[APIS_COUNT] = {
     { IP_API_COM,
       "IP_API_COM",
       ip_api_com_builder,
@@ -220,7 +235,74 @@ struct api_node apis_list[] = {
           "timezone",
           "Time Zone",
           NULL
+        }
+      }
+    },
+
+    { EXTREME_IP,
+      "EXTREME_IP",
+      extreme_ip_builder,
+      extreme_ip_handler,
+      IPAPI_CO_ALL_CAPS,
+      { { API_CAP_IP,
+          "query",
+          "IP",
+          NULL
         },
+
+        { API_CAP_ORG,
+          "org",
+          "ORG",
+          NULL
+        },
+
+        { API_CAP_AS,
+          "asn",
+          "AS",
+          NULL
+        },
+
+        { API_CAP_AS_NAME,
+          "asName",
+          "AS Name",
+          NULL
+        },
+
+        { API_CAP_ISP,
+          "isp",
+          "ISP",
+          NULL
+        },
+
+        { API_CAP_CONTINENT,
+          "continent",
+          "Continent",
+          NULL
+        },
+
+        { API_CAP_COUNTRY,
+          "country",
+          "Country",
+          NULL
+        },
+
+        { API_CAP_REGION,
+          "region",
+          "Region",
+          NULL
+        },
+
+        { API_CAP_CITY,
+          "city",
+          "City",
+          NULL
+        },
+
+        { API_CAP_TIMEZONE,
+          "timezone",
+          "Time Zone",
+          NULL
+        }
       }
     }
 };
@@ -327,6 +409,26 @@ json_copy_caps_values(struct json_object **parsed_json)
     json_object_put(*parsed_json);
 }
 
+bool
+check_api_success(struct json_object **parsed_json)
+{
+    struct json_object *certain_json_obj = NULL;
+
+    json_object_object_get_ex(*parsed_json, "status", &certain_json_obj);
+    if (strcmp(json_object_get_string (certain_json_obj), "success")) {
+        if (is_verbose) {
+            printf("API error: Response status is \"%s\"\n", json_object_get_string(certain_json_obj));
+            json_object_object_get_ex(*parsed_json, "message", &certain_json_obj);
+            printf("API message: %s\n", json_object_get_string(certain_json_obj));
+        }
+
+        error_id = ERR_API_STATUS;
+        return false;
+    }
+
+    return true;
+}
+
 void
 ip_api_com_builder(CURL *curl)
 {
@@ -385,7 +487,6 @@ ip_api_com_handler(CURL   *curl,
                    size_t json_res_len)
 {
     struct json_object *parsed_json      = NULL;
-    struct json_object *certain_json_obj = NULL;
 
     if (!curl_check_code(curl)) {
         return false;
@@ -395,15 +496,7 @@ ip_api_com_handler(CURL   *curl,
         return false;
     }
 
-    json_object_object_get_ex(parsed_json, "status", &certain_json_obj);
-    if (strcmp(json_object_get_string (certain_json_obj), "success")) {
-        if (is_verbose) {
-            printf("API error: Response status is \"%s\"\n", json_object_get_string(certain_json_obj));
-            json_object_object_get_ex(parsed_json, "message", &certain_json_obj);
-            printf("API message: %s\n", json_object_get_string(certain_json_obj));
-        }
-
-        error_id = ERR_API_STATUS;
+    if (!check_api_success(&parsed_json)) {
         return false;
     }
 
@@ -419,9 +512,9 @@ ipapi_co_builder(CURL *curl)
 
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, true);
 
-    tmp_url = malloc(external_ip.str_len + /* By default is 0 */
-                     IPAPI_CO_URL_LEN + /* Includes Null-terminator */
-                     5 /* /json */);
+    tmp_url = malloc(external_ip.str_len /* By default is 0 */
+                     + IPAPI_CO_URL_LEN /* Includes Null-terminator */
+                     + 5 /* /json */);
     if (is_external_ip) {
         sprintf(tmp_url, IPAPI_CO_URL "%.*s/json", MAX_IP_STR_LEN, external_ip.ip_str);
         curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
@@ -445,6 +538,51 @@ ipapi_co_handler(CURL   *curl,
     }
 
     if (!json_parse(&parsed_json, json_response, json_res_len)) {
+        return false;
+    }
+
+    json_copy_caps_values(&parsed_json);
+
+    return true;
+}
+
+void
+extreme_ip_builder(CURL *curl)
+{
+    char *tmp_url;
+
+    // curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, true);
+
+    tmp_url = malloc(external_ip.str_len /* By default is 0 */
+                     + EXTREME_IP_URL_LEN /* Includes Null-terminator */
+                     + 10 /* ?key=demo2 */);
+    if (is_external_ip) {
+        sprintf(tmp_url, EXTREME_IP_URL "%.*s?key=demo2", MAX_IP_STR_LEN, external_ip.ip_str);
+        curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
+    } else {
+        sprintf(tmp_url, EXTREME_IP_URL "?key=demo2");
+        curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
+    }
+
+    free(tmp_url);
+}
+
+bool
+extreme_ip_handler(CURL   *curl,
+                   char   *json_response,
+                   size_t json_res_len)
+{
+    struct json_object *parsed_json      = NULL;
+
+    if (!curl_check_code(curl)) {
+        return false;
+    }
+
+    if (!json_parse(&parsed_json, json_response, json_res_len)) {
+        return false;
+    }
+
+    if (!check_api_success(&parsed_json)) {
         return false;
     }
 
