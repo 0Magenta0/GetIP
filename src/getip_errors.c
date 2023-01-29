@@ -15,12 +15,12 @@
 #define ERR_STR_ARG_UNK        "unknown paramenter"
 #define ERR_STR_ARG_MISS       "parameter should have argument"
 #define ERR_STR_ARG_API_UNK    "you're select invalid API"
-#define ERR_STR_ARG_API_FIELD  "Select API doesn't support this field"
+#define ERR_STR_ARG_API_FIELD  "select API doesn't support this field"
 #define ERR_STR_CURL_GLOB_INIT "curl_global_init() failed"
 #define ERR_STR_CURL_EASY_INIT "curl_easy_init() failed"
 #define ERR_STR_CURL_EASY_PERF "curl_easy_perform() failed"
 #define ERR_STR_API_RET_CODE   "API's response status code is not 200"
-#define ERR_STR_API_JSON_PARSE "Cannot parse JSON API response"
+#define ERR_STR_API_JSON_PARSE "cannot parse JSON API response"
 #define ERR_STR_API_STATUS     "API response is not successful"
 
 enum error_id error_id;
