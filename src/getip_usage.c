@@ -13,7 +13,8 @@
 #include <stdlib.h>
 
 void
-print_usage(enum usage_variants variant) {
+print_usage(enum usage_variants variant)
+{
     puts("GetIP (version " GETIP_VERSION ")\n"
           GETIP_DESCRIPTION "\n"
           GETIP_URL "\n"
