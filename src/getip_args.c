@@ -318,6 +318,7 @@ args_handler(const int    argc,
 
             last_external_ip->ip_str[ip_str_len] = '\0';
             is_external_ips = true;
+            ++ips_count;
         }
 
         for (int arg_counter = ips_count + 1; arg_counter < argc; ++arg_counter) {

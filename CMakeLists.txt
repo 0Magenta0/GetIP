@@ -39,8 +39,7 @@ SET (
      -Wall -Wextra -Werror -Wpedantic \
      -Wcast-qual -Wconversion -Wcast-align \
      -Wredundant-decls -Wsign-conversion \
-     -Waggregate-return -Wswitch-enum \
-     -fsanitize=address"
+     -Waggregate-return -Wswitch-enum"
 )
 
 
