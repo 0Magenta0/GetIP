@@ -25,7 +25,7 @@ GetIP (version 2.6.0)
 Utility to request info about IP from APIs
 https://github.com/0Magenta0/GetIP
 
-Usage: getip [[target][-]] [options]
+Usage: getip [[targets][-]] [options]
  or:   getip [options]
 
   -help            Print this message and exit
@@ -54,7 +54,7 @@ GetIP (version 2.6.0)
 Utility to request info about IP from APIs
 https://github.com/0Magenta0/GetIP
 
-Usage: getip [[target][-]] [options]
+Usage: getip [[targets][-]] [options]
  or:   getip [options]
 
 List of supported field by current API:

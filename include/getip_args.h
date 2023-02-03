@@ -14,6 +14,7 @@
 
 extern bool is_verbose;
 extern bool is_raw;
+extern bool is_no_delim;
 
 bool
 args_handler(int argc,

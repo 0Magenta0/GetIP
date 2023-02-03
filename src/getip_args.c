@@ -68,6 +68,9 @@ bool
 raw_opt(char *);
 
 bool
+no_delim_opt(char *);
+
+bool
 ip_opt(char *);
 
 bool
@@ -111,6 +114,7 @@ is_mobile_opt(char *);
 
 bool is_verbose;
 bool is_raw;
+bool is_no_delim;
 
 const struct getip_option options_list[] = {
     { "help",
@@ -152,6 +156,12 @@ const struct getip_option options_list[] = {
     { "raw",
       GETIP_OPTION_NO_ARG,
       raw_opt,
+      2
+    },
+
+    { "no-delim",
+      GETIP_OPTION_NO_ARG,
+      no_delim_opt,
       2
     },
 
@@ -246,6 +256,7 @@ args_handler(const int    argc,
 {
     size_t ip_str_len;
     bool is_next_ip = true;
+    int ips_count = 0;
     int ch;
 
     if (argc == 1 || !argc) {
@@ -254,16 +265,20 @@ args_handler(const int    argc,
         return true;
     } else {
         if (argv[1][0] != '-') {
-            if (!ip_string_validate(argv[1])) {
-                error_id = ERR_IP_STR;
-                return false;
+            while (argv[ips_count + 1] != NULL && argv[ips_count + 1][0] != '-') {
+                if (!ip_string_validate(argv[ips_count + 1])) {
+                    error_id = ERR_IP_STR;
+                    return false;
+                }
+
+                ip_str_len = strlen(argv[ips_count + 1]);
+                append_ip_str(ip_str_len);
+                strncpy(last_external_ip->ip_str, argv[ips_count + 1], ip_str_len);
+                last_external_ip->ip_str[ip_str_len] = '\0';
+                last_external_ip->str_len = ip_str_len;
+                ++ips_count;
             }
 
-            ip_str_len = strlen(argv[1]);
-            external_ip->ip_str = malloc(ip_str_len + 1);
-            strncpy(external_ip->ip_str, argv[1], ip_str_len);
-            external_ip->ip_str[ip_str_len] = '\0';
-            external_ip->str_len = ip_str_len;
             is_external_ips = true;
         } else if (argv[1][0] == '-' && argv[1][1] == '\0') {
             while ((ch = getchar()) != EOF) {
@@ -291,6 +306,11 @@ args_handler(const int    argc,
                         continue;
                     }
 
+                    if (isblank(ch)) {
+                        error_id = ERR_IP_STR;
+                        return false;
+                    }
+
                     last_external_ip->ip_str[ip_str_len] = (char) ch;
                     ++ip_str_len;
                 }
@@ -300,7 +320,7 @@ args_handler(const int    argc,
             is_external_ips = true;
         }
 
-        for (int arg_counter = is_external_ips ? 2 : 1; arg_counter < argc; ++arg_counter) {
+        for (int arg_counter = ips_count + 1; arg_counter < argc; ++arg_counter) {
             for (int opt_counter = 0; opt_counter < (int) OPTIONS_COUNT; ++opt_counter) {
                 if (!strcmp(options_list[opt_counter].option_name, argv[arg_counter] + 1)) {
                     if (options_list[opt_counter].option_type == GETIP_OPTION_ARG ||
@@ -337,7 +357,7 @@ _valid_arg:
         }
 
         for (int priority = 0; priority <= MAX_OPT_PRIORITY; ++priority) {
-            for (int arg_counter = is_external_ips ? 2 : 1; arg_counter < argc; ++arg_counter) {
+            for (int arg_counter = ips_count + 1; arg_counter < argc; ++arg_counter) {
                 for (int opt_counter = 0; opt_counter < (int) OPTIONS_COUNT; ++opt_counter) {
                     if (options_list[opt_counter].option_priority != priority) {
                         continue;
@@ -499,6 +519,14 @@ raw_opt(char *n)
     (void) n;
 
     return (is_raw = true);
+}
+
+bool
+no_delim_opt(char *n)
+{
+    (void) n;
+
+    return (is_no_delim = true);
 }
 
 bool

@@ -112,7 +112,14 @@ send_api_request(void)
         free(external_ip->ip_str);
         free(external_ip);
         external_ip = tmp_ip_str;
-        puts("=================================");
+
+        if (!is_raw) {
+            if (!is_no_delim) {
+                puts("=================================");
+            }
+        } else {
+            putc('\n', stdout);
+        }
     }
 
     return true;
