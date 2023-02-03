@@ -14,7 +14,7 @@
 #include <stdbool.h>
 
 extern struct external_ip {
-    char *ip_str;
+    char   *ip_str;
     size_t str_len;
 } external_ip;
 
