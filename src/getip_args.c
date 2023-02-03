@@ -232,6 +232,7 @@ args_handler(const int    argc,
              char * const argv[])
 {
     size_t ip_str_len;
+    int ch;
 
     if (argc == 1 || !argc) {
         selected_capabilites =
@@ -249,6 +250,29 @@ args_handler(const int    argc,
             strncpy(external_ip.ip_str, argv[1], ip_str_len);
             external_ip.ip_str[ip_str_len] = '\0';
             external_ip.str_len = ip_str_len;
+            is_external_ip = true;
+        } else if (argv[1][0] == '-' && argv[1][1] == '\0') {
+            external_ip.ip_str = malloc(MAX_IP_STR_LEN + 1);
+
+            for (ip_str_len = 0; ip_str_len < MAX_IP_STR_LEN; ++ip_str_len) {
+                if ((ch = getchar()) != '\n' && ch != EOF) {
+                    if (isblank(ch)) {
+                        error_id = ERR_IP_STR;
+                        return false;
+                    }
+
+                    external_ip.ip_str[ip_str_len] = (char) ch;
+                } else {
+                    if (ip_str_len < MIN_IP_STR_LEN) {
+                        error_id = ERR_IP_STR;
+                        return false;
+                    }
+
+                    break;
+                }
+            }
+
+            external_ip.ip_str[ip_str_len] = '\0';
             is_external_ip = true;
         }
 

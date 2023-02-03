@@ -21,7 +21,7 @@ print_usage(enum usage_variants variant)
     );
 
     if (variant != USAGE_APIS) {
-        puts("Usage: getip [target] [options]\n"
+        puts("Usage: getip [[target][-]] [options]\n"
              " or:   getip [options]\n"
         );
     }
