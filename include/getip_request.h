@@ -16,15 +16,17 @@
 extern struct external_ip {
     char   *ip_str;
     size_t str_len;
-} external_ip;
+    struct external_ip *next;
+} *external_ip, *last_external_ip;
 
 struct api_cap_response {
     enum api_cap key;
     char *str_res;
 };
 
-extern bool is_external_ip;
+extern bool is_external_ips;
 extern bool is_custom_agent;
+extern bool is_end;
 extern enum api_cap selected_capabilites;
 extern char *custom_agent;
 

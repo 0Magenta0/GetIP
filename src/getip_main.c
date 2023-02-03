@@ -17,15 +17,17 @@ main(int  argc,
      char *argv[])
 {
     if (args_handler(argc, argv)) {
-        if (send_api_request()) {
-            exit(EXIT_SUCCESS);
-        } else {
-            error_handler();
-            exit(EXIT_FAILURE);
+        while (!is_end) {
+            if (!send_api_request()) {
+                error_handler();
+                exit(EXIT_FAILURE);
+            }
         }
     } else {
         error_handler();
         exit(EXIT_FAILURE);
     }
+
+    exit(EXIT_SUCCESS);
 }
 

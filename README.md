@@ -1,4 +1,4 @@
-# GetIP 2.5.0
+# GetIP 2.6.0
 
 Simple utility to request information about IP written in C
 
@@ -21,11 +21,11 @@ $ ./builder.sh R
 ### Usage
 GetIP help message
 ```
-GetIP (version 2.5.0)
+GetIP (version 2.6.0)
 Utility to request info about IP from APIs
 https://github.com/0Magenta0/GetIP
 
-Usage: getip [target] [options]
+Usage: getip [[target][-]] [options]
  or:   getip [options]
 
   -help            Print this message and exit
@@ -38,7 +38,7 @@ Usage: getip [target] [options]
 
 GetIP api-list message
 ```
-GetIP (version 2.5.0)
+GetIP (version 2.6.0)
 Utility to request info about IP from APIs
 https://github.com/0Magenta0/GetIP
 
@@ -50,7 +50,7 @@ List of supported apis:
 
 GetIP fields-list message (IP\_API\_COM)
 ```
-GetIP (version 2.5.0)
+GetIP (version 2.6.0)
 Utility to request info about IP from APIs
 https://github.com/0Magenta0/GetIP
 

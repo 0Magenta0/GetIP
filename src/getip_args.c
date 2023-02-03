@@ -43,6 +43,9 @@ string_have_no_empty(const char *str);
 bool
 string_have_no_full_empty(const char * str);
 
+void
+append_ip_str(size_t ip_str_len);
+
 noreturn bool
 help_opt(char *);
 
@@ -242,6 +245,7 @@ args_handler(const int    argc,
              char * const argv[])
 {
     size_t ip_str_len;
+    bool is_next_ip = true;
     int ch;
 
     if (argc == 1 || !argc) {
@@ -256,37 +260,47 @@ args_handler(const int    argc,
             }
 
             ip_str_len = strlen(argv[1]);
-            external_ip.ip_str = malloc(ip_str_len + 1);
-            strncpy(external_ip.ip_str, argv[1], ip_str_len);
-            external_ip.ip_str[ip_str_len] = '\0';
-            external_ip.str_len = ip_str_len;
-            is_external_ip = true;
+            external_ip->ip_str = malloc(ip_str_len + 1);
+            strncpy(external_ip->ip_str, argv[1], ip_str_len);
+            external_ip->ip_str[ip_str_len] = '\0';
+            external_ip->str_len = ip_str_len;
+            is_external_ips = true;
         } else if (argv[1][0] == '-' && argv[1][1] == '\0') {
-            external_ip.ip_str = malloc(MAX_IP_STR_LEN + 1);
-
-            for (ip_str_len = 0; ip_str_len < MAX_IP_STR_LEN; ++ip_str_len) {
-                if ((ch = getchar()) != '\n' && ch != EOF) {
-                    if (isblank(ch)) {
+            while ((ch = getchar()) != EOF) {
+                if (is_next_ip) {
+                    if (ch == '\n') {
                         error_id = ERR_IP_STR;
                         return false;
+                    } else {
+                        append_ip_str(MAX_IP_STR_LEN);
+                        is_next_ip = false;
+                        ip_str_len = 0;
+                    }
+                }
+
+                if (ip_str_len < MAX_IP_STR_LEN) {
+                    if (ch == '\n') {
+                        if (ip_str_len < MIN_IP_STR_LEN) {
+                            error_id = ERR_IP_STR;
+                            return false;
+                        }
+
+                        is_next_ip = true;
+                        last_external_ip->ip_str[ip_str_len] = '\0';
+                        last_external_ip->str_len = ip_str_len;
+                        continue;
                     }
 
-                    external_ip.ip_str[ip_str_len] = (char) ch;
-                } else {
-                    if (ip_str_len < MIN_IP_STR_LEN) {
-                        error_id = ERR_IP_STR;
-                        return false;
-                    }
-
-                    break;
+                    last_external_ip->ip_str[ip_str_len] = (char) ch;
+                    ++ip_str_len;
                 }
             }
 
-            external_ip.ip_str[ip_str_len] = '\0';
-            is_external_ip = true;
+            last_external_ip->ip_str[ip_str_len] = '\0';
+            is_external_ips = true;
         }
 
-        for (int arg_counter = is_external_ip ? 2 : 1; arg_counter < argc; ++arg_counter) {
+        for (int arg_counter = is_external_ips ? 2 : 1; arg_counter < argc; ++arg_counter) {
             for (int opt_counter = 0; opt_counter < (int) OPTIONS_COUNT; ++opt_counter) {
                 if (!strcmp(options_list[opt_counter].option_name, argv[arg_counter] + 1)) {
                     if (options_list[opt_counter].option_type == GETIP_OPTION_ARG ||
@@ -323,7 +337,7 @@ _valid_arg:
         }
 
         for (int priority = 0; priority <= MAX_OPT_PRIORITY; ++priority) {
-            for (int arg_counter = is_external_ip ? 2 : 1; arg_counter < argc; ++arg_counter) {
+            for (int arg_counter = is_external_ips ? 2 : 1; arg_counter < argc; ++arg_counter) {
                 for (int opt_counter = 0; opt_counter < (int) OPTIONS_COUNT; ++opt_counter) {
                     if (options_list[opt_counter].option_priority != priority) {
                         continue;
@@ -394,7 +408,7 @@ string_have_no_empty(const char * str)
 }
 
 bool
-string_have_no_full_empty(const char * str)
+string_have_no_full_empty(const char *str)
 {
     if (!str[0]) {
         return false;
@@ -407,6 +421,22 @@ string_have_no_full_empty(const char * str)
     }
 
     return false;
+}
+
+void
+append_ip_str(size_t ip_str_len)
+{
+    if (last_external_ip == NULL) {
+        external_ip = malloc(sizeof (struct external_ip));
+        memset(external_ip, 0, sizeof (struct external_ip));
+        last_external_ip = external_ip;
+        last_external_ip->ip_str = malloc(ip_str_len + 1);
+    } else {
+        last_external_ip->next = malloc(sizeof (struct external_ip));
+        last_external_ip = last_external_ip->next;
+        memset(last_external_ip, 0, sizeof (struct external_ip));
+        last_external_ip->ip_str = malloc(ip_str_len + 1);
+    }
 }
 
 noreturn bool

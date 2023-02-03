@@ -450,11 +450,11 @@ ip_api_com_builder(CURL *curl)
 
     tmp_bitset |= 0xC000 /* Two flag enabled by default */;
 
-    tmp_url = malloc(external_ip.str_len /* By default is 0 */
+    tmp_url = malloc(external_ip->str_len /* By default is 0 */
                      + IP_API_COM_URL_LEN /* Includes Null-terminator */
                      + 16 /* API bitset */);
-    if (is_external_ip) {
-        sprintf(tmp_url, IP_API_COM_URL "%.*s?fields=%d", MAX_IP_STR_LEN, external_ip.ip_str, tmp_bitset);
+    if (is_external_ips) {
+        sprintf(tmp_url, IP_API_COM_URL "%.*s?fields=%d", MAX_IP_STR_LEN, external_ip->ip_str, tmp_bitset);
         curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
     } else {
         sprintf(tmp_url, IP_API_COM_URL "?fields=%d", tmp_bitset);
@@ -495,11 +495,11 @@ ipapi_co_builder(CURL *curl)
 
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, true);
 
-    tmp_url = malloc(external_ip.str_len /* By default is 0 */
+    tmp_url = malloc(external_ip->str_len /* By default is 0 */
                      + IPAPI_CO_URL_LEN /* Includes Null-terminator */
                      + 5 /* /json */);
-    if (is_external_ip) {
-        sprintf(tmp_url, IPAPI_CO_URL "%.*s/json", MAX_IP_STR_LEN, external_ip.ip_str);
+    if (is_external_ips) {
+        sprintf(tmp_url, IPAPI_CO_URL "%.*s/json", MAX_IP_STR_LEN, external_ip->ip_str);
         curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
     } else {
         sprintf(tmp_url, IPAPI_CO_URL "json");
@@ -536,11 +536,11 @@ extreme_ip_builder(CURL *curl)
 
     // curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, true);
 
-    tmp_url = malloc(external_ip.str_len /* By default is 0 */
+    tmp_url = malloc(external_ip->str_len /* By default is 0 */
                      + EXTREME_IP_URL_LEN /* Includes Null-terminator */
                      + 10 /* ?key=demo2 */);
-    if (is_external_ip) {
-        sprintf(tmp_url, EXTREME_IP_URL "%.*s?key=demo2", MAX_IP_STR_LEN, external_ip.ip_str);
+    if (is_external_ips) {
+        sprintf(tmp_url, EXTREME_IP_URL "%.*s?key=demo2", MAX_IP_STR_LEN, external_ip->ip_str);
         curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
     } else {
         sprintf(tmp_url, EXTREME_IP_URL "?key=demo2");

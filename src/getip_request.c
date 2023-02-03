@@ -17,13 +17,16 @@
 #include <curl/curl.h>
 
 struct response {
-    char *response;
+    char   *response;
     size_t len;
 };
 
-bool is_external_ip;
+bool is_external_ips;
 bool is_custom_agent;
-struct external_ip external_ip;
+bool is_end;
+bool is_curl_init;
+struct external_ip *external_ip;
+struct external_ip *last_external_ip;
 char *custom_agent;
 enum api_cap selected_capabilites;
 
@@ -45,11 +48,16 @@ send_api_request(void)
     CURL *curl;
     struct response response = {0};
     char *default_agent;
+    struct external_ip *tmp_ip_str;
 
-    if (curl_global_init(CURL_GLOBAL_SSL)) {
-        error_id = ERR_CURL_GLOB_INIT;
+    if (!is_curl_init) {
+        if (curl_global_init(CURL_GLOBAL_SSL)) {
+            error_id = ERR_CURL_GLOB_INIT;
 
-        return false;
+            return false;
+        }
+
+        is_curl_init = true;
     }
 
     if (!(curl = curl_easy_init())) {
@@ -75,7 +83,6 @@ send_api_request(void)
     }
 
     curl_easy_cleanup(curl);
-    curl_global_cleanup();
 
     if (is_raw) {
         if (!curl_check_code(curl)) {
@@ -93,6 +100,19 @@ send_api_request(void)
 
         free(response.response);
         print_response();
+    }
+
+    if (external_ip == last_external_ip) {
+        is_end = true;
+        free(external_ip->ip_str);
+        free(external_ip);
+        curl_global_cleanup();
+    } else {
+        tmp_ip_str = external_ip->next;
+        free(external_ip->ip_str);
+        free(external_ip);
+        external_ip = tmp_ip_str;
+        puts("=================================");
     }
 
     return true;
