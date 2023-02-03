@@ -62,6 +62,9 @@ bool
 agent_opt(char *agent);
 
 bool
+raw_opt(char *);
+
+bool
 ip_opt(char *);
 
 bool
@@ -104,6 +107,7 @@ bool
 is_mobile_opt(char *);
 
 bool is_verbose;
+bool is_raw;
 
 const struct getip_option options_list[] = {
     { "help",
@@ -139,6 +143,12 @@ const struct getip_option options_list[] = {
     { "agent",
       GETIP_OPTION_ARG_HAVE_EMP,
       agent_opt,
+      2
+    },
+
+    { "raw",
+      GETIP_OPTION_NO_ARG,
+      raw_opt,
       2
     },
 
@@ -451,6 +461,14 @@ agent_opt(char *agent)
     custom_agent = agent;
 
     return true;
+}
+
+bool
+raw_opt(char *n)
+{
+    (void) n;
+
+    return (is_raw = true);
 }
 
 bool

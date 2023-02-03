@@ -31,3 +31,6 @@ extern char *custom_agent;
 bool
 send_api_request(void);
 
+bool
+curl_check_code(CURL *curl);
+

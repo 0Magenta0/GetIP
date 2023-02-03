@@ -77,13 +77,23 @@ send_api_request(void)
     curl_easy_cleanup(curl);
     curl_global_cleanup();
 
-    if (!get_api_by_id(selected_api)->
-            handle_response(curl, response.response, response.len)) {
-        return false;
-    }
+    if (is_raw) {
+        if (!curl_check_code(curl)) {
+            free(response.response);
+            return false;
+        }
 
-    free(response.response);
-    print_response();
+        fputs(response.response, stdout);
+        free(response.response);
+    } else {
+        if (!get_api_by_id(selected_api)->
+                handle_response(curl, response.response, response.len)) {
+            return false;
+        }
+
+        free(response.response);
+        print_response();
+    }
 
     return true;
 
@@ -91,6 +101,20 @@ _end_fail:
     curl_global_cleanup();
 
     return false;
+}
+
+bool
+curl_check_code(CURL *curl)
+{
+    long status_code;
+
+    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status_code);
+    if (status_code != 200) {
+        error_id = ERR_API_RET_CODE;
+        return false;
+    }
+
+    return true;
 }
 
 size_t

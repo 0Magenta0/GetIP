@@ -47,9 +47,6 @@ enum ip_api_com_bitset {
 };
 
 bool
-curl_check_code(CURL *curl);
-
-bool
 json_parse(struct json_object **parsed_json,
            char   *json_response,
            size_t json_res_len);
@@ -336,20 +333,6 @@ get_api_by_id(enum api_ids id)
     }
 
     return NULL;
-}
-
-bool
-curl_check_code(CURL *curl)
-{
-    long status_code;
-
-    curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &status_code);
-    if (status_code != 200) {
-        error_id = ERR_API_RET_CODE;
-        return false;
-    }
-
-    return true;
 }
 
 bool

@@ -13,6 +13,7 @@
 #define MAX_IP_STR_LEN 254
 
 extern bool is_verbose;
+extern bool is_raw;
 
 bool
 args_handler(int argc,
