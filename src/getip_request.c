@@ -102,6 +102,11 @@ send_api_request(void)
         print_response();
     }
 
+    if (!is_external_ips) {
+        is_end = true;
+        return true;
+    }
+
     if (external_ip == last_external_ip) {
         is_end = true;
         free(external_ip->ip_str);

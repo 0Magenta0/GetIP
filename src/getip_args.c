@@ -265,7 +265,7 @@ args_handler(const int    argc,
         return true;
     } else {
         if (argv[1][0] != '-') {
-            while (argv[ips_count + 1] != NULL && argv[ips_count + 1][0] != '-') {
+            while (ips_count + 1 < argc && argv[ips_count + 1][0] != '-') {
                 if (!ip_string_validate(argv[ips_count + 1])) {
                     error_id = ERR_IP_STR;
                     return false;
