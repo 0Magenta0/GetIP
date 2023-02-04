@@ -74,11 +74,21 @@ print_usage(enum usage_variants variant)
         for (int counter = 0; counter < APIS_COUNT; ++counter) {
             putchar(' '), putchar(' ');
 
-            if (!counter) {
-                printf("%s (Default)\n", apis_list[counter].str_id);
-            } else {
-                puts(apis_list[counter].str_id);
+            fputs(apis_list[counter].str_id, stdout);
+            putchar(' ');
+            if (apis_list[counter].can_use_key) {
+                if (apis_list[counter].should_use_key) {
+                    fputs("(REQ API KEY)", stdout);
+                } else {
+                    fputs("(API KEY)", stdout);
+                }
             }
+
+            if (!counter) {
+                fputs("(Default)", stdout);
+            }
+
+            putchar('\n');
         }
 
         putchar('\n');
