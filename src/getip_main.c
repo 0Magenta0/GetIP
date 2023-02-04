@@ -17,13 +17,22 @@ main(int  argc,
      char *argv[])
 {
     if (args_handler(argc, argv)) {
+        /* While have new IPs
+         * send new requests.
+         */
         while (!is_end) {
+            /* If request is failure
+             * exit with error.
+             */
             if (!send_api_request()) {
                 error_handler();
                 exit(EXIT_FAILURE);
             }
         }
     } else {
+        /* Handle errors
+         * when have bad args.
+         */
         error_handler();
         exit(EXIT_FAILURE);
     }

@@ -16,6 +16,10 @@
 
 #include <curl/curl.h>
 
+/* Structure contains
+ * a curl HTTP response
+ * and buffer lenght.
+ */
 struct response {
     char   *response;
     size_t len;
@@ -24,21 +28,30 @@ struct response {
 bool is_external_ips;
 bool is_custom_agent;
 bool is_end;
-bool is_curl_init;
 struct external_ip *external_ip;
 struct external_ip *last_external_ip;
 char *custom_agent;
 enum api_cap selected_capabilites;
 
+/* Indicates if curl global
+ * init has already happened.
+ */
+static bool is_curl_init;
+
+/* Append curl HTTP response
+ * to buffer structure.
+ */
 size_t
 write_response(void   *npart,
                size_t size,
                size_t nmemb,
                void   *responsep);
 
+/* Send curl HTTP request. */
 bool
 curl_perform(CURL *curl);
 
+/* Print pretty output. */
 void
 print_response(void);
 

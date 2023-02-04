@@ -9,6 +9,9 @@
 
 #include <stdbool.h>
 
+/* List of errors that
+ * can be handled.
+ */
 enum error_id {
     ERR_IP_STR,
     ERR_ARG_UNK,
@@ -23,8 +26,14 @@ enum error_id {
     ERR_API_STATUS
 };
 
+/* Indicates what
+ * is failed.
+ */
 extern enum error_id error_id;
 
+/* Handle error IDs and
+ * print usage if needed.
+ */
 void
 error_handler(void);
 

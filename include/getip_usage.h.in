@@ -7,16 +7,21 @@
 
 #pragma once
 
+/* Contains CMake variables. */
 #define GETIP_VERSION     "@CMAKE_PROJECT_VERSION@"
 #define GETIP_DESCRIPTION "@CMAKE_PROJECT_DESCRIPTION@"
 #define GETIP_URL         "@CMAKE_PROJECT_HOMEPAGE_URL@"
 
+/* Types of usage. */
 enum usage_variants {
     USAGE_GENERAL,
     USAGE_FIELDS,
     USAGE_APIS
 };
 
+/* Prints usage in
+ * selected variant.
+ */
 void
 print_usage(enum usage_variants variant);
 

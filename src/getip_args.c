@@ -21,28 +21,44 @@
 #define MAX_OPT_PRIORITY 3
 #define OPTIONS_COUNT (sizeof (options_list) / sizeof (struct getip_option))
 
+/* Terminal parameter types
+ * enumerator
+ */
 enum getip_option_type {
-    GETIP_OPTION_ARG,
-    GETIP_OPTION_NO_ARG,
-    GETIP_OPTION_ARG_HAVE_EMP
+    GETIP_OPTION_ARG,         /* Parameter required argument.  */
+    GETIP_OPTION_NO_ARG,      /* Parameter have no arguments.  */
+    GETIP_OPTION_ARG_HAVE_EMP /* Parameter can have arguments. */
 };
 
+/* Struct that defines
+ * GetIP's parameter structure
+ */
 struct getip_option {
     const char * const option_name;
     const enum getip_option_type option_type;
     bool (* const func)(char *);
-    const int option_priority;
+    const int option_priority; /* Less number - more priority. */
 };
 
+/* Verify target string
+ * lenght and blank symbols.
+ */
 bool
 ip_string_validate(const char *ip_str);
 
+/* Check if string doesn't
+ * contains a blank characters.
+ */
 bool
 string_have_no_empty(const char *str);
 
+/* Check if string contains a
+ * non-blank characters.
+ */
 bool
 string_have_no_full_empty(const char * str);
 
+/* Allocates new target structure */
 void
 append_ip_str(size_t ip_str_len);
 
@@ -260,11 +276,17 @@ args_handler(const int    argc,
     int ch;
 
     if (argc == 1 || !argc) {
+        /* Select default API when
+         * have no arguments.
+         */
         selected_capabilites =
             get_api_by_id(selected_api)->capabilities;
         return true;
     } else {
         if (argv[1][0] != '-') {
+            /* While arguments contains
+             * a targets strings.
+             */
             while (ips_count + 1 < argc && argv[ips_count + 1][0] != '-') {
                 if (!ip_string_validate(argv[ips_count + 1])) {
                     error_id = ERR_IP_STR;
@@ -281,18 +303,25 @@ args_handler(const int    argc,
 
             is_external_ips = true;
         } else if (argv[1][0] == '-' && argv[1][1] == '\0') {
+            /* While use `stdin` and non-EOF. */
             while ((ch = getchar()) != EOF) {
                 if (is_next_ip) {
                     if (ch == '\n') {
                         error_id = ERR_IP_STR;
                         return false;
                     } else {
+                        /* Allocate new target
+                         * structure when is needed.
+                         */
                         append_ip_str(MAX_IP_STR_LEN);
                         is_next_ip = false;
                         ip_str_len = 0;
                     }
                 }
 
+                /* Verify input and handle
+                 * characters from `stdin`.
+                 */
                 if (ip_str_len < MAX_IP_STR_LEN) {
                     if (ch == '\n') {
                         if (ip_str_len < MIN_IP_STR_LEN) {
@@ -316,11 +345,15 @@ args_handler(const int    argc,
                 }
             }
 
+            /* Append Zero-terminator at end
+             * in case the input is too long.
+             */
             last_external_ip->ip_str[ip_str_len] = '\0';
             is_external_ips = true;
             ++ips_count;
         }
 
+        /* All parameters validation. */
         for (int arg_counter = ips_count + 1; arg_counter < argc; ++arg_counter) {
             for (int opt_counter = 0; opt_counter < (int) OPTIONS_COUNT; ++opt_counter) {
                 if (!strcmp(options_list[opt_counter].option_name, argv[arg_counter] + 1)) {
@@ -357,9 +390,13 @@ _valid_arg:
             continue;
         }
 
+        /* If args successfuly validated handle it. */
         for (int priority = 0; priority <= MAX_OPT_PRIORITY; ++priority) {
             for (int arg_counter = ips_count + 1; arg_counter < argc; ++arg_counter) {
                 for (int opt_counter = 0; opt_counter < (int) OPTIONS_COUNT; ++opt_counter) {
+                    /* Continue loop if parameters
+                     * priority is not same.
+                     */
                     if (options_list[opt_counter].option_priority != priority) {
                         continue;
                     }
@@ -385,6 +422,9 @@ _opt_found:
             }
         }
 
+        /* If no one API parameter is
+         * selected then use ALL.
+         */
         if (!selected_capabilites) {
             selected_capabilites =
                 get_api_by_id(selected_api)->capabilities;

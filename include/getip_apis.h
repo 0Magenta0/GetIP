@@ -12,17 +12,31 @@
 
 #include <curl/curl.h>
 
+/* Maximum count of
+ * supported API parameters.
+ */
 #define API_CAP_COUNT 14
+
+/* Count of supported APIs. */
 #define APIS_COUNT 3
 
+/* Count of supported API
+ * parameters by certain API.
+ */
 #define API_CAPS_COUNT(api_caps) (sizeof (api_caps) / sizeof (struct api_cap_id))
 
+/* Internal IDs for
+ * API indication.
+ */
 enum api_ids {
     IP_API_COM,
     IPAPI_CO,
     EXTREME_IP
 };
 
+/* Global enumerator for
+ * selected API parameters.
+ */
 enum api_cap {
     API_CAP_IP        =   0x01,
     API_CAP_ORG       =   0x02,
@@ -40,6 +54,10 @@ enum api_cap {
     API_CAP_ISMOBILE  = 0x2000
 };
 
+/* Represents Certain API parameter,
+ * JSON key, pretty printer name,
+ * and API response (NULL if not).
+ */
 struct api_cap_id {
     const enum api_cap capablitiy;
     const char *str_json_key;
@@ -47,6 +65,13 @@ struct api_cap_id {
     char *result;
 };
 
+/* Represents one supported API.
+ * Contains API ID and it's
+ * string representation,
+ * pointers to request/response functions,
+ * bitset with ALL selected parameters,
+ * array with API paramters description.
+ */
 struct api_node {
     const enum api_ids id;
     const char *str_id;
@@ -58,16 +83,33 @@ struct api_node {
     struct api_cap_id api_cap_id[API_CAP_COUNT];
 };
 
+/* Contains a selected
+ * API enumerator value.
+ */
 extern enum api_ids selected_api;
 
+/* Array with description ALL
+ * for supported APIs.
+ */
 extern struct api_node apis_list[];
 
+/* Compares ALL supported string
+ * API IDs with passed string
+ * and select API when it's found
+ * and return `true`, otherwise `false`.
+ */
 bool
 select_api_by_str_id(const char * const str_id);
 
+/* Check if selected API supports
+ * passed API parameter.
+ */
 bool
 check_field_support(enum api_cap api_cap);
 
+/* Get point to API structure
+ * by enumerator ID.
+ */
 struct api_node *
 get_api_by_id(enum api_ids id);
 

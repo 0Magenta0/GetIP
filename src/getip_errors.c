@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+/* Errors descriptions. */
 #define ERR_STR_IP_STR         "invalid target paramenter"
 #define ERR_STR_ARG_UNK        "unknown paramenter"
 #define ERR_STR_ARG_MISS       "parameter should have argument"

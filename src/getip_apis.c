@@ -17,6 +17,10 @@
 #include <curl/curl.h>
 #include <json-c/json.h>
 
+/* Contains API URLs, it's lenght
+ * and bitset with ALL selected
+ * API parameters.
+ */
 #define IP_API_COM_URL      "http://ip-api.com/json/"
 #define IP_API_COM_URL_LEN  (sizeof (IP_API_COM_URL) / sizeof (char))
 #define IP_API_COM_ALL_CAPS 0x3FFF
@@ -29,6 +33,9 @@
 #define EXTREME_IP_URL_LEN  (sizeof (EXTREME_IP_URL) / sizeof (char))
 #define EXTREME_IP_ALL_CAPS 0x07FB
 
+/* Bitset that unique
+ * to ip-api.com.
+ */
 enum ip_api_com_bitset {
     BS_IP_API_COM_IP        =    0x2000,
     BS_IP_API_COM_ORG       =    0x0400,
@@ -46,36 +53,49 @@ enum ip_api_com_bitset {
     BS_IP_API_COM_ISMOBILE  =   0x10000
 };
 
+/* Returns `true` is parsed
+ * succefuly and `false` if do not.
+ */
 bool
 json_parse(struct json_object **parsed_json,
            char   *json_response,
            size_t json_res_len);
 
+/* Handle selected API's parameters. */
 void
 json_copy_caps_values(struct json_object **parsed_json);
 
+/* Check if some API returns
+ * a successful message.
+ */
 bool
 check_api_success(struct json_object **parsed_json);
 
+/* Prepare request for ip-api.com. */
 void
 ip_api_com_builder(CURL *curl);
 
+/* Handle response from ip-api.com. */
 bool
 ip_api_com_handler(CURL *curl,
                    char *json_response,
                    size_t json_res_len);
 
+/* Prepare request for ipapi.co. */
 void
 ipapi_co_builder(CURL *curl);
 
+/* Handle response from ipapi.co. */
 bool
 ipapi_co_handler(CURL   *curl,
                  char   *json_response,
                  size_t json_res_len);
 
+/* Prepare request for extreme-ip-lookup.com. */
 void
 extreme_ip_builder(CURL *curl);
 
+/* Handle response from extreme-ip-lookup.com. */
 bool
 extreme_ip_handler(CURL   *curl,
                    char   *json_response,

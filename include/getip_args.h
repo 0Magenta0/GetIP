@@ -12,10 +12,15 @@
 #define MIN_IP_STR_LEN   3
 #define MAX_IP_STR_LEN 254
 
-extern bool is_verbose;
-extern bool is_raw;
-extern bool is_no_delim;
+extern bool is_verbose;  /* Verbose is needed.          */
+extern bool is_raw;      /* Print raw JSON.             */
+extern bool is_no_delim; /* Don't draw delimiters
+                            between few output targets. */
 
+/* Handle `argv` parameters.
+ * Return `false` when failed
+ * and `true` if do not.
+ */
 bool
 args_handler(int argc,
              char * const argv[]);
