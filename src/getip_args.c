@@ -373,6 +373,7 @@ args_handler(const int    argc,
                     if (options_list[opt_counter].option_type == GETIP_OPTION_ARG ||
                         options_list[opt_counter].option_type == GETIP_OPTION_ARG_HAVE_EMP) {
                         if (++arg_counter >= argc) {
+                            fprintf(stderr, "getip: %s check failed\n", argv[arg_counter - 1]);
                             error_id = ERR_ARG_MISS;
                             return false;
                         }
@@ -380,6 +381,7 @@ args_handler(const int    argc,
 
                     if (options_list[opt_counter].option_type == GETIP_OPTION_ARG) {
                         if (!string_have_no_empty(argv[arg_counter])) {
+                            fprintf(stderr, "getip: %s check failed\n", argv[arg_counter - 1]);
                             error_id = ERR_ARG_MISS;
                             return false;
                         }
@@ -387,6 +389,7 @@ args_handler(const int    argc,
 
                     if (options_list[opt_counter].option_type == GETIP_OPTION_ARG_HAVE_EMP) {
                         if (!string_have_no_full_empty(argv[arg_counter])) {
+                            fprintf(stderr, "getip: %s check failed\n", argv[arg_counter - 1]);
                             error_id = ERR_ARG_MISS;
                             return false;
                         }
@@ -396,6 +399,7 @@ args_handler(const int    argc,
                 }
             }
 
+            fprintf(stderr, "getip: %s check failed\n", argv[arg_counter]);
             error_id = ERR_ARG_UNK;
             return false;
 
