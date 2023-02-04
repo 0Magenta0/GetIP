@@ -33,6 +33,7 @@ print_usage(enum usage_variants variant)
              "  -api-list        List of supported apis\n"
              "  -fields-list     List of supported fields by selected API\n"
              "  -agent <ua>      Custom User-Agent header\n"
+             "  -api-key <key>   Set API key\n"
              "  -raw             Print response in raw format\n"
         );
     } else if (variant == USAGE_FIELDS) {

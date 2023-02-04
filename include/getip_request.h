@@ -23,6 +23,14 @@ extern struct external_ip {
     struct external_ip *next;
 } *external_ip, *last_external_ip;
 
+/* Contains char buffer
+ * and it's lenght.
+ */
+struct str_buf {
+    char   *buf;
+    size_t len;
+};
+
 /* Represents the API response to
  * the parameter and it's key.
  */
@@ -47,6 +55,11 @@ extern bool is_custom_agent;
  */
 extern bool is_end;
 
+/* Indicated if API
+ * key is used.
+ */
+extern bool is_api_key;
+
 /* Contains selected API
  * parameters to request.
  */
@@ -56,6 +69,12 @@ extern enum api_cap selected_capabilites;
  * custom UserAgent.
  */
 extern char *custom_agent;
+
+/* Contains string
+ * with API key.
+ */
+extern struct str_buf api_key;
+
 
 /* Prepare, send request
  * and handle response.

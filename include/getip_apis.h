@@ -68,6 +68,7 @@ struct api_cap_id {
 /* Represents one supported API.
  * Contains API ID and it's
  * string representation,
+ * can API used with/without key or not,
  * pointers to request/response functions,
  * bitset with ALL selected parameters,
  * array with API paramters description.
@@ -75,6 +76,8 @@ struct api_cap_id {
 struct api_node {
     const enum api_ids id;
     const char *str_id;
+    const bool can_use_key;
+    const bool should_use_key;
     void (* const build_request)(CURL *);
     bool (* const handle_response)(CURL *,
                                    char *,

@@ -16,7 +16,10 @@
 #define ERR_STR_ARG_UNK        "unknown paramenter"
 #define ERR_STR_ARG_MISS       "parameter should have argument"
 #define ERR_STR_ARG_API_UNK    "you're select invalid API"
-#define ERR_STR_ARG_API_FIELD  "select API doesn't support this field"
+#define ERR_STR_ARG_API_FIELD  "selected API doesn't support this field"
+#define ERR_STR_ARG_API_NOKEY  "selected API doesn't support API keys"
+#define ERR_STR_ARG_API_REQKEY "selected API required API key"
+#define ERR_STR_ARG_API_KEYLEN "selected API key has an invalid lenght"
 #define ERR_STR_CURL_GLOB_INIT "curl_global_init() failed"
 #define ERR_STR_CURL_EASY_INIT "curl_easy_init() failed"
 #define ERR_STR_CURL_EASY_PERF "curl_easy_perform() failed"
@@ -54,6 +57,22 @@ error_handler(void)
             fputs(ERR_STR_ARG_API_FIELD, stderr);
             putchar('\n');
             print_usage(USAGE_FIELDS);
+            break;
+
+        case ERR_ARG_API_NOKEY:
+            fputs(ERR_STR_ARG_API_NOKEY, stderr);
+            putchar('\n');
+            break;
+
+         case ERR_ARG_API_REQKEY:
+            fputs(ERR_STR_ARG_API_REQKEY, stderr);
+            putchar('\n');
+            print_usage(USAGE_FIELDS);
+            break;
+
+         case ERR_ARG_API_KEYLEN:
+            fputs(ERR_STR_ARG_API_KEYLEN, stderr);
+            putchar('\n');
             break;
 
         case ERR_CURL_GLOB_INIT:

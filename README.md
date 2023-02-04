@@ -21,7 +21,7 @@ $ ./builder.sh R
 ### Usage
 GetIP help message
 ```
-GetIP (version 2.6.0)
+GetIP (version 2.7.0)
 Utility to request info about IP from APIs
 https://github.com/0Magenta0/GetIP
 
@@ -34,11 +34,13 @@ Usage: getip [[targets][-]] [options]
   -api-list        List of supported apis
   -fields-list     List of supported fields by selected API
   -agent <ua>      Custom User-Agent header
+  -api-key <key>   Set API key
+  -raw             Print response in raw format
 ```
 
 GetIP api-list message
 ```
-GetIP (version 2.6.0)
+GetIP (version 2.7.0)
 Utility to request info about IP from APIs
 https://github.com/0Magenta0/GetIP
 
@@ -50,7 +52,7 @@ List of supported apis:
 
 GetIP fields-list message (IP\_API\_COM)
 ```
-GetIP (version 2.6.0)
+GetIP (version 2.7.0)
 Utility to request info about IP from APIs
 https://github.com/0Magenta0/GetIP
 

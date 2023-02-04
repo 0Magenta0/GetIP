@@ -16,21 +16,14 @@
 
 #include <curl/curl.h>
 
-/* Structure contains
- * a curl HTTP response
- * and buffer lenght.
- */
-struct response {
-    char   *response;
-    size_t len;
-};
-
 bool is_external_ips;
 bool is_custom_agent;
 bool is_end;
+bool is_api_key;
 struct external_ip *external_ip;
 struct external_ip *last_external_ip;
 char *custom_agent;
+struct str_buf api_key;
 enum api_cap selected_capabilites;
 
 /* Indicates if curl global
@@ -59,7 +52,7 @@ bool
 send_api_request(void)
 {
     CURL *curl;
-    struct response response = {0};
+    struct str_buf response = {0};
     char *default_agent;
     struct external_ip *tmp_ip_str;
 
@@ -99,19 +92,23 @@ send_api_request(void)
 
     if (is_raw) {
         if (!curl_check_code(curl)) {
-            free(response.response);
+            free(response.buf);
             return false;
         }
 
-        fputs(response.response, stdout);
-        free(response.response);
+        fputs(response.buf, stdout);
+        free(response.buf);
     } else {
         if (!get_api_by_id(selected_api)->
-                handle_response(curl, response.response, response.len)) {
+                handle_response(curl, response.buf, response.len)) {
+            if (response.buf) {
+                free(response.buf);
+            }
+
             return false;
         }
 
-        free(response.response);
+        free(response.buf);
         print_response();
     }
 
@@ -169,20 +166,20 @@ write_response(void   *npart,
                void   *responsep)
 {
     const size_t full_size = size * nmemb;
-    struct response *tmp_responsep = (struct response *) responsep;
+    struct str_buf *tmp_responsep = (struct str_buf *) responsep;
     char *str_responsep;
 
     if (responsep != NULL) {
-        str_responsep = realloc(tmp_responsep->response,
+        str_responsep = realloc(tmp_responsep->buf,
                 tmp_responsep->len + full_size + 1);
     } else {
         str_responsep = malloc(full_size + 1);
     }
 
-    tmp_responsep->response = str_responsep;
-    memcpy(tmp_responsep->response + tmp_responsep->len, npart, full_size);
+    tmp_responsep->buf = str_responsep;
+    memcpy(tmp_responsep->buf + tmp_responsep->len, npart, full_size);
     tmp_responsep->len += full_size;
-    tmp_responsep->response[tmp_responsep->len] = '\0';
+    tmp_responsep->buf[tmp_responsep->len] = '\0';
 
     return full_size;
 }

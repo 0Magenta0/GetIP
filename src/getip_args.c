@@ -21,13 +21,16 @@
 #define MAX_OPT_PRIORITY 3
 #define OPTIONS_COUNT (sizeof (options_list) / sizeof (struct getip_option))
 
+/* Define max api key lenght */
+#define MAX_API_KEY_LEN 128
+
 /* Terminal parameter types
  * enumerator
  */
 enum getip_option_type {
     GETIP_OPTION_ARG,         /* Parameter required argument.   */
     GETIP_OPTION_NO_ARG,      /* Parameter have no arguments.   */
-    GETIP_OPTION_ARG_HAVE_EMP /* Parameter required argument 
+    GETIP_OPTION_ARG_HAVE_EMP /* Parameter required argument
                                  that can contains blank chars. */
 };
 
@@ -80,6 +83,9 @@ fileds_list_opt(char *);
 
 bool
 agent_opt(char *agent);
+
+bool
+api_key_opt(char *key_str);
 
 bool
 raw_opt(char *);
@@ -167,6 +173,12 @@ const struct getip_option options_list[] = {
     { "agent",
       GETIP_OPTION_ARG_HAVE_EMP,
       agent_opt,
+      2
+    },
+
+    { "api-key",
+      GETIP_OPTION_ARG,
+      api_key_opt,
       2
     },
 
@@ -431,6 +443,14 @@ _opt_found:
                 get_api_by_id(selected_api)->capabilities;
         }
 
+        /* If the API requires a key but it's
+         * not provided then print error.
+         */
+        if (!is_api_key && get_api_by_id(selected_api)->should_use_key) {
+            error_id = ERR_ARG_API_REQKEY;
+            return false;
+        }
+
         return true;
     }
 }
@@ -549,10 +569,36 @@ fileds_list_opt(char *n)
 bool
 agent_opt(char *agent)
 {
-    is_custom_agent = true;
     custom_agent = agent;
 
-    return true;
+    return (is_custom_agent = true);
+}
+
+bool
+api_key_opt(char *key_str)
+{
+    size_t key_len;
+
+    for (key_len = 0; key_len < MAX_API_KEY_LEN; ++key_len) {
+        if (key_len == MAX_API_KEY_LEN - 1 && key_str[key_len] != '\0') {
+            error_id = ERR_ARG_API_KEYLEN;
+            return false;
+        }
+
+        if (key_str[key_len] == '\0') {
+            break;
+        }
+    }
+
+    if (get_api_by_id(selected_api)->can_use_key) {
+        api_key.buf = key_str;
+        api_key.len = key_len;
+    } else {
+        error_id = ERR_ARG_API_NOKEY;
+        return false;
+    }
+
+    return (is_api_key = true);
 }
 
 bool

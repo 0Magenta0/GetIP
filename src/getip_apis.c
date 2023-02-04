@@ -106,6 +106,8 @@ enum api_ids selected_api;
 struct api_node apis_list[APIS_COUNT] = {
     { IP_API_COM,
       "IP_API_COM",
+      false, /* Cannot be used with API key. */
+      false, /* API key is not reuqired. */
       ip_api_com_builder,
       ip_api_com_handler,
       IP_API_COM_ALL_CAPS,
@@ -197,6 +199,8 @@ struct api_node apis_list[APIS_COUNT] = {
 
     { IPAPI_CO,
       "IPAPI_CO",
+      false, /* Cannot be used with API key. */
+      false, /* API key is not required. */
       ipapi_co_builder,
       ipapi_co_handler,
       IPAPI_CO_ALL_CAPS,
@@ -258,6 +262,8 @@ struct api_node apis_list[APIS_COUNT] = {
 
     { EXTREME_IP,
       "EXTREME_IP",
+      true,  /* Can be used with API key. */
+      false, /* API key is not required. */
       extreme_ip_builder,
       extreme_ip_handler,
       IPAPI_CO_ALL_CAPS,
@@ -415,7 +421,7 @@ json_copy_caps_values(struct json_object **parsed_json)
 bool
 check_api_success(struct json_object **parsed_json)
 {
-    struct json_object *certain_json_obj = NULL;
+    struct json_object *certain_json_obj;
 
     json_object_object_get_ex(*parsed_json, "status", &certain_json_obj);
     if (strcmp(json_object_get_string (certain_json_obj), "success")) {
@@ -425,6 +431,7 @@ check_api_success(struct json_object **parsed_json)
             printf("API message: %s\n", json_object_get_string(certain_json_obj));
         }
 
+        json_object_put(*parsed_json);
         error_id = ERR_API_STATUS;
         return false;
     }
@@ -495,7 +502,7 @@ ip_api_com_handler(CURL   *curl,
                    char   *json_response,
                    size_t json_res_len)
 {
-    struct json_object *parsed_json      = NULL;
+    struct json_object *parsed_json = NULL;
 
     if (!curl_check_code(curl)) {
         return false;
@@ -567,20 +574,43 @@ extreme_ip_builder(CURL *curl)
     char *tmp_url;
 
     if (is_external_ips) {
-        tmp_url = malloc(external_ip->str_len
-                         + EXTREME_IP_URL_LEN /* Includes Null-terminator */
-                         + 10 /* ?key=demo2 */);
+        if (is_api_key) {
+            tmp_url = malloc(external_ip->str_len
+                             + EXTREME_IP_URL_LEN /* Includes Null-terminator */
+                             + 5 /* ?key= */
+                             + api_key.len);
+        } else {
+            tmp_url = malloc(external_ip->str_len
+                             + EXTREME_IP_URL_LEN /* Includes Null-terminator */
+                             + 10 /* ?key=demo2 */);
+        }
     } else {
-        tmp_url = malloc(+ EXTREME_IP_URL_LEN /* Includes Null-terminator */
-                         + 10 /* ?key=demo2 */);
+        if (is_api_key) {
+            tmp_url = malloc(EXTREME_IP_URL_LEN /* Includes Null-terminator */
+                             + 5 /* ?key= */
+                             + api_key.len);
+        } else {
+            tmp_url = malloc(EXTREME_IP_URL_LEN /* Includes Null-terminator */
+                             + 10 /* ?key=demo2 */);
+        }
     }
 
     if (is_external_ips) {
-        sprintf(tmp_url, EXTREME_IP_URL "%.*s?key=demo2", MAX_IP_STR_LEN, external_ip->ip_str);
-        curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
+        if (is_api_key) {
+            sprintf(tmp_url, EXTREME_IP_URL "%.*s?key=%.*s", MAX_IP_STR_LEN, external_ip->ip_str, (int) api_key.len, api_key.buf);
+            curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
+        } else {
+            sprintf(tmp_url, EXTREME_IP_URL "%.*s?key=demo2", MAX_IP_STR_LEN, external_ip->ip_str);
+            curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
+        }
     } else {
-        sprintf(tmp_url, EXTREME_IP_URL "?key=demo2");
-        curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
+        if (is_api_key) {
+            sprintf(tmp_url, EXTREME_IP_URL "?key=%.*s", (int) api_key.len, api_key.buf);
+            curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
+        } else {
+            sprintf(tmp_url, EXTREME_IP_URL "?key=demo2");
+            curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
+        }
     }
 
     free(tmp_url);
@@ -591,7 +621,7 @@ extreme_ip_handler(CURL   *curl,
                    char   *json_response,
                    size_t json_res_len)
 {
-    struct json_object *parsed_json      = NULL;
+    struct json_object *parsed_json = NULL;
 
     if (!curl_check_code(curl)) {
         return false;
