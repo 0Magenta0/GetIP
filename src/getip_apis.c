@@ -199,7 +199,7 @@ struct api_node apis_list[APIS_COUNT] = {
 
     { IPAPI_CO,
       "IPAPI_CO",
-      false, /* Cannot be used with API key. */
+      true,  /* Can be used with API key. */
       false, /* API key is not required. */
       ipapi_co_builder,
       ipapi_co_handler,
@@ -529,20 +529,44 @@ ipapi_co_builder(CURL *curl)
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, true);
 
     if (is_external_ips) {
-        tmp_url = malloc(external_ip->str_len
-                         + IPAPI_CO_URL_LEN /* Includes Null-terminator */
-                         + 5 /* /json */);
+        if (is_api_key) {
+            tmp_url = malloc(external_ip->str_len
+                             + api_key.len
+                             + IPAPI_CO_URL_LEN /* Includes Null-terminator */
+                             + 10 /* /json?key= */);
+        } else {
+            tmp_url = malloc(external_ip->str_len
+                             + IPAPI_CO_URL_LEN /* Includes Null-terminator */
+                             + 5 /* /json */);
+        }
     } else {
-        tmp_url = malloc(IPAPI_CO_URL_LEN /* Includes Null-terminator */
-                         + 5 /* /json */);
+        if (is_api_key) {
+            tmp_url = malloc(IPAPI_CO_URL_LEN /* Includes Null-terminator */
+                             + api_key.len
+                             + 9 /* json?key= */);
+        } else {
+            tmp_url = malloc(IPAPI_CO_URL_LEN /* Includes Null-terminator */
+                             + 4 /* json */);
+        }
     }
 
     if (is_external_ips) {
-        sprintf(tmp_url, IPAPI_CO_URL "%.*s/json", MAX_IP_STR_LEN, external_ip->ip_str);
-        curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
+        if (is_api_key) {
+            sprintf(tmp_url, IPAPI_CO_URL "%.*s/json?key=%.*s", MAX_IP_STR_LEN,
+                    external_ip->ip_str, (int) api_key.len, api_key.buf);
+            curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
+        } else {
+            sprintf(tmp_url, IPAPI_CO_URL "%.*s/json", MAX_IP_STR_LEN, external_ip->ip_str);
+            curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
+        }
     } else {
-        sprintf(tmp_url, IPAPI_CO_URL "json");
-        curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
+        if (is_api_key) {
+            sprintf(tmp_url, IPAPI_CO_URL "json?key=%.*s", (int) api_key.len, api_key.buf);
+            curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
+        } else {
+            strcpy(tmp_url, IPAPI_CO_URL "json");
+            curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
+        }
     }
 
     free(tmp_url);
