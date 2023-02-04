@@ -1,4 +1,4 @@
-# GetIP 2.6.0
+# GetIP 2.7.0
 
 Simple utility to request information about IP written in C
 
