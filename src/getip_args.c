@@ -25,9 +25,10 @@
  * enumerator
  */
 enum getip_option_type {
-    GETIP_OPTION_ARG,         /* Parameter required argument.  */
-    GETIP_OPTION_NO_ARG,      /* Parameter have no arguments.  */
-    GETIP_OPTION_ARG_HAVE_EMP /* Parameter can have arguments. */
+    GETIP_OPTION_ARG,         /* Parameter required argument.   */
+    GETIP_OPTION_NO_ARG,      /* Parameter have no arguments.   */
+    GETIP_OPTION_ARG_HAVE_EMP /* Parameter required argument 
+                                 that can contains blank chars. */
 };
 
 /* Struct that defines
