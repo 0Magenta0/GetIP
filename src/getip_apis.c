@@ -65,6 +65,11 @@ json_parse(struct json_object **parsed_json,
 void
 json_copy_caps_values(struct json_object **parsed_json);
 
+/* Get deep json object by key. */
+struct json_object *
+get_json_obj_by_key(struct json_object **parsed_json,
+                    const char *json_key);
+
 /* Check if some API returns
  * a successful message.
  */
@@ -399,10 +404,10 @@ json_copy_caps_values(struct json_object **parsed_json)
     caps_count = API_CAPS_COUNT(current_api->api_cap_id);
     for (counter = 0; counter < caps_count; ++counter) {
         if (current_api->api_cap_id[counter].capablitiy & selected_capabilites) {
-            json_object_object_get_ex(*parsed_json, current_api->api_cap_id[counter].str_json_key, &certain_json_obj);
+            certain_json_obj = get_json_obj_by_key(parsed_json, current_api->api_cap_id[counter].str_json_key);
             if (!json_object_is_type(certain_json_obj, json_type_null)
                 && (json_object_get_string_len(certain_json_obj)
-                   || json_object_is_type(certain_json_obj, json_type_boolean))) {
+                || json_object_is_type(certain_json_obj, json_type_boolean))) {
                 if (json_object_is_type(certain_json_obj, json_type_boolean)) {
                     current_api->api_cap_id[counter].result = malloc(6);
                     strncpy(current_api->api_cap_id[counter].result, json_object_get_string(certain_json_obj), 6);
@@ -418,17 +423,66 @@ json_copy_caps_values(struct json_object **parsed_json)
     json_object_put(*parsed_json);
 }
 
+struct json_object *
+get_json_obj_by_key(struct json_object **parsed_json,
+                    const char *json_key)
+{
+    struct json_object *certain_json_obj;
+    char   *tmp_str;
+    char   *tmp_str_pos;
+    size_t counter = 0;
+    size_t str_len;
+
+    str_len = strlen(json_key);
+    tmp_str = malloc(str_len + 1);
+    tmp_str_pos = tmp_str;
+    strcpy(tmp_str, json_key);
+
+    tmp_str = strtok(tmp_str, ".");
+    while (tmp_str != NULL) {
+        if (!counter) {
+            certain_json_obj = json_object_object_get(*parsed_json, tmp_str);
+        } else {
+            certain_json_obj = json_object_object_get(certain_json_obj, tmp_str);
+        }
+
+        tmp_str = strtok(NULL, ".");
+        ++counter;
+    }
+
+    if (!counter) {
+        certain_json_obj = json_object_object_get(*parsed_json, json_key);
+        goto _end;
+    }
+
+_end:
+    free(tmp_str_pos);
+    return certain_json_obj;
+}
+
 bool
 check_api_success(struct json_object **parsed_json)
 {
     struct json_object *certain_json_obj;
+    const char *tmp_str;
 
-    json_object_object_get_ex(*parsed_json, "status", &certain_json_obj);
-    if (strcmp(json_object_get_string (certain_json_obj), "success")) {
+    certain_json_obj = get_json_obj_by_key(parsed_json, "status");
+    tmp_str = json_object_get_string(certain_json_obj);
+    if (!tmp_str || strcmp(tmp_str, "success")) {
         if (is_verbose) {
-            printf("API error: Response status is \"%s\"\n", json_object_get_string(certain_json_obj));
-            json_object_object_get_ex(*parsed_json, "message", &certain_json_obj);
-            printf("API message: %s\n", json_object_get_string(certain_json_obj));
+            if (!tmp_str) {
+                puts("API error: Response status is null");
+            } else {
+                printf("API error: Response status is \"%s\"\n", tmp_str);
+            }
+
+            certain_json_obj = get_json_obj_by_key(parsed_json, "message");
+            tmp_str = json_object_get_string(certain_json_obj);
+            if (!tmp_str) {
+                puts("API message is null");
+            } else {
+                printf("API message: %s\n", tmp_str);
+            }
         }
 
         json_object_put(*parsed_json);
