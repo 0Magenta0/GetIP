@@ -113,6 +113,8 @@ struct api_node apis_list[APIS_COUNT] = {
       "IP_API_COM",
       false, /* Cannot be used with API key. */
       false, /* API key is not reuqired. */
+      true,  /* Can use TARGET. */
+      false, /* TARGET is not required. */
       ip_api_com_builder,
       ip_api_com_handler,
       IP_API_COM_ALL_CAPS,
@@ -206,6 +208,8 @@ struct api_node apis_list[APIS_COUNT] = {
       "IPAPI_CO",
       true,  /* Can be used with API key. */
       false, /* API key is not required. */
+      true,  /* Can use TARGET. */
+      false, /* TARGET is not required. */
       ipapi_co_builder,
       ipapi_co_handler,
       IPAPI_CO_ALL_CAPS,
@@ -269,6 +273,8 @@ struct api_node apis_list[APIS_COUNT] = {
       "EXTREME_IP",
       true,  /* Can be used with API key. */
       false, /* API key is not required. */
+      true,  /* Can use TARGET. */
+      false, /* TARGET is not required. */
       extreme_ip_builder,
       extreme_ip_handler,
       IPAPI_CO_ALL_CAPS,

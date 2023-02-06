@@ -439,6 +439,22 @@ _opt_found:
             }
         }
 
+        /* If the API cannot handle the TARGET
+         * but it's providen then print error.
+         */
+        if (is_external_ips && !get_api_by_id(selected_api)->can_use_target) {
+            error_id = ERR_ARG_API_NOKEY;
+            return false;
+        }
+
+        /* If the API requires a TARGET but it's
+         * not provided then print error.
+         */
+        if (!is_external_ips && get_api_by_id(selected_api)->should_use_target) {
+            error_id = ERR_ARG_API_REQKEY;
+            return false;
+        }
+
         /* If no one API parameter is
          * selected then use ALL.
          */

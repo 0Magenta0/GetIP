@@ -12,20 +12,22 @@
 #include <stdbool.h>
 
 /* Errors descriptions. */
-#define ERR_STR_IP_STR         "invalid target paramenter"
-#define ERR_STR_ARG_UNK        "unknown paramenter"
-#define ERR_STR_ARG_MISS       "parameter should have argument"
-#define ERR_STR_ARG_API_UNK    "you're select invalid API"
-#define ERR_STR_ARG_API_FIELD  "selected API doesn't support this field"
-#define ERR_STR_ARG_API_NOKEY  "selected API doesn't support API keys"
-#define ERR_STR_ARG_API_REQKEY "selected API required API key"
-#define ERR_STR_ARG_API_KEYLEN "selected API key has an invalid lenght"
-#define ERR_STR_CURL_GLOB_INIT "curl_global_init() failed"
-#define ERR_STR_CURL_EASY_INIT "curl_easy_init() failed"
-#define ERR_STR_CURL_EASY_PERF "curl_easy_perform() failed"
-#define ERR_STR_API_RET_CODE   "API's response status code is not 200"
-#define ERR_STR_API_JSON_PARSE "cannot parse JSON API response"
-#define ERR_STR_API_STATUS     "API response is not successful"
+#define ERR_STR_IP_STR            "invalid target paramenter"
+#define ERR_STR_ARG_UNK           "unknown paramenter"
+#define ERR_STR_ARG_MISS          "parameter should have argument"
+#define ERR_STR_ARG_API_UNK       "you're select invalid API"
+#define ERR_STR_ARG_API_FIELD     "selected API doesn't support this field"
+#define ERR_STR_ARG_API_NOKEY     "selected API doesn't support API keys"
+#define ERR_STR_ARG_API_REQKEY    "selected API required API key"
+#define ERR_STR_ARG_API_KEYLEN    "selected API key has an invalid lenght"
+#define ERR_STR_ARG_API_NOTARGET  "selected API doesn't support TARGETS"
+#define ERR_STR_ARG_API_REQTARGET "selected API required a TARGET"
+#define ERR_STR_CURL_GLOB_INIT    "curl_global_init() failed"
+#define ERR_STR_CURL_EASY_INIT    "curl_easy_init() failed"
+#define ERR_STR_CURL_EASY_PERF    "curl_easy_perform() failed"
+#define ERR_STR_API_RET_CODE      "API's response status code is not 200"
+#define ERR_STR_API_JSON_PARSE    "cannot parse JSON API response"
+#define ERR_STR_API_STATUS        "API response is not successful"
 
 enum error_id error_id;
 
@@ -73,6 +75,17 @@ error_handler(void)
          case ERR_ARG_API_KEYLEN:
             fputs(ERR_STR_ARG_API_KEYLEN, stderr);
             putchar('\n');
+            break;
+
+        case ERR_ARG_API_NOTARGET:
+            fputs(ERR_STR_ARG_API_NOTARGET, stderr);
+            putchar('\n');
+            break;
+
+         case ERR_ARG_API_REQTARGET:
+            fputs(ERR_STR_ARG_API_REQTARGET, stderr);
+            putchar('\n');
+            print_usage(USAGE_FIELDS);
             break;
 
         case ERR_CURL_GLOB_INIT:

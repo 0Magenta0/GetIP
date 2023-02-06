@@ -78,6 +78,8 @@ struct api_node {
     const char *str_id;
     const bool can_use_key;
     const bool should_use_key;
+    const bool can_use_target;
+    const bool should_use_target;
     void (* const build_request)(CURL *);
     bool (* const handle_response)(CURL *,
                                    char *,
