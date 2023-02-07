@@ -37,6 +37,10 @@
 #define DB_IP_URL_LEN  (sizeof (DB_IP_URL) / sizeof (char))
 #define DB_IP_ALL_CAPS 0x17F3
 
+#define IPGEO_IO_URL      "https://api.ipgeolocation.io/ipgeo?apiKey="
+#define IPGEO_IO_URL_LEN  (sizeof (IPGEO_IO_URL) / sizeof (char))
+#define IPGEO_IO_ALL_CAPS 0x07EF
+
 /* Bitset that unique
  * to ip-api.com.
  */
@@ -117,6 +121,16 @@ db_ip_builder(CURL *curl);
 /* Handle response from api.db-ip.com. */
 bool
 db_ip_handler(CURL   *curl,
+                   char   *json_response,
+                   size_t json_res_len);
+
+/* Prepare request for ipgeolocation.io. */
+void
+ipgeo_io_builder(CURL *curl);
+
+/* Handle response from ipgeolocation.io. */
+bool
+ipgeo_io_handler(CURL   *curl,
                    char   *json_response,
                    size_t json_res_len);
 
@@ -421,7 +435,78 @@ struct api_node apis_list[APIS_COUNT] = {
           "isProxy",
           "Proxy",
           NULL
+        }
+      }
+    },
+
+    { IPGEO_IO,
+      "IPGEO_IO",
+      true,  /* Can be used with API key. */
+      true,  /* API key is reuqired.      */
+      true,  /* Can use TARGET.           */
+      false, /* TARGET is not required.   */
+      ipgeo_io_builder,
+      ipgeo_io_handler,
+      IPGEO_IO_ALL_CAPS,
+      { { API_CAP_IP,
+          "ip",
+          "IP",
+          NULL
         },
+
+        { API_CAP_ORG,
+          "organization",
+          "ORG",
+          NULL
+        },
+
+        { API_CAP_HOST,
+          "hostname",
+          "Hostname",
+          NULL
+        },
+
+        { API_CAP_AS,
+          "asn",
+          "ASN",
+          NULL
+        },
+
+        { API_CAP_ISP,
+          "isp",
+          "ISP",
+          NULL
+        },
+
+        { API_CAP_CONTINENT,
+          "continent_name",
+          "Continent",
+          NULL
+        },
+
+        { API_CAP_COUNTRY,
+          "country_name",
+          "Country",
+          NULL
+        },
+
+        { API_CAP_REGION,
+          "state_prov",
+          "State",
+          NULL
+        },
+
+        { API_CAP_CITY,
+          "city",
+          "City",
+          NULL
+        },
+
+        { API_CAP_TIMEZONE,
+          "time_zone.name",
+          "Time Zone",
+          NULL
+        }
       }
     }
 };
@@ -859,6 +944,54 @@ db_ip_builder(CURL *curl)
 
 bool
 db_ip_handler(CURL   *curl,
+                   char   *json_response,
+                   size_t json_res_len)
+{
+    struct json_object *parsed_json = NULL;
+
+    if (!curl_check_code(curl)) {
+        return false;
+    }
+
+    if (!json_parse(&parsed_json, json_response, json_res_len)) {
+        return false;
+    }
+
+    json_copy_caps_values(&parsed_json);
+
+    return true;
+}
+
+void
+ipgeo_io_builder(CURL *curl)
+{
+    char *tmp_url;
+
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, true);
+
+    if (is_external_ips) {
+        tmp_url = malloc(external_ip->str_len
+                         + IPGEO_IO_URL_LEN /* Includes Null-terminator */
+                         + 4 /* &ip= */
+                         + api_key.len);
+    } else {
+        tmp_url = malloc(IPGEO_IO_URL_LEN /* Includes Null-terminator */
+                         + api_key.len);
+    }
+
+    if (is_external_ips) {
+        sprintf(tmp_url, IPGEO_IO_URL "%.*s&ip=%.*s", (int) api_key.len, api_key.buf, MAX_IP_STR_LEN, external_ip->ip_str);
+        curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
+    } else {
+        sprintf(tmp_url, IPGEO_IO_URL "%.*s", (int) api_key.len, api_key.buf);
+        curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
+    }
+
+    free(tmp_url);
+}
+
+bool
+ipgeo_io_handler(CURL   *curl,
                    char   *json_response,
                    size_t json_res_len)
 {
