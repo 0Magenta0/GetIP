@@ -948,12 +948,23 @@ db_ip_handler(CURL   *curl,
                    size_t json_res_len)
 {
     struct json_object *parsed_json = NULL;
+    struct json_object *certain_json_obj;
+    const char *tmp_str;
 
     if (!curl_check_code(curl)) {
         return false;
     }
 
     if (!json_parse(&parsed_json, json_response, json_res_len)) {
+        return false;
+    }
+
+    certain_json_obj = get_json_obj_by_key(&parsed_json, "error");
+    tmp_str = json_object_get_string(certain_json_obj);
+    if (tmp_str) {
+        printf("getip: API Error message is %s.\n", tmp_str);
+        json_object_put(parsed_json);
+        error_id = ERR_API_STATUS;
         return false;
     }
 
