@@ -583,8 +583,12 @@ json_copy_caps_values(struct json_object **parsed_json)
             certain_json_obj = get_json_obj_by_key(parsed_json, current_api->api_cap_id[counter].str_json_key);
             if (!json_object_is_type(certain_json_obj, json_type_null)
                 && (json_object_get_string_len(certain_json_obj)
-                || json_object_is_type(certain_json_obj, json_type_boolean))) {
-                if (json_object_is_type(certain_json_obj, json_type_boolean)) {
+                || json_object_is_type(certain_json_obj, json_type_boolean)
+                || json_object_is_type(certain_json_obj, json_type_int))) {
+                if (json_object_is_type(certain_json_obj, json_type_int)) {
+                    current_api->api_cap_id[counter].result = malloc(12);
+                    strncpy(current_api->api_cap_id[counter].result, json_object_get_string(certain_json_obj), 12);
+                } else if (json_object_is_type(certain_json_obj, json_type_boolean)) {
                     current_api->api_cap_id[counter].result = malloc(6);
                     strncpy(current_api->api_cap_id[counter].result, json_object_get_string(certain_json_obj), 6);
                 } else {
