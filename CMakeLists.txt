@@ -35,10 +35,10 @@ ENDIF (NOT CMAKE_BUILD_TYPE)
 
 SET (
   CMAKE_C_FLAGS
-    "${CMAKE_C_FLAGS} \
-     -Wall -Wextra -Werror -Wpedantic \
-     -Wcast-qual -Wconversion -Wcast-align \
-     -Wredundant-decls -Wsign-conversion \
+    "${CMAKE_C_FLAGS}\
+     -Wall -Wextra -Werror -Wpedantic\
+     -Wcast-qual -Wconversion -Wcast-align\
+     -Wredundant-decls -Wsign-conversion\
      -Waggregate-return -Wswitch-enum"
 )
 

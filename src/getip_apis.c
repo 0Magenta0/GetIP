@@ -33,6 +33,10 @@
 #define EXTREME_IP_URL_LEN  (sizeof (EXTREME_IP_URL) / sizeof (char))
 #define EXTREME_IP_ALL_CAPS 0x07FB
 
+#define DB_IP_URL      "https://api.db-ip.com/v2/"
+#define DB_IP_URL_LEN  (sizeof (DB_IP_URL) / sizeof (char))
+#define DB_IP_ALL_CAPS 0x17F3
+
 /* Bitset that unique
  * to ip-api.com.
  */
@@ -106,15 +110,25 @@ extreme_ip_handler(CURL   *curl,
                    char   *json_response,
                    size_t json_res_len);
 
+/* Prepare request for api.db-ip.com. */
+void
+db_ip_builder(CURL *curl);
+
+/* Handle response from api.db-ip.com. */
+bool
+db_ip_handler(CURL   *curl,
+                   char   *json_response,
+                   size_t json_res_len);
+
 enum api_ids selected_api;
 
 struct api_node apis_list[APIS_COUNT] = {
     { IP_API_COM,
       "IP_API_COM",
       false, /* Cannot be used with API key. */
-      false, /* API key is not reuqired. */
-      true,  /* Can use TARGET. */
-      false, /* TARGET is not required. */
+      false, /* API key is not reuqired.     */
+      true,  /* Can use TARGET.              */
+      false, /* TARGET is not required.      */
       ip_api_com_builder,
       ip_api_com_handler,
       IP_API_COM_ALL_CAPS,
@@ -207,9 +221,9 @@ struct api_node apis_list[APIS_COUNT] = {
     { IPAPI_CO,
       "IPAPI_CO",
       true,  /* Can be used with API key. */
-      false, /* API key is not required. */
-      true,  /* Can use TARGET. */
-      false, /* TARGET is not required. */
+      false, /* API key is not required.  */
+      true,  /* Can use TARGET.           */
+      false, /* TARGET is not required.   */
       ipapi_co_builder,
       ipapi_co_handler,
       IPAPI_CO_ALL_CAPS,
@@ -272,9 +286,9 @@ struct api_node apis_list[APIS_COUNT] = {
     { EXTREME_IP,
       "EXTREME_IP",
       true,  /* Can be used with API key. */
-      false, /* API key is not required. */
-      true,  /* Can use TARGET. */
-      false, /* TARGET is not required. */
+      false, /* API key is not required.  */
+      true,  /* Can use TARGET.           */
+      false, /* TARGET is not required.   */
       extreme_ip_builder,
       extreme_ip_handler,
       IPAPI_CO_ALL_CAPS,
@@ -337,6 +351,77 @@ struct api_node apis_list[APIS_COUNT] = {
           "Time Zone",
           NULL
         }
+      }
+    },
+
+    { DB_IP,
+      "DB_IP",
+      true,  /* Can be used with API key. */
+      false, /* API key is not required.  */
+      true,
+      false,
+      db_ip_builder,
+      db_ip_handler,
+      DB_IP_ALL_CAPS,
+      { { API_CAP_IP,
+          "ipAddress",
+          "IP",
+          NULL
+        },
+
+        { API_CAP_ORG,
+          "organization",
+          "ORG",
+          NULL
+        },
+
+        { API_CAP_AS_NAME,
+          "asName",
+          "AS NAME",
+          NULL
+        },
+
+        { API_CAP_ISP,
+          "isp",
+          "ISP",
+          NULL
+        },
+
+        { API_CAP_CONTINENT,
+          "continentName",
+          "Continent",
+          NULL
+        },
+
+        { API_CAP_COUNTRY,
+          "countryName",
+          "Country",
+          NULL
+        },
+
+        { API_CAP_REGION,
+          "stateProv",
+          "State",
+          NULL
+        },
+
+        { API_CAP_CITY,
+          "city",
+          "City",
+          NULL
+        },
+
+        { API_CAP_TIMEZONE,
+          "timeZone",
+          "Time Zone",
+          NULL
+        },
+
+        { API_CAP_ISPROXY,
+          "isProxy",
+          "Proxy",
+          NULL
+        },
       }
     }
 };
@@ -716,6 +801,74 @@ extreme_ip_handler(CURL   *curl,
     }
 
     if (!check_api_success(&parsed_json)) {
+        return false;
+    }
+
+    json_copy_caps_values(&parsed_json);
+
+    return true;
+}
+
+void
+db_ip_builder(CURL *curl)
+{
+    char *tmp_url;
+
+    if (is_external_ips) {
+        if (is_api_key) {
+            tmp_url = malloc(external_ip->str_len
+                             + DB_IP_URL_LEN /* Includes Null-terminator */
+                             + 1 /* / */
+                             + api_key.len);
+        } else {
+            tmp_url = malloc(external_ip->str_len
+                             + DB_IP_URL_LEN /* Includes Null-terminator */
+                             + 5 /* free/ */);
+        }
+    } else {
+        if (is_api_key) {
+            tmp_url = malloc(DB_IP_URL_LEN /* Includes Null-terminator */
+                             + 5 /* /self */
+                             + api_key.len);
+        } else {
+            tmp_url = malloc(DB_IP_URL_LEN /* Includes Null-terminator */
+                             + 9 /* free/self */);
+        }
+    }
+
+    if (is_external_ips) {
+        if (is_api_key) {
+            sprintf(tmp_url, DB_IP_URL "%.*s/%.*s", (int) api_key.len, api_key.buf, MAX_IP_STR_LEN, external_ip->ip_str);
+            curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
+        } else {
+            sprintf(tmp_url, DB_IP_URL "free/%.*s", MAX_IP_STR_LEN, external_ip->ip_str);
+            curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
+        }
+    } else {
+        if (is_api_key) {
+            sprintf(tmp_url, DB_IP_URL "%.*s/self", (int) api_key.len, api_key.buf);
+            curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
+        } else {
+            sprintf(tmp_url, DB_IP_URL "free/self");
+            curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
+        }
+    }
+
+    free(tmp_url);
+}
+
+bool
+db_ip_handler(CURL   *curl,
+                   char   *json_response,
+                   size_t json_res_len)
+{
+    struct json_object *parsed_json = NULL;
+
+    if (!curl_check_code(curl)) {
+        return false;
+    }
+
+    if (!json_parse(&parsed_json, json_response, json_res_len)) {
         return false;
     }
 
