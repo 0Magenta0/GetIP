@@ -58,13 +58,13 @@ print_usage(enum usage_variants variant)
             puts("  -region             Print Region field");
         } if (check_field_support(API_CAP_CITY)) {
             puts("  -city               Print City field");
-        } if (check_field_support(API_CAP_CITY)) {
+        } if (check_field_support(API_CAP_TIMEZONE)) {
             puts("  -zone               Print Time Zone field");
-        } if (check_field_support(API_CAP_CITY)) {
+        } if (check_field_support(API_CAP_ISHOST)) {
             puts("  -is-host            Print Hosting field");
-        } if (check_field_support(API_CAP_CITY)) {
+        } if (check_field_support(API_CAP_ISPROXY)) {
             puts("  -is-proxy           Print Time Proxy field");
-        } if (check_field_support(API_CAP_CITY)) {
+        } if (check_field_support(API_CAP_ISMOBILE)) {
             puts("  -is-mobile          Print Time Mobile field");
         }
 
