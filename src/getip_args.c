@@ -283,7 +283,7 @@ bool
 args_handler(const int    argc,
              char * const argv[])
 {
-    size_t ip_str_len;
+    size_t ip_str_len = 0;
     bool is_next_ip = true;
     int ips_count = 0;
     int ch;
@@ -356,6 +356,14 @@ args_handler(const int    argc,
                     last_external_ip->ip_str[ip_str_len] = (char) ch;
                     ++ip_str_len;
                 }
+            }
+
+            /* It's possible in situation
+             * when EOF in first byte.
+             */
+            if (!ip_str_len) {
+                error_id = ERR_IP_STR;
+                return false;
             }
 
             /* Append Zero-terminator at end
