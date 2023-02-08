@@ -18,7 +18,7 @@
 #define API_CAP_COUNT 14
 
 /* Count of supported APIs. */
-#define APIS_COUNT 5
+#define APIS_COUNT 6
 
 /* Count of supported API
  * parameters by certain API.
@@ -33,7 +33,8 @@ enum api_ids {
     IPAPI_CO,
     EXTREME_IP,
     DB_IP,
-    IPGEO_IO
+    IPGEO_IO,
+    WHOIS
 };
 
 /* Global enumerator for

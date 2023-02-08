@@ -41,6 +41,12 @@
 #define IPGEO_IO_URL_LEN  (sizeof (IPGEO_IO_URL) / sizeof (char))
 #define IPGEO_IO_ALL_CAPS 0x07EF
 
+#define WHOIS_URL        "https://ipwho.is/"
+#define WHOISPRO_URL     "https://ipwhois.pro/"
+#define WHOIS_URL_LEN    (sizeof (WHOIS_URL) / sizeof (char))
+#define WHOISPRO_URL_LEN (sizeof (WHOISPRO_URL) / sizeof (char))
+#define WHOIS_ALL_CAPS 0x1DEB
+
 /* Bitset that unique
  * to ip-api.com.
  */
@@ -121,8 +127,8 @@ db_ip_builder(CURL *curl);
 /* Handle response from api.db-ip.com. */
 bool
 db_ip_handler(CURL   *curl,
-                   char   *json_response,
-                   size_t json_res_len);
+              char   *json_response,
+              size_t json_res_len);
 
 /* Prepare request for ipgeolocation.io. */
 void
@@ -131,8 +137,18 @@ ipgeo_io_builder(CURL *curl);
 /* Handle response from ipgeolocation.io. */
 bool
 ipgeo_io_handler(CURL   *curl,
-                   char   *json_response,
-                   size_t json_res_len);
+                 char   *json_response,
+                 size_t json_res_len);
+
+/* Prepare request for ipwho.is/ipwhois.pro. */
+void
+whois_builder(CURL *curl);
+
+/* Handle response from ipwho.is/ipwhois.pro. */
+bool
+whois_handler(CURL   *curl,
+              char   *json_response,
+              size_t json_res_len);
 
 enum api_ids selected_api;
 
@@ -505,6 +521,84 @@ struct api_node apis_list[APIS_COUNT] = {
         { API_CAP_TIMEZONE,
           "time_zone.name",
           "Time Zone",
+          NULL
+        }
+      }
+    },
+
+
+    { WHOIS,
+      "WHOIS",
+      true,  /* Can be used with API key. */
+      false, /* API key is not required.  */
+      true,  /* Can use TARGET.           */
+      false, /* TARGET is not required.   */
+      whois_builder,
+      whois_handler,
+      WHOIS_ALL_CAPS,
+      { { API_CAP_IP,
+          "ip",
+          "IP",
+          NULL
+        },
+
+        { API_CAP_ORG,
+          "connection.org",
+          "ORG",
+          NULL
+        },
+
+        { API_CAP_AS,
+          "connection.asn",
+          "AS",
+          NULL
+        },
+
+        { API_CAP_ISP,
+          "connection.isp",
+          "ISP",
+          NULL
+        },
+
+        { API_CAP_CONTINENT,
+          "continent",
+          "Continent",
+          NULL
+        },
+
+        { API_CAP_COUNTRY,
+          "country",
+          "Country",
+          NULL
+        },
+
+        { API_CAP_REGION,
+          "region",
+          "Region",
+          NULL
+        },
+
+        { API_CAP_CITY,
+          "city",
+          "City",
+          NULL
+        },
+
+        { API_CAP_TIMEZONE,
+          "timezone.id",
+          "Time Zone",
+          NULL
+        },
+
+        { API_CAP_ISHOST,
+          "security.hosting",
+          "Hosting",
+          NULL
+        },
+
+        { API_CAP_ISPROXY,
+          "security.proxy",
+          "Proxy",
           NULL
         }
       }
@@ -1017,6 +1111,95 @@ ipgeo_io_handler(CURL   *curl,
     }
 
     if (!json_parse(&parsed_json, json_response, json_res_len)) {
+        return false;
+    }
+
+    json_copy_caps_values(&parsed_json);
+
+    return true;
+}
+
+void
+whois_builder(CURL *curl)
+{
+    char *tmp_url;
+
+    curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, true);
+
+    if (is_external_ips) {
+        if (is_api_key) {
+            tmp_url = malloc(external_ip->str_len
+                             + WHOISPRO_URL_LEN /* Includes Null-terminator */
+                             + 5 /* ?key= */
+                             + api_key.len);
+        } else {
+            tmp_url = malloc(external_ip->str_len
+                             + WHOIS_URL_LEN /* Includes Null-terminator */);
+        }
+    } else {
+        if (is_api_key) {
+            tmp_url = malloc(WHOISPRO_URL_LEN /* Includes Null-terminator */
+                             + 5 /* ?key= */
+                             + api_key.len);
+        } else {
+            tmp_url = malloc(WHOIS_URL_LEN /* Includes Null-terminator */);
+        }
+    }
+
+    if (is_external_ips) {
+        if (is_api_key) {
+            sprintf(tmp_url, WHOISPRO_URL "%.*s?key=%.*s", MAX_IP_STR_LEN, external_ip->ip_str, (int) api_key.len, api_key.buf);
+            curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
+        } else {
+            sprintf(tmp_url, WHOIS_URL "%.*s", MAX_IP_STR_LEN, external_ip->ip_str);
+            curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
+        }
+    } else {
+        if (is_api_key) {
+            sprintf(tmp_url, WHOISPRO_URL "?key=%.*s", (int) api_key.len, api_key.buf);
+            curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
+        } else {
+            sprintf(tmp_url, WHOIS_URL);
+            curl_easy_setopt(curl, CURLOPT_URL, tmp_url);
+        }
+    }
+
+    free(tmp_url);
+}
+
+bool
+whois_handler(CURL   *curl,
+              char   *json_response,
+              size_t json_res_len)
+{
+    struct json_object *parsed_json = NULL;
+    struct json_object *certain_json_obj;
+    const char *tmp_str;
+    bool tmp_bool;
+
+    if (!curl_check_code(curl)) {
+        return false;
+    }
+
+    if (!json_parse(&parsed_json, json_response, json_res_len)) {
+        return false;
+    }
+
+    certain_json_obj = get_json_obj_by_key(&parsed_json, "success");
+    tmp_bool = json_object_get_boolean(certain_json_obj);
+    if (!tmp_bool) {
+        if (is_verbose) {
+            certain_json_obj = get_json_obj_by_key(&parsed_json, "message");
+            tmp_str = json_object_get_string(certain_json_obj);
+            if (!tmp_str) {
+                puts("API message is null");
+            } else {
+                printf("API message: %s\n", tmp_str);
+            }
+        }
+
+        json_object_put(parsed_json);
+        error_id = ERR_API_STATUS;
         return false;
     }
 
