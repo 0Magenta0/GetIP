@@ -44,10 +44,19 @@ GetIP (version 2.7.0)
 Utility to request info about IP from APIs
 https://github.com/0Magenta0/GetIP
 
+Legend:
++--- (-) Can't TARGET (/) Can TARGET (+) Req TARGET
+|+-- (-) Can't APIKEY (/) Can APIKEY (+) Req APKEY
+||+- (-/+) Some fields require the APIKEY
+***
+
 List of supported apis:
-  IP_API_COM (Default)
-  IPAPI_CO
-  EXTREME_IP
+  IP_API_COM (/--)(Default)
+  IPAPI_CO (//+)
+  EXTREME_IP (//-)
+  DB_IP (//+)
+  IPGEO_IO (/++)
+  WHOIS (//+)
 ```
 
 GetIP fields-list message (IP\_API\_COM)

@@ -15,7 +15,7 @@
 /* Maximum count of
  * supported API parameters.
  */
-#define API_CAP_COUNT 14
+#define API_CAP_COUNT 15
 
 /* Count of supported APIs. */
 #define APIS_COUNT 6
@@ -54,7 +54,8 @@ enum api_cap {
     API_CAP_TIMEZONE  = 0x0400,
     API_CAP_ISHOST    = 0x0800,
     API_CAP_ISPROXY   = 0x1000,
-    API_CAP_ISMOBILE  = 0x2000
+    API_CAP_ISMOBILE  = 0x2000,
+    API_CAP_ISTOR     = 0x4000
 };
 
 /* Represents Certain API parameter,
@@ -72,6 +73,8 @@ struct api_cap_id {
  * Contains API ID and it's
  * string representation,
  * can API used with/without key or not,
+ * can use TARGET (External IP),
+ * can use ALL API fields without APIKEY,
  * pointers to request/response functions,
  * bitset with ALL selected parameters,
  * array with API paramters description.
@@ -83,6 +86,7 @@ struct api_node {
     const bool should_use_key;
     const bool can_use_target;
     const bool should_use_target;
+    const bool can_caps_without_key;
     void (* const build_request)(CURL *);
     bool (* const handle_response)(CURL *,
                                    char *,

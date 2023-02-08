@@ -66,23 +66,52 @@ print_usage(enum usage_variants variant)
             puts("  -is-proxy           Print Time Proxy field");
         } if (check_field_support(API_CAP_ISMOBILE)) {
             puts("  -is-mobile          Print Time Mobile field");
+        } if (check_field_support(API_CAP_ISTOR)) {
+            puts("  -is-tor             Print Time TOR field");
         }
 
         putchar('\n');
     } else if (variant == USAGE_APIS) {
-        puts("List of supported apis:");
+        puts("Legend:\n"
+             "+--- (-) Can't TARGET (/) Can TARGET (+) Req TARGET\n"
+             "|+-- (-) Can't APIKEY (/) Can APIKEY (+) Req APKEY\n"
+             "||+- (-/+) Some fields require the APIKEY\n"
+             "***\n"
+             "\n"
+             "List of supported apis:");
         for (int counter = 0; counter < APIS_COUNT; ++counter) {
             putchar(' '), putchar(' ');
 
             fputs(apis_list[counter].str_id, stdout);
             putchar(' ');
+            putchar('(');
+            if (apis_list[counter].can_use_target) {
+                if (apis_list[counter].should_use_target) {
+                    putchar('+');
+                } else {
+                    putchar('/');
+                }
+            } else {
+                putchar('-');
+            }
+
             if (apis_list[counter].can_use_key) {
                 if (apis_list[counter].should_use_key) {
-                    fputs("(REQ API KEY)", stdout);
+                    putchar('+');
                 } else {
-                    fputs("(API KEY)", stdout);
+                    putchar('/');
                 }
+            } else {
+                putchar('-');
             }
+
+            if (apis_list[counter].can_caps_without_key) {
+                putchar('+');
+            } else {
+                putchar('-');
+            }
+
+            putchar(')');
 
             if (!counter) {
                 fputs("(Default)", stdout);

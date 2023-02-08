@@ -45,7 +45,7 @@
 #define WHOISPRO_URL     "https://ipwhois.pro/"
 #define WHOIS_URL_LEN    (sizeof (WHOIS_URL) / sizeof (char))
 #define WHOISPRO_URL_LEN (sizeof (WHOISPRO_URL) / sizeof (char))
-#define WHOIS_ALL_CAPS 0x1DEB
+#define WHOIS_ALL_CAPS 0x5DEB
 
 /* Bitset that unique
  * to ip-api.com.
@@ -155,10 +155,11 @@ enum api_ids selected_api;
 struct api_node apis_list[APIS_COUNT] = {
     { IP_API_COM,
       "IP_API_COM",
-      false, /* Cannot be used with API key. */
-      false, /* API key is not reuqired.     */
-      true,  /* Can use TARGET.              */
-      false, /* TARGET is not required.      */
+      false, /* Cannot be used with API key.    */
+      false, /* API key is not reuqired.        */
+      true,  /* Can use TARGET.                 */
+      false, /* TARGET is not required.         */
+      false, /* Can use ALL Fields without key. */
       ip_api_com_builder,
       ip_api_com_handler,
       IP_API_COM_ALL_CAPS,
@@ -250,10 +251,11 @@ struct api_node apis_list[APIS_COUNT] = {
 
     { IPAPI_CO,
       "IPAPI_CO",
-      true,  /* Can be used with API key. */
-      false, /* API key is not required.  */
-      true,  /* Can use TARGET.           */
-      false, /* TARGET is not required.   */
+      true,  /* Can be used with API key.         */
+      false, /* API key is not required.          */
+      true,  /* Can use TARGET.                   */
+      false, /* TARGET is not required.           */
+      true,  /* Can't use ALL Fields without key. */
       ipapi_co_builder,
       ipapi_co_handler,
       IPAPI_CO_ALL_CAPS,
@@ -315,10 +317,11 @@ struct api_node apis_list[APIS_COUNT] = {
 
     { EXTREME_IP,
       "EXTREME_IP",
-      true,  /* Can be used with API key. */
-      false, /* API key is not required.  */
-      true,  /* Can use TARGET.           */
-      false, /* TARGET is not required.   */
+      true,  /* Can be used with API key.       */
+      false, /* API key is not required.        */
+      true,  /* Can use TARGET.                 */
+      false, /* TARGET is not required.         */
+      false, /* Can use ALL Fields without key. */
       extreme_ip_builder,
       extreme_ip_handler,
       IPAPI_CO_ALL_CAPS,
@@ -386,10 +389,11 @@ struct api_node apis_list[APIS_COUNT] = {
 
     { DB_IP,
       "DB_IP",
-      true,  /* Can be used with API key. */
-      false, /* API key is not required.  */
-      true,
-      false,
+      true,  /* Can be used with API key.         */
+      false, /* API key is not required.          */
+      true,  /* Can use TARGET.                   */
+      false, /* TARGET is not required.           */
+      true,  /* Can't use ALL Fields without key. */
       db_ip_builder,
       db_ip_handler,
       DB_IP_ALL_CAPS,
@@ -457,10 +461,11 @@ struct api_node apis_list[APIS_COUNT] = {
 
     { IPGEO_IO,
       "IPGEO_IO",
-      true,  /* Can be used with API key. */
-      true,  /* API key is reuqired.      */
-      true,  /* Can use TARGET.           */
-      false, /* TARGET is not required.   */
+      true,  /* Can be used with API key.         */
+      true,  /* API key is reuqired.              */
+      true,  /* Can use TARGET.                   */
+      false, /* TARGET is not required.           */
+      true,  /* Can't use ALL Fields without key. */
       ipgeo_io_builder,
       ipgeo_io_handler,
       IPGEO_IO_ALL_CAPS,
@@ -529,10 +534,11 @@ struct api_node apis_list[APIS_COUNT] = {
 
     { WHOIS,
       "WHOIS",
-      true,  /* Can be used with API key. */
-      false, /* API key is not required.  */
-      true,  /* Can use TARGET.           */
-      false, /* TARGET is not required.   */
+      true,  /* Can be used with API key.         */
+      false, /* API key is not required.          */
+      true,  /* Can use TARGET.                   */
+      false, /* TARGET is not required.           */
+      true,  /* Can't use ALL Fields without key. */
       whois_builder,
       whois_handler,
       WHOIS_ALL_CAPS,
@@ -599,6 +605,12 @@ struct api_node apis_list[APIS_COUNT] = {
         { API_CAP_ISPROXY,
           "security.proxy",
           "Proxy",
+          NULL
+        },
+
+        { API_CAP_ISTOR,
+          "security.tor",
+          "Tor",
           NULL
         }
       }
