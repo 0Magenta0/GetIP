@@ -6,6 +6,9 @@ Simple utility to request information about IP written in C
  - [ip-api.com](https://ip-api.com) (Default)
  - [ipapi.co](https://ipapi.co)
  - [extreme-ip-lookup.com](https://extreme-ip-lookup.com)
+ - [db-ip.com](https://db-ip.com)
+ - [ipgeolocation.io](https://ipgeolocation.io)
+ - [ipwhois.io](https://ipwhois.io/)
 
 ### Dependencies
  - [libcurl](https://curl.se/libcurl)
