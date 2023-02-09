@@ -18,8 +18,21 @@
 #include <curl/curl.h>
 #include <maxminddb.h>
 
+/* Max deep of MMDB path
+ * also counts NULL at end.
+ */
+#define MMDB_MAX_PATH_DEEP 4
+
+/* Max count of MMDB paths
+ * also counts NULL at end.
+ */
+#define MMDB_PATH_COUNT 4
+
 struct mmdb_field {
-    char *value;
+    const enum mmdb_cap capablitiy;
+    const char * const cap_str_name;
+    const char * const paths[MMDB_MAX_PATH_DEEP][MMDB_PATH_COUNT];
+    char *result;
 };
 
 bool is_mmdb;
@@ -35,6 +48,47 @@ struct str_buf api_key;
 enum api_cap selected_capabilities;
 enum mmdb_cap selected_mmdb_capabilities;
 struct MMDB_s mmdb;
+
+/* Array with ALL supported
+ * MMDB paths and fields.
+ */
+struct mmdb_field mmdb_fields[MMDB_FIELDS_COUNT] = {
+    { MMDB_CAP_IP,
+      "IP",
+      { { NULL } },
+      NULL
+    },
+
+    { MMDB_CAP_CONTINENT,
+      "Continent",
+      { { "continent", "names", "en", NULL },
+        { "registered_continent", "names", "en", NULL },
+        { "continent", "names", "ru", NULL },
+        { "registered_continent", "names", "ru", NULL },
+      },
+      NULL
+    },
+
+    { MMDB_CAP_COUNTRY,
+      "Country",
+      { { "country", "names", "en", NULL },
+        { "registered_country", "names", "en", NULL },
+        { "country", "names", "ru", NULL },
+        { "registered_country", "names", "ru", NULL }
+      },
+      NULL
+    },
+
+    { MMDB_CAP_CONTINENT,
+      "City",
+      { { "city", "names", "en", NULL },
+        { "registered_city", "names", "en", NULL },
+        { "city", "names", "ru", NULL },
+        { "registered_city", "names", "ru", NULL }
+      },
+      NULL
+    }
+};
 
 /* Append curl HTTP response
  * to buffer structure.
@@ -292,8 +346,6 @@ mmdb_check_status(int mmdb_error)
             fprintf(stderr, "getip: libmaxminddb: %s\n", MMDB_strerror(mmdb_error));
         }
 
-        MMDB_close(&mmdb);
-        error_id = ERR_MMDB_REQUEST;
         return false;
     }
 
@@ -335,33 +387,43 @@ mmdb_get_data(void)
     struct external_ip *tmp_ip_str;
     int mmdb_error;
     int gai_error;
+    int caps_counter;
+    int path_counter;
 
     mmdb_result = MMDB_lookup_string(&mmdb, external_ip->ip_str, &gai_error, &mmdb_error);
 
     if (!mmdb_check_error(mmdb_error, gai_error)) {
+        error_id = ERR_MMDB_REQUEST;
         return false;
     }
 
-    if (mmdb_result.found_entry) {
-        mmdb_error = MMDB_get_value(&mmdb_result.entry, &mmdb_data,
-                                    "registered_country", "names", "en", NULL);
+    for (caps_counter = 1; caps_counter < MMDB_FIELDS_COUNT; ++caps_counter) {
+        for (path_counter = 0; path_counter < MMDB_PATH_COUNT; ++path_counter) {
+            if (mmdb_result.found_entry) {
+                mmdb_error = MMDB_aget_value(&mmdb_result.entry, &mmdb_data, mmdb_fields[caps_counter].paths[path_counter]);
 
-        if (mmdb_check_status(mmdb_error)) {
-            return false;
+                if (!mmdb_check_status(mmdb_error)) {
+                    continue;
+                }
+
+                if (mmdb_data.has_data) {
+                    mmdb_fields[caps_counter].result = malloc(mmdb_data.data_size + 1);
+                    strncpy(mmdb_fields[caps_counter].result, mmdb_data.utf8_string, mmdb_data.data_size);
+                    mmdb_fields[caps_counter].result[mmdb_data.data_size] = '\0';
+                    goto _path_found;
+                } else {
+                    continue;
+                }
+            } else {
+                fputs("getip: couldn't find TARGET entry", stderr);
+                MMDB_close(&mmdb);
+                error_id = ERR_MMDB_REQUEST;
+                return false;
+            }
         }
 
-        if (mmdb_data.has_data) {
-            printf("EN: %.*s\n", mmdb_data.data_size, mmdb_data.utf8_string);
-        } else {
-            MMDB_close(&mmdb);
-            error_id = ERR_MMDB_REQUEST;
-            return false;
-        }
-    } else {
-        fputs("getip: couldn't find TARGET entry", stderr);
-        MMDB_close(&mmdb);
-        error_id = ERR_MMDB_REQUEST;
-        return false;
+_path_found:
+        continue;
     }
 
     if (external_ip == last_external_ip) {
@@ -369,6 +431,9 @@ mmdb_get_data(void)
         free(external_ip->ip_str);
         free(external_ip);
         MMDB_close(&mmdb);
+        printf("Pizdos: %s\n", mmdb_fields[1].result);
+        printf("Andron: %s\n", mmdb_fields[2].result);
+        printf("Pumbas: %s\n", mmdb_fields[3].result);
     } else {
         tmp_ip_str = external_ip->next;
         free(external_ip->ip_str);

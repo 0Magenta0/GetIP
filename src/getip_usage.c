@@ -22,7 +22,7 @@ print_usage(enum usage_variants variant)
 
     if (variant != USAGE_APIS) {
         puts("Usage: getip [[targets][-]] [options]\n"
-             " or:   getip -mmdb <path> [options]\n"
+             " or:   getip <targets> -mmdb <path> [options]\n"
         );
     }
 
