@@ -13,6 +13,16 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#define MMDB_FIELDS_COUNT 4
+
+/* Fields supported wtih MMDB. */
+enum mmdb_cap {
+    MMDB_CAP_IP        = 0x01,
+    MMDB_CAP_CONTINENT = 0x02,
+    MMDB_CAP_COUNTRY   = 0x04,
+    MMDB_CAP_CITY      = 0x08
+};
+
 /* Structure that contains
  * the targets strings and
  * next target pointer.
@@ -68,7 +78,12 @@ extern bool is_api_key;
 /* Contains selected API
  * parameters to request.
  */
-extern enum api_cap selected_capabilites;
+extern enum api_cap selected_capabilities;
+
+/* Contains selected MMDB
+ * parameters to request.
+ */
+extern enum mmdb_cap selected_mmdb_capabilities;
 
 /* Contains string with
  * custom UserAgent.

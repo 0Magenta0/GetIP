@@ -18,6 +18,10 @@
 #include <curl/curl.h>
 #include <maxminddb.h>
 
+struct mmdb_field {
+    char *value;
+};
+
 bool is_mmdb;
 bool is_external_ips;
 bool is_custom_agent;
@@ -28,7 +32,8 @@ struct external_ip *last_external_ip;
 char *custom_agent;
 char *mmdb_file;
 struct str_buf api_key;
-enum api_cap selected_capabilites;
+enum api_cap selected_capabilities;
+enum mmdb_cap selected_mmdb_capabilities;
 struct MMDB_s mmdb;
 
 /* Append curl HTTP response
@@ -44,12 +49,26 @@ write_response(void   *npart,
 bool
 curl_perform(CURL *curl);
 
+/* Checks if MMDB request
+ * is successful.
+ */
+bool
+mmdb_check_error(int mmdb_error,
+                 int gai_error);
+
 /* Print pretty output. */
 void
 print_response(void);
 
+/* Checks if MMDB path
+ * request is successful.
+ */
 bool
 mmdb_check_status(int mmdb_error);
+
+/* Sends request to MMDB. */
+bool
+mmdb_get_data(void);
 
 bool
 mmdb_init(void)
@@ -77,74 +96,8 @@ mmdb_init(void)
 bool
 send_mmdb_request(void)
 {
-    MMDB_entry_data_s mmdb_data;
-    MMDB_lookup_result_s mmdb_result;
-    struct external_ip *tmp_ip_str;
-    int mmdb_error;
-    int gai_error;
-
-    mmdb_result = MMDB_lookup_string(&mmdb, external_ip->ip_str, &gai_error, &mmdb_error);
-
-    if (gai_error != 0) {
-        if (is_verbose) {
-            fprintf(stderr, "getip: getaddrinfo: %s - %d\n", external_ip->ip_str, gai_error);
-        }
-
-        MMDB_close(&mmdb);
-        error_id = ERR_MMDB_GAI;
+    if (!mmdb_get_data()) {
         return false;
-    }
-
-    if (mmdb_error != MMDB_SUCCESS) {
-        if (is_verbose) {
-            fprintf(stderr, "getip: libmaxminddb: %s\n", MMDB_strerror(mmdb_error));
-        }
-
-        MMDB_close(&mmdb);
-        error_id = ERR_MMDB_REQUEST;
-        return false;
-    }
-
-    if (mmdb_result.found_entry) {
-        mmdb_error = MMDB_get_value(&mmdb_result.entry, &mmdb_data,
-                                    "registered_country", "names", "en", NULL);
-
-        if (mmdb_check_status(mmdb_error)) {
-            return false;
-        }
-
-        if (mmdb_data.has_data) {
-            printf("EN: %.*s\n", mmdb_data.data_size, mmdb_data.utf8_string);
-        } else {
-            MMDB_close(&mmdb);
-            error_id = ERR_MMDB_REQUEST;
-            return false;
-        }
-    } else {
-        fputs("getip: couldn't find TARGET entry", stderr);
-        MMDB_close(&mmdb);
-        error_id = ERR_MMDB_REQUEST;
-        return false;
-    }
-
-    if (external_ip == last_external_ip) {
-        is_end = true;
-        free(external_ip->ip_str);
-        free(external_ip);
-        MMDB_close(&mmdb);
-    } else {
-        tmp_ip_str = external_ip->next;
-        free(external_ip->ip_str);
-        free(external_ip);
-        external_ip = tmp_ip_str;
-
-        if (!is_raw) {
-            if (!is_no_delim) {
-                puts("=================================");
-            }
-        } else {
-            putc('\n', stdout);
-        }
     }
 
     return true;
@@ -316,7 +269,7 @@ print_response(void)
     current_api = get_api_by_id(selected_api);
     caps_count = API_CAPS_COUNT(current_api->api_cap_id);
     for (counter = 0; counter < caps_count; ++counter) {
-        if (current_api->api_cap_id[counter].capablitiy & selected_capabilites) {
+        if (current_api->api_cap_id[counter].capablitiy & selected_capabilities) {
             if (current_api->api_cap_id[counter].result) {
                 printf("[\x1B[0;32m+\x1B[0m] %s: %s\n",
                         current_api->api_cap_id[counter].str_value_name,
@@ -342,6 +295,93 @@ mmdb_check_status(int mmdb_error)
         MMDB_close(&mmdb);
         error_id = ERR_MMDB_REQUEST;
         return false;
+    }
+
+    return true;
+}
+
+bool
+mmdb_check_error(int mmdb_error,
+                 int gai_error)
+{
+    if (gai_error != 0) {
+        if (is_verbose) {
+            fprintf(stderr, "getip: getaddrinfo: %s - %d\n", external_ip->ip_str, gai_error);
+        }
+
+        MMDB_close(&mmdb);
+        error_id = ERR_MMDB_GAI;
+        return false;
+    }
+
+    if (mmdb_error != MMDB_SUCCESS) {
+        if (is_verbose) {
+            fprintf(stderr, "getip: libmaxminddb: %s\n", MMDB_strerror(mmdb_error));
+        }
+
+        MMDB_close(&mmdb);
+        error_id = ERR_MMDB_REQUEST;
+        return false;
+    }
+
+    return true;
+}
+
+bool
+mmdb_get_data(void)
+{
+    MMDB_entry_data_s mmdb_data;
+    MMDB_lookup_result_s mmdb_result;
+    struct external_ip *tmp_ip_str;
+    int mmdb_error;
+    int gai_error;
+
+    mmdb_result = MMDB_lookup_string(&mmdb, external_ip->ip_str, &gai_error, &mmdb_error);
+
+    if (!mmdb_check_error(mmdb_error, gai_error)) {
+        return false;
+    }
+
+    if (mmdb_result.found_entry) {
+        mmdb_error = MMDB_get_value(&mmdb_result.entry, &mmdb_data,
+                                    "registered_country", "names", "en", NULL);
+
+        if (mmdb_check_status(mmdb_error)) {
+            return false;
+        }
+
+        if (mmdb_data.has_data) {
+            printf("EN: %.*s\n", mmdb_data.data_size, mmdb_data.utf8_string);
+        } else {
+            MMDB_close(&mmdb);
+            error_id = ERR_MMDB_REQUEST;
+            return false;
+        }
+    } else {
+        fputs("getip: couldn't find TARGET entry", stderr);
+        MMDB_close(&mmdb);
+        error_id = ERR_MMDB_REQUEST;
+        return false;
+    }
+
+    if (external_ip == last_external_ip) {
+        is_end = true;
+        free(external_ip->ip_str);
+        free(external_ip);
+        MMDB_close(&mmdb);
+    } else {
+        tmp_ip_str = external_ip->next;
+        free(external_ip->ip_str);
+        free(external_ip);
+        external_ip = tmp_ip_str;
+
+        if (!is_raw) {
+            if (!is_no_delim) {
+                puts("=================================");
+            }
+        } else {
+            putc('\n', stdout);
+        }
     }
 
     return true;

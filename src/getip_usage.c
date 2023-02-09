@@ -22,7 +22,7 @@ print_usage(enum usage_variants variant)
 
     if (variant != USAGE_APIS) {
         puts("Usage: getip [[targets][-]] [options]\n"
-             " or:   getip [options]\n"
+             " or:   getip -mmdb <path> [options]\n"
         );
     }
 
@@ -30,44 +30,53 @@ print_usage(enum usage_variants variant)
         puts("  -help            Print this message and exit\n"
              "  -verbose         Debug output to stderr\n"
              "  -api <api-id>    Select API\n"
+             "  -mmdb <path>     Use MMDB file instead of API\n"
              "  -api-list        List of supported apis\n"
-             "  -fields-list     List of supported fields by selected API\n"
+             "  -fields-list     List of supported fields by selected API or MMDB\n"
              "  -agent <ua>      Custom User-Agent header\n"
              "  -api-key <key>   Set API key\n"
              "  -raw             Print response in raw format\n"
         );
     } else if (variant == USAGE_FIELDS) {
-        puts("List of supported field by current API:");
-        if (check_field_support(API_CAP_IP)) {
+        if (is_mmdb) {
+            puts("List of supported fields by MMDB:");
             puts("  -ip                 Print IP field");
-        } if (check_field_support(API_CAP_ORG)) {
-            puts("  -org                Print ORG field");
-        } if (check_field_support(API_CAP_HOST)) {
-            puts("  -host               Print Hostname field");
-        } if (check_field_support(API_CAP_AS)) {
-            puts("  -as                 Print AS field");
-        } if (check_field_support(API_CAP_AS_NAME)) {
-            puts("  -asname             Print AS Name field");
-        } if (check_field_support(API_CAP_ISP)) {
-            puts("  -isp                Print ISP field");
-        } if (check_field_support(API_CAP_CONTINENT)) {
             puts("  -continent          Print Continent field");
-        } if (check_field_support(API_CAP_COUNTRY)) {
             puts("  -country            Print Country field");
-        } if (check_field_support(API_CAP_REGION)) {
-            puts("  -region             Print Region field");
-        } if (check_field_support(API_CAP_CITY)) {
             puts("  -city               Print City field");
-        } if (check_field_support(API_CAP_TIMEZONE)) {
-            puts("  -zone               Print Time Zone field");
-        } if (check_field_support(API_CAP_ISHOST)) {
-            puts("  -is-host            Print Hosting field");
-        } if (check_field_support(API_CAP_ISPROXY)) {
-            puts("  -is-proxy           Print Time Proxy field");
-        } if (check_field_support(API_CAP_ISMOBILE)) {
-            puts("  -is-mobile          Print Time Mobile field");
-        } if (check_field_support(API_CAP_ISTOR)) {
-            puts("  -is-tor             Print Time TOR field");
+        } else {
+            puts("List of supported fields by current API:");
+            if (check_field_support(API_CAP_IP)) {
+                puts("  -ip                 Print IP field");
+            } if (check_field_support(API_CAP_ORG)) {
+                puts("  -org                Print ORG field");
+            } if (check_field_support(API_CAP_HOST)) {
+                puts("  -host               Print Hostname field");
+            } if (check_field_support(API_CAP_AS)) {
+                puts("  -as                 Print AS field");
+            } if (check_field_support(API_CAP_AS_NAME)) {
+                puts("  -asname             Print AS Name field");
+            } if (check_field_support(API_CAP_ISP)) {
+                puts("  -isp                Print ISP field");
+            } if (check_field_support(API_CAP_CONTINENT)) {
+                puts("  -continent          Print Continent field");
+            } if (check_field_support(API_CAP_COUNTRY)) {
+                puts("  -country            Print Country field");
+            } if (check_field_support(API_CAP_REGION)) {
+                puts("  -region             Print Region field");
+            } if (check_field_support(API_CAP_CITY)) {
+                puts("  -city               Print City field");
+            } if (check_field_support(API_CAP_TIMEZONE)) {
+                puts("  -zone               Print Time Zone field");
+            } if (check_field_support(API_CAP_ISHOST)) {
+                puts("  -is-host            Print Hosting field");
+            } if (check_field_support(API_CAP_ISPROXY)) {
+                puts("  -is-proxy           Print Time Proxy field");
+            } if (check_field_support(API_CAP_ISMOBILE)) {
+                puts("  -is-mobile          Print Time Mobile field");
+            } if (check_field_support(API_CAP_ISTOR)) {
+                puts("  -is-tor             Print Time TOR field");
+            }
         }
 
         putchar('\n');

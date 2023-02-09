@@ -685,7 +685,7 @@ json_copy_caps_values(struct json_object **parsed_json)
     current_api = get_api_by_id(selected_api);
     caps_count = API_CAPS_COUNT(current_api->api_cap_id);
     for (counter = 0; counter < caps_count; ++counter) {
-        if (current_api->api_cap_id[counter].capablitiy & selected_capabilites) {
+        if (current_api->api_cap_id[counter].capablitiy & selected_capabilities) {
             certain_json_obj = get_json_obj_by_key(parsed_json, current_api->api_cap_id[counter].str_json_key);
             if (!json_object_is_type(certain_json_obj, json_type_null)
                 && (json_object_get_string_len(certain_json_obj)
@@ -785,33 +785,33 @@ ip_api_com_builder(CURL *curl)
     char *tmp_url;
     int tmp_bitset = 0;
 
-    if (selected_capabilites & API_CAP_IP) {
+    if (selected_capabilities & API_CAP_IP) {
         tmp_bitset |= BS_IP_API_COM_IP;
-    } if (selected_capabilites & API_CAP_ORG) {
+    } if (selected_capabilities & API_CAP_ORG) {
         tmp_bitset |= BS_IP_API_COM_ORG;
-    } if (selected_capabilites & API_CAP_HOST) {
+    } if (selected_capabilities & API_CAP_HOST) {
         tmp_bitset |= BS_IP_API_COM_HOST;
-    } if (selected_capabilites & API_CAP_AS) {
+    } if (selected_capabilities & API_CAP_AS) {
         tmp_bitset |= BS_IP_API_COM_AS;
-    } if (selected_capabilites & API_CAP_AS_NAME) {
+    } if (selected_capabilities & API_CAP_AS_NAME) {
         tmp_bitset |= BS_IP_API_COM_AS_NAME;
-    } if (selected_capabilites & API_CAP_ISP) {
+    } if (selected_capabilities & API_CAP_ISP) {
         tmp_bitset |= BS_IP_API_COM_ISP;
-    } if (selected_capabilites & API_CAP_CONTINENT) {
+    } if (selected_capabilities & API_CAP_CONTINENT) {
         tmp_bitset |= BS_IP_API_COM_CONTINENT;
-    } if (selected_capabilites & API_CAP_COUNTRY) {
+    } if (selected_capabilities & API_CAP_COUNTRY) {
         tmp_bitset |= BS_IP_API_COM_COUNTRY;
-    } if (selected_capabilites & API_CAP_REGION) {
+    } if (selected_capabilities & API_CAP_REGION) {
         tmp_bitset |= BS_IP_API_COM_REGION;
-    } if (selected_capabilites & API_CAP_CITY) {
+    } if (selected_capabilities & API_CAP_CITY) {
         tmp_bitset |= BS_IP_API_COM_CITY;
-    } if (selected_capabilites & API_CAP_TIMEZONE) {
+    } if (selected_capabilities & API_CAP_TIMEZONE) {
         tmp_bitset |= BS_IP_API_COM_TIMEZONE;
-    } if (selected_capabilites & API_CAP_ISHOST) {
+    } if (selected_capabilities & API_CAP_ISHOST) {
         tmp_bitset |= BS_IP_API_COM_ISHOST;
-    } if (selected_capabilites & API_CAP_ISPROXY) {
+    } if (selected_capabilities & API_CAP_ISPROXY) {
         tmp_bitset |= BS_IP_API_COM_ISPROXY;
-    } if (selected_capabilites & API_CAP_ISMOBILE) {
+    } if (selected_capabilities & API_CAP_ISMOBILE) {
         tmp_bitset |= BS_IP_API_COM_ISMOBILE;
     }
 

@@ -15,6 +15,7 @@
 #define ERR_STR_IP_STR            "invalid target paramenter"
 #define ERR_STR_ARG_UNK           "unknown paramenter"
 #define ERR_STR_ARG_MISS          "parameter should have argument"
+#define ERR_STR_ARG_CANT_MMDB     "selected option doesn't support MMDB mode"
 #define ERR_STR_ARG_API_UNK       "you're select invalid API"
 #define ERR_STR_ARG_API_FIELD     "selected API doesn't support this field"
 #define ERR_STR_ARG_API_NOKEY     "selected API doesn't support API keys"
@@ -22,6 +23,7 @@
 #define ERR_STR_ARG_API_KEYLEN    "selected API key has an invalid lenght"
 #define ERR_STR_ARG_API_NOTARGET  "selected API doesn't support TARGETS"
 #define ERR_STR_ARG_API_REQTARGET "selected API required a TARGET"
+#define ERR_STR_ARG_API_WHEN_MMDB "you can't use -api parameter with -mmdb"
 #define ERR_STR_CURL_GLOB_INIT    "curl_global_init() failed"
 #define ERR_STR_CURL_EASY_INIT    "curl_easy_init() failed"
 #define ERR_STR_CURL_EASY_PERF    "curl_easy_perform() failed"
@@ -58,6 +60,11 @@ error_handler(void)
             print_usage(USAGE_GENERAL);
             break;
 
+        case ERR_ARG_CANT_MMDB:
+            fputs(ERR_STR_ARG_CANT_MMDB, stderr);
+            putchar('\n');
+            break;
+
         case ERR_ARG_API_FIELD:
             fputs(ERR_STR_ARG_API_FIELD, stderr);
             putchar('\n');
@@ -85,12 +92,17 @@ error_handler(void)
             putchar('\n');
             break;
 
-         case ERR_ARG_API_REQTARGET:
+        case ERR_ARG_API_REQTARGET:
             fputs(ERR_STR_ARG_API_REQTARGET, stderr);
             putchar('\n');
             print_usage(USAGE_FIELDS);
             break;
 
+        case ERR_ARG_API_WHEN_MMDB:
+            fputs(ERR_STR_ARG_API_WHEN_MMDB, stderr);
+            putchar('\n');
+            print_usage(USAGE_GENERAL);
+            break;
         case ERR_CURL_GLOB_INIT:
             fputs(ERR_STR_CURL_GLOB_INIT, stderr);
             putchar('\n');

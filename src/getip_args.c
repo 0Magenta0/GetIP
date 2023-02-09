@@ -173,12 +173,6 @@ const struct getip_option options_list[] = {
       1
     },
 
-    { "mmdb-lang",
-      GETIP_OPTION_ARG,
-      NULL,
-      2
-    },
-
     { "fields-list",
       GETIP_OPTION_NO_ARG,
       fileds_list_opt,
@@ -307,7 +301,7 @@ args_handler(const int    argc,
         /* Select default API when
          * have no arguments.
          */
-        selected_capabilites =
+        selected_capabilities =
             get_api_by_id(selected_api)->capabilities;
         return true;
     } else {
@@ -481,8 +475,8 @@ _opt_found:
         /* If no one API parameter is
          * selected then use ALL.
          */
-        if (!selected_capabilites) {
-            selected_capabilites =
+        if (!selected_capabilities) {
+            selected_capabilities =
                 get_api_by_id(selected_api)->capabilities;
         }
 
@@ -592,6 +586,11 @@ api_list_opt(char *n) {
 bool
 api_opt(char *api_str_id)
 {
+    if (is_mmdb) {
+        error_id = ERR_ARG_API_WHEN_MMDB;
+        return false;
+    }
+
     if (!select_api_by_str_id(api_str_id)) {
         error_id = ERR_ARG_API_UNK;
         return false;
@@ -619,6 +618,11 @@ fileds_list_opt(char *n)
 bool
 agent_opt(char *agent)
 {
+    if (is_mmdb) {
+        error_id = ERR_ARG_CANT_MMDB;
+        return false;
+    }
+
     custom_agent = agent;
 
     return (is_custom_agent = true);
@@ -628,6 +632,11 @@ bool
 api_key_opt(char *key_str)
 {
     size_t key_len;
+
+    if (is_mmdb) {
+        error_id = ERR_ARG_CANT_MMDB;
+        return false;
+    }
 
     for (key_len = 0; key_len < MAX_API_KEY_LEN; ++key_len) {
         if (key_len == MAX_API_KEY_LEN - 1 && key_str[key_len] != '\0') {
@@ -656,6 +665,11 @@ raw_opt(char *n)
 {
     (void) n;
 
+    if (is_mmdb) {
+        error_id = ERR_ARG_CANT_MMDB;
+        return false;
+    }
+
     return (is_raw = true);
 }
 
@@ -672,9 +686,13 @@ ip_opt(char *n)
 {
     (void) n;
 
-    if (check_field_support(API_CAP_IP)) {
-        selected_capabilites |= API_CAP_IP;
-        return true;
+    if (is_mmdb) {
+        selected_mmdb_capabilities |= MMDB_CAP_IP;
+    } else {
+        if (check_field_support(API_CAP_IP)) {
+            selected_capabilities |= API_CAP_IP;
+            return true;
+        }
     }
 
     error_id = ERR_ARG_API_FIELD;
@@ -686,8 +704,13 @@ org_opt(char *n)
 {
     (void) n;
 
+    if (is_mmdb) {
+        error_id = ERR_ARG_CANT_MMDB;
+        return false;
+    }
+
     if (check_field_support(API_CAP_ORG)) {
-        selected_capabilites |= API_CAP_ORG;
+        selected_capabilities |= API_CAP_ORG;
         return true;
     }
 
@@ -700,8 +723,13 @@ host_opt(char *n)
 {
     (void) n;
 
+    if (is_mmdb) {
+        error_id = ERR_ARG_CANT_MMDB;
+        return false;
+    }
+
     if (check_field_support(API_CAP_HOST)) {
-        selected_capabilites |= API_CAP_HOST;
+        selected_capabilities |= API_CAP_HOST;
         return true;
     }
 
@@ -714,8 +742,13 @@ as_opt(char *n)
 {
     (void) n;
 
+    if (is_mmdb) {
+        error_id = ERR_ARG_CANT_MMDB;
+        return false;
+    }
+
     if (check_field_support(API_CAP_AS)) {
-        selected_capabilites |= API_CAP_AS;
+        selected_capabilities |= API_CAP_AS;
         return true;
     }
 
@@ -728,8 +761,13 @@ asname_opt(char *n)
 {
     (void) n;
 
+    if (is_mmdb) {
+        error_id = ERR_ARG_CANT_MMDB;
+        return false;
+    }
+
     if (check_field_support(API_CAP_AS_NAME)) {
-        selected_capabilites |= API_CAP_AS_NAME;
+        selected_capabilities |= API_CAP_AS_NAME;
         return true;
     }
 
@@ -741,8 +779,13 @@ bool
 isp_opt(char *n) {
     (void) n;
 
+    if (is_mmdb) {
+        error_id = ERR_ARG_CANT_MMDB;
+        return false;
+    }
+
     if (check_field_support(API_CAP_ISP)) {
-        selected_capabilites |= API_CAP_ISP;
+        selected_capabilities |= API_CAP_ISP;
         return true;
     }
 
@@ -755,9 +798,13 @@ continent_opt(char *n)
 {
     (void) n;
 
-    if (check_field_support(API_CAP_CONTINENT)) {
-        selected_capabilites |= API_CAP_CONTINENT;
-        return true;
+    if (is_mmdb) {
+        selected_mmdb_capabilities |= MMDB_CAP_CONTINENT;
+    } else {
+        if (check_field_support(API_CAP_CONTINENT)) {
+            selected_capabilities |= API_CAP_CONTINENT;
+            return true;
+        }
     }
 
     error_id = ERR_ARG_API_FIELD;
@@ -769,9 +816,13 @@ country_opt(char *n)
 {
     (void) n;
 
-    if (check_field_support(API_CAP_COUNTRY)) {
-        selected_capabilites |= API_CAP_COUNTRY;
-        return true;
+    if (is_mmdb) {
+        selected_mmdb_capabilities |= MMDB_CAP_COUNTRY;
+    } else {
+        if (check_field_support(API_CAP_COUNTRY)) {
+            selected_capabilities |= API_CAP_COUNTRY;
+            return true;
+        }
     }
 
     error_id = ERR_ARG_API_FIELD;
@@ -782,8 +833,13 @@ bool
 region_opt(char *n) {
     (void) n;
 
+    if (is_mmdb) {
+        error_id = ERR_ARG_CANT_MMDB;
+        return false;
+    }
+
     if (check_field_support(API_CAP_REGION)) {
-        selected_capabilites |= API_CAP_REGION;
+        selected_capabilities |= API_CAP_REGION;
         return true;
     }
 
@@ -796,9 +852,13 @@ city_opt(char *n)
 {
     (void) n;
 
-    if (check_field_support(API_CAP_CITY)) {
-        selected_capabilites |= API_CAP_CITY;
-        return true;
+    if (is_mmdb) {
+        selected_mmdb_capabilities |= MMDB_CAP_CITY;
+    } else {
+        if (check_field_support(API_CAP_CITY)) {
+            selected_capabilities |= API_CAP_CITY;
+            return true;
+        }
     }
 
     error_id = ERR_ARG_API_FIELD;
@@ -810,8 +870,13 @@ zone_opt(char *n)
 {
     (void) n;
 
+    if (is_mmdb) {
+        error_id = ERR_ARG_CANT_MMDB;
+        return false;
+    }
+
     if (check_field_support(API_CAP_TIMEZONE)) {
-        selected_capabilites |= API_CAP_TIMEZONE;
+        selected_capabilities |= API_CAP_TIMEZONE;
         return true;
     }
 
@@ -824,8 +889,13 @@ is_host_opt(char *n)
 {
     (void) n;
 
+    if (is_mmdb) {
+        error_id = ERR_ARG_CANT_MMDB;
+        return false;
+    }
+
     if (check_field_support(API_CAP_ISHOST)) {
-        selected_capabilites |= API_CAP_ISHOST;
+        selected_capabilities |= API_CAP_ISHOST;
         return true;
     }
 
@@ -838,8 +908,13 @@ is_proxy_opt(char *n)
 {
     (void) n;
 
+    if (is_mmdb) {
+        error_id = ERR_ARG_CANT_MMDB;
+        return false;
+    }
+
     if (check_field_support(API_CAP_ISPROXY)) {
-        selected_capabilites |= API_CAP_ISPROXY;
+        selected_capabilities |= API_CAP_ISPROXY;
         return true;
     }
 
@@ -852,8 +927,13 @@ is_mobile_opt(char *n)
 {
     (void) n;
 
+    if (is_mmdb) {
+        error_id = ERR_ARG_CANT_MMDB;
+        return false;
+    }
+
     if (check_field_support(API_CAP_ISMOBILE)) {
-        selected_capabilites |= API_CAP_ISMOBILE;
+        selected_capabilities |= API_CAP_ISMOBILE;
         return true;
     }
 
