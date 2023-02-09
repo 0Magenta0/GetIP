@@ -480,6 +480,13 @@ _opt_found:
                 get_api_by_id(selected_api)->capabilities;
         }
 
+        /* If no one MMDB parameter is
+         * selected then use ALL.
+         */
+        if (!selected_mmdb_capabilities) {
+            selected_mmdb_capabilities = 0x0F;
+        }
+
         /* If the API requires a key but it's
          * not provided then print error.
          */
