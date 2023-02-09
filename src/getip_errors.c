@@ -28,6 +28,9 @@
 #define ERR_STR_API_RET_CODE      "API's response status code is not 200"
 #define ERR_STR_API_JSON_PARSE    "cannot parse JSON API response"
 #define ERR_STR_API_STATUS        "API response is not successful"
+#define ERR_STR_MMDB_OPEN         "MMDB open failure"
+#define ERR_STR_MMDB_GAI          "MMDB can't resolve IP string"
+#define ERR_STR_MMDB_REQUEST      "MMDB request failure"
 
 enum error_id error_id;
 
@@ -121,6 +124,21 @@ error_handler(void)
 
         case ERR_API_STATUS:
             fputs(ERR_STR_API_STATUS, stderr);
+            putchar('\n');
+            break;
+
+         case ERR_MMDB_OPEN:
+            fputs(ERR_STR_MMDB_OPEN, stderr);
+            putchar('\n');
+            break;
+
+        case ERR_MMDB_GAI:
+            fputs(ERR_STR_MMDB_GAI, stderr);
+            putchar('\n');
+            break;
+
+         case ERR_MMDB_REQUEST:
+            fputs(ERR_STR_MMDB_REQUEST, stderr);
             putchar('\n');
             break;
     }

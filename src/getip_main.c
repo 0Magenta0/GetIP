@@ -17,16 +17,43 @@ main(int  argc,
      char *argv[])
 {
     if (args_handler(argc, argv)) {
-        /* While have new IPs
-         * send new requests.
-         */
-        while (!is_end) {
-            /* If request is failure
-             * exit with error.
-             */
-            if (!send_api_request()) {
+        if (is_mmdb) {
+            /* Try to open MMDB. */
+            if (!mmdb_init()) {
                 error_handler();
                 exit(EXIT_FAILURE);
+            }
+
+            /* While have new IPs
+             * send new requests.
+             */
+            while (!is_end) {
+                /* If request is failure
+                 * exit with error.
+                 */
+                if (!send_mmdb_request()) {
+                    error_handler();
+                    exit(EXIT_FAILURE);
+                }
+            }
+        } else {
+            /* Try to init libcurl. */
+            if (!curl_init()) {
+                error_handler();
+                exit(EXIT_FAILURE);
+            }
+
+            /* While have new IPs
+             * send new requests.
+             */
+            while (!is_end) {
+                /* If request is failure
+                 * exit with error.
+                 */
+                if (!send_api_request()) {
+                    error_handler();
+                    exit(EXIT_FAILURE);
+                }
             }
         }
     } else {

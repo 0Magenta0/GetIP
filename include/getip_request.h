@@ -39,6 +39,11 @@ struct api_cap_response {
     char *str_res;
 };
 
+/* Indicates if MaxMindDB
+ * is used instead APIs
+ */
+extern bool is_mmdb;
+
 /* Indicates if need to
  * request for external
  * targets.
@@ -70,11 +75,29 @@ extern enum api_cap selected_capabilites;
  */
 extern char *custom_agent;
 
+/* Contains string with
+ * path to MMDB file.
+ */
+extern char *mmdb_file;
+
 /* Contains string
  * with API key.
  */
 extern struct str_buf api_key;
 
+/* Open MMDB file. */
+bool
+mmdb_init(void);
+
+/* Prepare request to MMDB
+ * and handle it's response.
+ */
+bool
+send_mmdb_request(void);
+
+/* Curl global init. */
+bool
+curl_init(void);
 
 /* Prepare, send request
  * and handle response.

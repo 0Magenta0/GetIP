@@ -78,6 +78,9 @@ api_list_opt(char *);
 bool
 api_opt(char *api_str_id);
 
+bool
+mmdb_opt(char *path);
+
 noreturn bool
 fileds_list_opt(char *);
 
@@ -162,6 +165,18 @@ const struct getip_option options_list[] = {
       GETIP_OPTION_ARG,
       api_opt,
       1
+    },
+
+    { "mmdb",
+      GETIP_OPTION_ARG_HAVE_EMP,
+      mmdb_opt,
+      1
+    },
+
+    { "mmdb-lang",
+      GETIP_OPTION_ARG,
+      NULL,
+      2
     },
 
     { "fields-list",
@@ -583,6 +598,13 @@ api_opt(char *api_str_id)
     }
 
     return true;
+}
+
+bool
+mmdb_opt(char *path)
+{
+    mmdb_file = path;
+    return (is_mmdb = true);
 }
 
 noreturn bool
