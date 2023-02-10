@@ -33,6 +33,7 @@
 #define ERR_STR_MMDB_OPEN         "MMDB open failure"
 #define ERR_STR_MMDB_GAI          "MMDB can't resolve IP string"
 #define ERR_STR_MMDB_REQUEST      "MMDB request failure"
+#define ERR_STR_MMDB_TARGET       "MMDB require the TARGET"
 
 enum error_id error_id;
 
@@ -76,13 +77,13 @@ error_handler(void)
             putchar('\n');
             break;
 
-         case ERR_ARG_API_REQKEY:
+        case ERR_ARG_API_REQKEY:
             fputs(ERR_STR_ARG_API_REQKEY, stderr);
             putchar('\n');
             print_usage(USAGE_FIELDS);
             break;
 
-         case ERR_ARG_API_KEYLEN:
+        case ERR_ARG_API_KEYLEN:
             fputs(ERR_STR_ARG_API_KEYLEN, stderr);
             putchar('\n');
             break;
@@ -139,7 +140,7 @@ error_handler(void)
             putchar('\n');
             break;
 
-         case ERR_MMDB_OPEN:
+        case ERR_MMDB_OPEN:
             fputs(ERR_STR_MMDB_OPEN, stderr);
             putchar('\n');
             break;
@@ -149,9 +150,15 @@ error_handler(void)
             putchar('\n');
             break;
 
-         case ERR_MMDB_REQUEST:
+        case ERR_MMDB_REQUEST:
             fputs(ERR_STR_MMDB_REQUEST, stderr);
             putchar('\n');
+            break;
+
+        case ERR_MMDB_TARGET:
+            fputs(ERR_STR_MMDB_TARGET, stderr);
+            putchar('\n');
+            print_usage(USAGE_GENERAL);
             break;
     }
 }

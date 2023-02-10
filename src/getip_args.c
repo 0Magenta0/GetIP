@@ -475,7 +475,7 @@ _opt_found:
         /* If no one API parameter is
          * selected then use ALL.
          */
-        if (!selected_capabilities) {
+        if (!is_mmdb && !selected_capabilities) {
             selected_capabilities =
                 get_api_by_id(selected_api)->capabilities;
         }
@@ -483,14 +483,23 @@ _opt_found:
         /* If no one MMDB parameter is
          * selected then use ALL.
          */
-        if (!selected_mmdb_capabilities) {
+        if (is_mmdb && !selected_mmdb_capabilities) {
             selected_mmdb_capabilities = 0x0F;
+        }
+
+        /* If MMDB used without
+         * TARGET print error.
+         */
+        if (is_mmdb && !is_external_ips) {
+            error_id = ERR_MMDB_TARGET;
+            return false;
         }
 
         /* If the API requires a key but it's
          * not provided then print error.
          */
-        if (!is_api_key && get_api_by_id(selected_api)->should_use_key) {
+        if (!is_mmdb && !is_api_key
+            && get_api_by_id(selected_api)->should_use_key) {
             error_id = ERR_ARG_API_REQKEY;
             return false;
         }

@@ -33,7 +33,8 @@ enum error_id {
     ERR_API_STATUS,
     ERR_MMDB_OPEN,
     ERR_MMDB_GAI,
-    ERR_MMDB_REQUEST
+    ERR_MMDB_REQUEST,
+    ERR_MMDB_TARGET
 };
 
 /* Indicates what
