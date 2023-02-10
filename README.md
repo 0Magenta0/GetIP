@@ -1,4 +1,4 @@
-# GetIP 2.7.0
+# GetIP 3.0.0
 
 Simple utility to request information about IP written in C
 
@@ -13,6 +13,7 @@ Simple utility to request information about IP written in C
 ### Dependencies
  - [libcurl](https://curl.se/libcurl)
  - [json-c](https://github.com/json-c/json-c)
+ - [libmaxminddb](https://github.com/maxmind/libmaxminddb)
 
 ### Manual build
 ```
@@ -24,18 +25,19 @@ $ ./builder.sh R
 ### Usage
 GetIP help message
 ```
-GetIP (version 2.7.0)
+GetIP (version 3.0.0)
 Utility to request info about IP from APIs
 https://github.com/0Magenta0/GetIP
 
 Usage: getip [[targets][-]] [options]
- or:   getip [options]
+ or:   getip <targets> -mmdb <path> [options]
 
   -help            Print this message and exit
   -verbose         Debug output to stderr
   -api <api-id>    Select API
+  -mmdb <path>     Use MMDB file instead of API
   -api-list        List of supported apis
-  -fields-list     List of supported fields by selected API
+  -fields-list     List of supported fields by selected API or MMDB
   -agent <ua>      Custom User-Agent header
   -api-key <key>   Set API key
   -raw             Print response in raw format
@@ -43,7 +45,7 @@ Usage: getip [[targets][-]] [options]
 
 GetIP api-list message
 ```
-GetIP (version 2.7.0)
+GetIP (version 3.0.0)
 Utility to request info about IP from APIs
 https://github.com/0Magenta0/GetIP
 
@@ -64,14 +66,14 @@ List of supported apis:
 
 GetIP fields-list message (IP\_API\_COM)
 ```
-GetIP (version 2.7.0)
+GetIP (version 3.0.0)
 Utility to request info about IP from APIs
 https://github.com/0Magenta0/GetIP
 
 Usage: getip [[targets][-]] [options]
- or:   getip [options]
+ or:   getip <targets> -mmdb <path> [options]
 
-List of supported field by current API:
+List of supported fields by current API:
   -ip                 Print IP field
   -org                Print ORG field
   -host               Print Hostname field
@@ -84,6 +86,6 @@ List of supported field by current API:
   -city               Print City field
   -zone               Print Time Zone field
   -is-host            Print Hosting field
-  -is-proxy           Print Time Proxy field
-  -is-mobile          Print Time Mobile field
+  -is-proxy           Print Proxy field
+  -is-mobile          Print Mobile field
 ```

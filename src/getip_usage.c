@@ -71,11 +71,11 @@ print_usage(enum usage_variants variant)
             } if (check_field_support(API_CAP_ISHOST)) {
                 puts("  -is-host            Print Hosting field");
             } if (check_field_support(API_CAP_ISPROXY)) {
-                puts("  -is-proxy           Print Time Proxy field");
+                puts("  -is-proxy           Print Proxy field");
             } if (check_field_support(API_CAP_ISMOBILE)) {
-                puts("  -is-mobile          Print Time Mobile field");
+                puts("  -is-mobile          Print Mobile field");
             } if (check_field_support(API_CAP_ISTOR)) {
-                puts("  -is-tor             Print Time TOR field");
+                puts("  -is-tor             Print TOR field");
             }
         }
 
