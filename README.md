@@ -26,7 +26,7 @@ $ ./builder.sh R
 GetIP help message
 ```
 GetIP (version 3.0.0)
-Utility to request info about IP from APIs
+Utility to request info about IP from APIs or MMDB
 https://github.com/0Magenta0/GetIP
 
 Usage: getip [[targets][-]] [options]
@@ -46,7 +46,7 @@ Usage: getip [[targets][-]] [options]
 GetIP api-list message
 ```
 GetIP (version 3.0.0)
-Utility to request info about IP from APIs
+Utility to request info about IP from APIs or MMDB
 https://github.com/0Magenta0/GetIP
 
 Legend:
@@ -67,7 +67,7 @@ List of supported apis:
 GetIP fields-list message (IP\_API\_COM)
 ```
 GetIP (version 3.0.0)
-Utility to request info about IP from APIs
+Utility to request info about IP from APIs or MMDB
 https://github.com/0Magenta0/GetIP
 
 Usage: getip [[targets][-]] [options]
