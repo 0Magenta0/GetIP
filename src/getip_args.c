@@ -695,6 +695,7 @@ ip_opt(char *n)
 
     if (is_mmdb) {
         selected_mmdb_capabilities |= MMDB_CAP_IP;
+        return true;
     } else {
         if (check_field_support(API_CAP_IP)) {
             selected_capabilities |= API_CAP_IP;
@@ -807,6 +808,7 @@ continent_opt(char *n)
 
     if (is_mmdb) {
         selected_mmdb_capabilities |= MMDB_CAP_CONTINENT;
+        return true;
     } else {
         if (check_field_support(API_CAP_CONTINENT)) {
             selected_capabilities |= API_CAP_CONTINENT;
@@ -825,6 +827,7 @@ country_opt(char *n)
 
     if (is_mmdb) {
         selected_mmdb_capabilities |= MMDB_CAP_COUNTRY;
+        return true;
     } else {
         if (check_field_support(API_CAP_COUNTRY)) {
             selected_capabilities |= API_CAP_COUNTRY;
@@ -861,6 +864,7 @@ city_opt(char *n)
 
     if (is_mmdb) {
         selected_mmdb_capabilities |= MMDB_CAP_CITY;
+        return true;
     } else {
         if (check_field_support(API_CAP_CITY)) {
             selected_capabilities |= API_CAP_CITY;

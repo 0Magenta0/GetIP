@@ -79,7 +79,7 @@ struct mmdb_field mmdb_fields[MMDB_FIELDS_COUNT] = {
       NULL
     },
 
-    { MMDB_CAP_CONTINENT,
+    { MMDB_CAP_CITY,
       "City",
       { { "city", "names", "en", NULL },
         { "registered_city", "names", "en", NULL },
