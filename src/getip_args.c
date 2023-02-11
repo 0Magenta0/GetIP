@@ -24,6 +24,9 @@
 /* Define max api key lenght */
 #define MAX_API_KEY_LEN 128
 
+/* ALL fields bitset for MMDB. */
+#define MMDB_ALL_CAPS 0x1F
+
 /* Terminal parameter types
  * enumerator
  */
@@ -74,6 +77,9 @@ verbose_opt(char *);
 
 noreturn bool
 api_list_opt(char *);
+
+bool
+force_opt(char *);
 
 bool
 api_opt(char *api_str_id);
@@ -138,9 +144,13 @@ is_proxy_opt(char *);
 bool
 is_mobile_opt(char *);
 
+bool
+is_tor_opt(char *);
+
 bool is_verbose;
 bool is_raw;
 bool is_no_delim;
+bool is_force;
 
 const struct getip_option options_list[] = {
     { "help",
@@ -158,6 +168,12 @@ const struct getip_option options_list[] = {
     { "api-list",
       GETIP_OPTION_NO_ARG,
       api_list_opt,
+      0
+    },
+
+    { "force",
+      GETIP_OPTION_NO_ARG,
+      force_opt,
       0
     },
 
@@ -284,6 +300,12 @@ const struct getip_option options_list[] = {
     { "is-mobile",
       GETIP_OPTION_NO_ARG,
       is_mobile_opt,
+      3
+    },
+
+    { "is-tor",
+      GETIP_OPTION_NO_ARG,
+      is_tor_opt,
       3
     },
 };
@@ -484,7 +506,7 @@ _opt_found:
          * selected then use ALL.
          */
         if (is_mmdb && !selected_mmdb_capabilities) {
-            selected_mmdb_capabilities = 0x0F;
+            selected_mmdb_capabilities = MMDB_ALL_CAPS;
         }
 
         /* If MMDB used without
@@ -600,6 +622,13 @@ api_list_opt(char *n) {
 }
 
 bool
+force_opt(char *n) {
+    (void) n;
+
+    return (is_force = true);
+}
+
+bool
 api_opt(char *api_str_id)
 {
     if (is_mmdb) {
@@ -634,7 +663,7 @@ fileds_list_opt(char *n)
 bool
 agent_opt(char *agent)
 {
-    if (is_mmdb) {
+    if (!is_force && is_mmdb) {
         error_id = ERR_ARG_CANT_MMDB;
         return false;
     }
@@ -649,7 +678,7 @@ api_key_opt(char *key_str)
 {
     size_t key_len;
 
-    if (is_mmdb) {
+    if (!is_force && is_mmdb) {
         error_id = ERR_ARG_CANT_MMDB;
         return false;
     }
@@ -681,7 +710,7 @@ raw_opt(char *n)
 {
     (void) n;
 
-    if (is_mmdb) {
+    if (!is_force && is_mmdb) {
         error_id = ERR_ARG_CANT_MMDB;
         return false;
     }
@@ -721,7 +750,7 @@ org_opt(char *n)
 {
     (void) n;
 
-    if (is_mmdb) {
+    if (!is_force && is_mmdb) {
         error_id = ERR_ARG_CANT_MMDB;
         return false;
     }
@@ -740,7 +769,7 @@ host_opt(char *n)
 {
     (void) n;
 
-    if (is_mmdb) {
+    if (!is_force && is_mmdb) {
         error_id = ERR_ARG_CANT_MMDB;
         return false;
     }
@@ -759,7 +788,7 @@ as_opt(char *n)
 {
     (void) n;
 
-    if (is_mmdb) {
+    if (!is_force && is_mmdb) {
         error_id = ERR_ARG_CANT_MMDB;
         return false;
     }
@@ -778,7 +807,7 @@ asname_opt(char *n)
 {
     (void) n;
 
-    if (is_mmdb) {
+    if (!is_force && is_mmdb) {
         error_id = ERR_ARG_CANT_MMDB;
         return false;
     }
@@ -796,7 +825,7 @@ bool
 isp_opt(char *n) {
     (void) n;
 
-    if (is_mmdb) {
+    if (!is_force && is_mmdb) {
         error_id = ERR_ARG_CANT_MMDB;
         return false;
     }
@@ -852,7 +881,7 @@ bool
 region_opt(char *n) {
     (void) n;
 
-    if (is_mmdb) {
+    if (!is_force && is_mmdb) {
         error_id = ERR_ARG_CANT_MMDB;
         return false;
     }
@@ -891,13 +920,13 @@ zone_opt(char *n)
     (void) n;
 
     if (is_mmdb) {
-        error_id = ERR_ARG_CANT_MMDB;
-        return false;
-    }
-
-    if (check_field_support(API_CAP_TIMEZONE)) {
-        selected_capabilities |= API_CAP_TIMEZONE;
+        selected_mmdb_capabilities |= MMDB_CAP_TIMEZONE;
         return true;
+    } else {
+        if (check_field_support(API_CAP_TIMEZONE)) {
+            selected_capabilities |= API_CAP_TIMEZONE;
+            return true;
+        }
     }
 
     error_id = ERR_ARG_API_FIELD;
@@ -909,7 +938,7 @@ is_host_opt(char *n)
 {
     (void) n;
 
-    if (is_mmdb) {
+    if (!is_force && is_mmdb) {
         error_id = ERR_ARG_CANT_MMDB;
         return false;
     }
@@ -928,7 +957,7 @@ is_proxy_opt(char *n)
 {
     (void) n;
 
-    if (is_mmdb) {
+    if (!is_force && is_mmdb) {
         error_id = ERR_ARG_CANT_MMDB;
         return false;
     }
@@ -947,13 +976,32 @@ is_mobile_opt(char *n)
 {
     (void) n;
 
-    if (is_mmdb) {
+    if (!is_force && is_mmdb) {
         error_id = ERR_ARG_CANT_MMDB;
         return false;
     }
 
     if (check_field_support(API_CAP_ISMOBILE)) {
         selected_capabilities |= API_CAP_ISMOBILE;
+        return true;
+    }
+
+    error_id = ERR_ARG_API_FIELD;
+    return false;
+}
+
+bool
+is_tor_opt(char *n)
+{
+    (void) n;
+
+    if (!is_force && is_mmdb) {
+        error_id = ERR_ARG_CANT_MMDB;
+        return false;
+    }
+
+    if (check_field_support(API_CAP_ISTOR)) {
+        selected_capabilities |= API_CAP_ISTOR;
         return true;
     }
 

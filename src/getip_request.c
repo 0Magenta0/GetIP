@@ -87,6 +87,14 @@ struct mmdb_field mmdb_fields[MMDB_FIELDS_COUNT] = {
         { "registered_city", "names", "ru", NULL }
       },
       NULL
+    },
+
+    { MMDB_CAP_TIMEZONE,
+      "Time Zone",
+      { { "location", "time_zone", NULL },
+        { NULL }
+      },
+      NULL
     }
 };
 
@@ -110,19 +118,23 @@ bool
 mmdb_check_error(int mmdb_error,
                  int gai_error);
 
-/* Print pretty output for APIs. */
-void
-print_response(void);
-
-/* Print prerry output for MMDB. */
-void
-mmdb_print_response(void);
-
 /* Checks if MMDB path
  * request is successful.
  */
 bool
 mmdb_check_status(int mmdb_error);
+
+/* Set target pointer
+ * to next node for API.
+ */
+void
+next_target(void);
+
+/* Set target pointer
+ * to next node for MMDB.
+ */
+void
+mmdb_next_target(void);
 
 bool
 mmdb_init(void)
@@ -152,7 +164,6 @@ send_mmdb_request(void)
 {
     MMDB_entry_data_s mmdb_data;
     MMDB_lookup_result_s mmdb_result;
-    struct external_ip *tmp_ip_str;
     int mmdb_error;
     int gai_error;
     int caps_counter;
@@ -160,26 +171,36 @@ send_mmdb_request(void)
 
     mmdb_result = MMDB_lookup_string(&mmdb, external_ip->ip_str, &gai_error, &mmdb_error);
 
+    if (selected_mmdb_capabilities & MMDB_CAP_IP) {
+        if (external_ip->ip_str) {
+            mmdb_fields[0].result = malloc(external_ip->str_len + 1);
+            strcpy(mmdb_fields[0].result, external_ip->ip_str);
+        }
+    }
+
     if (!mmdb_check_error(mmdb_error, gai_error)) {
         error_id = ERR_MMDB_REQUEST;
+        free(external_ip->ip_str);
+        mmdb_next_target();
         return false;
     }
 
-    if (selected_mmdb_capabilities & MMDB_CAP_IP) {
-        mmdb_fields[0].result = external_ip->ip_str;
-    }
-
+    free(external_ip->ip_str);
     if (mmdb_result.found_entry) {
         for (caps_counter = 1; caps_counter < MMDB_FIELDS_COUNT; ++caps_counter) {
             if (selected_mmdb_capabilities & mmdb_fields[caps_counter].capablitiy) {
                 for (path_counter = 0; path_counter < MMDB_PATH_COUNT; ++path_counter) {
+                    if (!mmdb_fields[caps_counter].paths[path_counter][0]) {
+                        break;
+                    }
+
                     mmdb_error = MMDB_aget_value(&mmdb_result.entry, &mmdb_data, mmdb_fields[caps_counter].paths[path_counter]);
 
                     if (!mmdb_check_status(mmdb_error)) {
                         continue;
                     }
 
-                    if (mmdb_data.has_data) {
+                    if (mmdb_data.has_data && mmdb_data.type == MMDB_DATA_TYPE_UTF8_STRING) {
                         mmdb_fields[caps_counter].result = malloc(mmdb_data.data_size + 1);
                         strncpy(mmdb_fields[caps_counter].result, mmdb_data.utf8_string, mmdb_data.data_size);
                         mmdb_fields[caps_counter].result[mmdb_data.data_size] = '\0';
@@ -195,28 +216,17 @@ send_mmdb_request(void)
         }
     } else {
         fputs("getip: couldn't find TARGET entry", stderr);
-        MMDB_close(&mmdb);
+        if (!is_force) {
+            MMDB_close(&mmdb);
+        }
+
+        mmdb_next_target();
+
         error_id = ERR_MMDB_REQUEST;
         return false;
     }
 
-    mmdb_print_response();
-
-    if (external_ip == last_external_ip) {
-        is_end = true;
-        MMDB_close(&mmdb);
-    } else {
-        tmp_ip_str = external_ip->next;
-        external_ip = tmp_ip_str;
-
-        if (!is_raw) {
-            if (!is_no_delim) {
-                puts("=================================");
-            }
-        } else {
-            putc('\n', stdout);
-        }
-    }
+    mmdb_next_target();
 
     return true;
 }
@@ -238,7 +248,6 @@ send_api_request(void)
     CURL *curl;
     struct str_buf response = {0};
     char *default_agent;
-    struct external_ip *tmp_ip_str;
 
     if (!(curl = curl_easy_init())) {
         error_id = ERR_CURL_EASY_INIT;
@@ -259,31 +268,46 @@ send_api_request(void)
     get_api_by_id(selected_api)->build_request(curl);
 
     if (!curl_perform(curl)) {
+        next_target();
         goto _end_fail;
+    } else {
+        curl_easy_cleanup(curl);
     }
-
-    curl_easy_cleanup(curl);
 
     if (is_raw) {
         if (!curl_check_code(curl)) {
-            free(response.buf);
+            if (response.buf) {
+                free(response.buf);
+                response.buf = NULL;
+            }
+
+            next_target();
             return false;
         }
 
         fputs(response.buf, stdout);
-        free(response.buf);
+        if (response.buf) {
+            free(response.buf);
+            response.buf = NULL;
+        }
     } else {
         if (!get_api_by_id(selected_api)->
                 handle_response(curl, response.buf, response.len)) {
             if (response.buf) {
-                free(response.buf);
+                if (response.buf) {
+                    free(response.buf);
+                    response.buf = NULL;
+                }
             }
 
+            next_target();
             return false;
         }
 
-        free(response.buf);
-        print_response();
+        if (response.buf) {
+            free(response.buf);
+            response.buf = NULL;
+        }
     }
 
     if (!is_external_ips) {
@@ -291,25 +315,7 @@ send_api_request(void)
         return true;
     }
 
-    if (external_ip == last_external_ip) {
-        is_end = true;
-        free(external_ip->ip_str);
-        free(external_ip);
-        curl_global_cleanup();
-    } else {
-        tmp_ip_str = external_ip->next;
-        free(external_ip->ip_str);
-        free(external_ip);
-        external_ip = tmp_ip_str;
-
-        if (!is_raw) {
-            if (!is_no_delim) {
-                puts("=================================");
-            }
-        } else {
-            putc('\n', stdout);
-        }
-    }
+    next_target();
 
     return true;
 
@@ -393,11 +399,22 @@ print_response(void)
                         current_api->api_cap_id[counter].str_value_name,
                         current_api->api_cap_id[counter].result);
                 free(current_api->api_cap_id[counter].result);
+                current_api->api_cap_id[counter].result = NULL;
             } else {
                 printf("[\x1B[0;31m-\x1B[0m] %s: %s\n",
                         current_api->api_cap_id[counter].str_value_name,
                         "\x1B[0;31mFAIL\x1B[0m");
             }
+        }
+    }
+
+    if (!is_end) {
+        if (!is_raw) {
+            if (!is_no_delim) {
+                puts("=================================");
+            }
+        } else {
+            putc('\n', stdout);
         }
     }
 }
@@ -414,11 +431,18 @@ mmdb_print_response(void)
                         mmdb_fields[counter].cap_str_name,
                         mmdb_fields[counter].result);
                 free(mmdb_fields[counter].result);
+                mmdb_fields[counter].result = NULL;
             } else {
                 printf("[\x1B[0;31m-\x1B[0m] %s: %s\n",
                         mmdb_fields[counter].cap_str_name,
                         "\x1B[0;31mFAIL\x1B[0m");
             }
+        }
+    }
+
+    if (!is_end) {
+        if (!is_no_delim) {
+            puts("=================================");
         }
     }
 }
@@ -446,7 +470,10 @@ mmdb_check_error(int mmdb_error,
             fprintf(stderr, "getip: getaddrinfo: %s - %d\n", external_ip->ip_str, gai_error);
         }
 
-        MMDB_close(&mmdb);
+        if (!is_force) {
+            MMDB_close(&mmdb);
+        }
+
         error_id = ERR_MMDB_GAI;
         return false;
     }
@@ -456,11 +483,48 @@ mmdb_check_error(int mmdb_error,
             fprintf(stderr, "getip: libmaxminddb: %s\n", MMDB_strerror(mmdb_error));
         }
 
-        MMDB_close(&mmdb);
+        if (!is_force) {
+            MMDB_close(&mmdb);
+        }
+
         error_id = ERR_MMDB_REQUEST;
         return false;
     }
 
     return true;
+}
+
+void
+next_target(void)
+{
+    struct external_ip *tmp_ip_str;
+
+    if (external_ip == last_external_ip) {
+        is_end = true;
+        free(external_ip->ip_str);
+        free(external_ip);
+        curl_global_cleanup();
+    } else {
+        tmp_ip_str = external_ip->next;
+        free(external_ip->ip_str);
+        free(external_ip);
+        external_ip = tmp_ip_str;
+    }
+}
+
+void
+mmdb_next_target(void)
+{
+    struct external_ip *tmp_ip_str;
+
+    if (external_ip == last_external_ip) {
+        is_end = true;
+        free(external_ip);
+        MMDB_close(&mmdb);
+    } else {
+        tmp_ip_str = external_ip->next;
+        free(external_ip);
+        external_ip = tmp_ip_str;
+    }
 }
 

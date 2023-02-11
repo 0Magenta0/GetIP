@@ -32,8 +32,18 @@ main(int  argc,
                  * exit with error.
                  */
                 if (!send_mmdb_request()) {
-                    error_handler();
-                    exit(EXIT_FAILURE);
+                    if (is_force && is_verbose) {
+                        error_handler();
+                    } if (is_force) {
+                        mmdb_print_response();
+                    }
+
+                    if (!is_force) {
+                        error_handler();
+                        exit(EXIT_FAILURE);
+                    }
+                } else {
+                    mmdb_print_response();
                 }
             }
         } else {
@@ -51,8 +61,18 @@ main(int  argc,
                  * exit with error.
                  */
                 if (!send_api_request()) {
-                    error_handler();
-                    exit(EXIT_FAILURE);
+                    if (is_force && is_verbose) {
+                        error_handler();
+                    } if (is_force) {
+                        print_response();
+                    }
+
+                    if (!is_force) {
+                        error_handler();
+                        exit(EXIT_FAILURE);
+                    }
+                } else {
+                    print_response();
                 }
             }
         }

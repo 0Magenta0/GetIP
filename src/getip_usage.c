@@ -6,7 +6,9 @@
  */
 
 #include "getip_apis.h"
+#include "getip_args.h"
 #include "getip_usage.h"
+#include "getip_errors.h"
 #include "getip_request.h"
 
 #include <stdio.h>
@@ -15,6 +17,10 @@
 void
 print_usage(enum usage_variants variant)
 {
+    if (error_id && is_verbose && is_force) {
+        return;
+    }
+
     puts("GetIP (version " GETIP_VERSION ")\n"
           GETIP_DESCRIPTION "\n"
           GETIP_URL "\n"

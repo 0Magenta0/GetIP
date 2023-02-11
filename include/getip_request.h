@@ -13,14 +13,15 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define MMDB_FIELDS_COUNT 4
+#define MMDB_FIELDS_COUNT 5
 
 /* Fields supported wtih MMDB. */
 enum mmdb_cap {
     MMDB_CAP_IP        = 0x01,
     MMDB_CAP_CONTINENT = 0x02,
     MMDB_CAP_COUNTRY   = 0x04,
-    MMDB_CAP_CITY      = 0x08
+    MMDB_CAP_CITY      = 0x08,
+    MMDB_CAP_TIMEZONE  = 0x10
 };
 
 /* Structure that contains
@@ -119,6 +120,14 @@ curl_init(void);
  */
 bool
 send_api_request(void);
+
+/* Print pretty output for APIs. */
+void
+print_response(void);
+
+/* Print prerry output for MMDB. */
+void
+mmdb_print_response(void);
 
 /* Check if HTTP status
  * code is not 200.

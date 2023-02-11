@@ -16,6 +16,7 @@ extern bool is_verbose;  /* Verbose is needed.          */
 extern bool is_raw;      /* Print raw JSON.             */
 extern bool is_no_delim; /* Don't draw delimiters
                             between few output targets. */
+extern bool is_force;    /* Ignore some warnings. */
 
 /* Handle `argv` parameters.
  * Return `false` when failed
