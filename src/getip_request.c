@@ -396,14 +396,14 @@ print_response(void)
         if (current_api->api_cap_id[counter].capablitiy & selected_capabilities) {
             if (current_api->api_cap_id[counter].result) {
                 printf("[\x1B[0;32m+\x1B[0m] %s: %s\n",
-                        current_api->api_cap_id[counter].str_value_name,
-                        current_api->api_cap_id[counter].result);
+                       current_api->api_cap_id[counter].str_value_name,
+                       current_api->api_cap_id[counter].result);
                 free(current_api->api_cap_id[counter].result);
                 current_api->api_cap_id[counter].result = NULL;
             } else {
                 printf("[\x1B[0;31m-\x1B[0m] %s: %s\n",
-                        current_api->api_cap_id[counter].str_value_name,
-                        "\x1B[0;31mFAIL\x1B[0m");
+                       current_api->api_cap_id[counter].str_value_name,
+                       "\x1B[0;31mFAIL\x1B[0m");
             }
         }
     }
@@ -428,14 +428,14 @@ mmdb_print_response(void)
         if (selected_mmdb_capabilities & mmdb_fields[counter].capablitiy) {
             if (mmdb_fields[counter].result) {
                 printf("[\x1B[0;32m+\x1B[0m] %s: %s\n",
-                        mmdb_fields[counter].cap_str_name,
-                        mmdb_fields[counter].result);
+                       mmdb_fields[counter].cap_str_name,
+                       mmdb_fields[counter].result);
                 free(mmdb_fields[counter].result);
                 mmdb_fields[counter].result = NULL;
             } else {
                 printf("[\x1B[0;31m-\x1B[0m] %s: %s\n",
-                        mmdb_fields[counter].cap_str_name,
-                        "\x1B[0;31mFAIL\x1B[0m");
+                       mmdb_fields[counter].cap_str_name,
+                       "\x1B[0;31mFAIL\x1B[0m");
             }
         }
     }
