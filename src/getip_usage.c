@@ -17,6 +17,10 @@
 void
 print_usage(enum usage_variants variant)
 {
+    /* Don't print any usage
+     * when have errors
+     * and verbose warnings.
+     */
     if (error_id && is_verbose && is_force) {
         return;
     }

@@ -13,7 +13,7 @@
  * can be handled.
  */
 enum error_id {
-    ERR_IP_STR,
+    ERR_IP_STR = 1,
     ERR_ARG_UNK,
     ERR_ARG_MISS,
     ERR_ARG_CANT_MMDB,
