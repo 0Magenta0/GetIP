@@ -274,6 +274,11 @@ send_api_request(void)
         curl_easy_cleanup(curl);
     }
 
+    if (!response.buf) {
+        error_id = ERR_API_RES_NULL;
+        return false;
+    }
+
     if (is_raw) {
         if (!curl_check_code(curl)) {
             if (response.buf) {

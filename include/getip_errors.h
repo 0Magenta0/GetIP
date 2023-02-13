@@ -31,6 +31,7 @@ enum error_id {
     ERR_API_RET_CODE,
     ERR_API_JSON_PARSE,
     ERR_API_STATUS,
+    ERR_API_RES_NULL,
     ERR_MMDB_OPEN,
     ERR_MMDB_GAI,
     ERR_MMDB_REQUEST,
