@@ -506,13 +506,25 @@ next_target(void)
 
     if (external_ip == last_external_ip) {
         is_end = true;
-        free(external_ip->ip_str);
-        free(external_ip);
+        if (external_ip) {
+            if (external_ip->ip_str) {
+                free(external_ip->ip_str);
+            }
+
+            free(external_ip);
+        }
+
         curl_global_cleanup();
     } else {
         tmp_ip_str = external_ip->next;
-        free(external_ip->ip_str);
-        free(external_ip);
+        if (external_ip) {
+            if (external_ip->ip_str) {
+                free(external_ip->ip_str);
+            }
+
+            free(external_ip);
+        }
+
         external_ip = tmp_ip_str;
     }
 }
@@ -524,11 +536,17 @@ mmdb_next_target(void)
 
     if (external_ip == last_external_ip) {
         is_end = true;
-        free(external_ip);
+        if (external_ip) {
+            free(external_ip);
+        }
+
         MMDB_close(&mmdb);
     } else {
         tmp_ip_str = external_ip->next;
-        free(external_ip);
+        if (external_ip) {
+            free(external_ip);
+        }
+
         external_ip = tmp_ip_str;
     }
 }
